@@ -1,5 +1,5 @@
 import { set } from 'date-fns';
-import { Customer } from '../../model/customer';
+import { Customer } from '../../model/customer2';
 import { Product } from '../../model/product';
 import { Payment } from '../../model/payment';
 import { Order } from '../../model/order';

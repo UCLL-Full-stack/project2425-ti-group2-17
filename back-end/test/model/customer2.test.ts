@@ -2,7 +2,7 @@
     🚨 TESTS FOR CUSTOMER TO BE WRITTEN, BECAUSE THIS IS JUST FOR STUB CUSTOMER!
 */
 
-import { Customer } from '../../model/customer';
+import { Customer } from '../../model/customer2';
 
 test('given: valid values for customer, when: customer is created, then: customer is created with those values', () => {
     const customer = new Customer({
