@@ -24,4 +24,8 @@ export class Customer extends User {
     getRecentOrders(): Order[] {
         return this.recentOrders;
     }
+
+    addItem(order: Order) {
+        this.recentOrders.push(order);
+    }
 }
