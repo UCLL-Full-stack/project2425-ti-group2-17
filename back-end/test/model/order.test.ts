@@ -1,5 +1,5 @@
 import { set } from 'date-fns';
-import { Customer } from '../../model/customer2';
+import { Customer } from '../../model/customer';
 import { Order } from '../../model/order';
 import { OrderItem } from '../../model/orderItem';
 import { Product } from '../../model/product';
@@ -7,8 +7,11 @@ import { Payment } from '../../model/payment';
 
 test('given: valid values for order, when: order is created, then: order is created with those values', () => {
     const customer = new Customer({
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john.doe@example.com',
+        password: 'securepassword123',
+        recentOrders: [],
     });
 
     const tShirt = new Product({

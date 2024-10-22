@@ -7,8 +7,11 @@ const product_1 = require("../../model/product");
 const payment_1 = require("../../model/payment");
 test('given: valid values for order, when: order is created, then: order is created with those values', () => {
     const customer = new customer_1.Customer({
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john.doe@example.com',
+        password: 'securepassword123',
+        recentOrders: [],
     });
     const tShirt = new product_1.Product({
         name: 'T-Shirt',
