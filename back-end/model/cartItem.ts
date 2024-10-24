@@ -6,12 +6,14 @@ export class CartItem {
     private cart: Cart;
     private product: Product;
     private quantity: number;
+
     constructor(cartItem: { cart: Cart; product: Product; quantity: number; id?: number }) {
         this.id = cartItem.id;
         this.cart = cartItem.cart;
         this.product = cartItem.product;
         this.quantity = cartItem.quantity;
     }
+
     getId(): number | undefined {
         return this.id;
     }

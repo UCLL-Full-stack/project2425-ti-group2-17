@@ -11,12 +11,6 @@ export class Customer extends User {
         recentOrders: Order[];
         id?: number;
     }) {
-        // this.id = customer.id;
-        // this.firstName = customer.firstName;
-        // this.lastName = customer.lastName;
-        // this.email = customer.email;
-        // this.password = customer.password;
-        // // this.isAdmin = user.isAdmin;
         super(customer);
         this.recentOrders = customer.recentOrders;
     }
