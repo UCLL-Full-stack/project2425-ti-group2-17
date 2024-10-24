@@ -20,5 +20,15 @@ class CartItem {
     getQuantity() {
         return this.quantity;
     }
+    updateQuantity(newQuantity) {
+        if (newQuantity <= 0) {
+            throw new Error('Quantity must be greater than zero');
+        }
+        const quantityDifference = newQuantity - this.quantity;
+        if (quantityDifference > 0) {
+            this.product.updateStock(quantityDifference);
+        }
+        this.quantity = newQuantity;
+    }
 }
 exports.CartItem = CartItem;
