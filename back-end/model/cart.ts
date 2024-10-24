@@ -8,6 +8,7 @@ export class Cart {
     private products: CartItem[];
 
     constructor(cart: { customer: Customer; products: CartItem[]; id?: number }) {
+        this.validate(cart);
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;

@@ -30,15 +30,31 @@ export class CartItem {
         return this.quantity;
     }
 
+    validate(cartItem: { cart: Cart; product: Product; quantity: number }) {
+        if (!cartItem.cart) {
+            throw new Error('Cart cannot be null or undefined.');
+        }
+
+        if (!cartItem.product) {
+            throw new Error('Product cannot be null or undefined.');
+        }
+
+        if (cartItem.quantity <= 0) {
+            throw new Error('Quantity must be greater than zero.');
+        }
+    }
+
     updateQuantity(newQuantity: number): void {
         if (newQuantity <= 0) {
-            throw new Error('Quantity must be greater than zero');
+            throw new Error('Quantity must be greater than zero.');
         }
 
         const quantityDifference = newQuantity - this.quantity;
-        if (quantityDifference > 0) {
-            this.product.updateStock(quantityDifference);
+        if (quantityDifference > 0 && this.product.getStock() < quantityDifference) {
+            throw new Error('Not enough stock available to update the quantity.');
         }
+
+        this.product.updateStock(quantityDifference);
         this.quantity = newQuantity;
     }
 }

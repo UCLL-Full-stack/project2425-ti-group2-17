@@ -4,6 +4,7 @@ exports.Cart = void 0;
 const cartItem_1 = require("./cartItem");
 class Cart {
     constructor(cart) {
+        this.validate(cart);
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;

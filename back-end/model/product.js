@@ -41,7 +41,7 @@ class Product {
         return this.colors;
     }
     updateStock(quantity) {
-        if (this.stock - quantity < 0) {
+        if (quantity > 0 && this.stock - quantity < 0) {
             throw new Error('Not enough stock available');
         }
         this.stock -= quantity;
