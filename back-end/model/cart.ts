@@ -36,7 +36,7 @@ export class Cart {
         if (quantity <= 0) throw new Error('Quantity must be greater than zero.');
 
         const existingProductIndex = this.products.findIndex(
-            (item) => item.getProduct().id === product.id
+            (item) => item.getProduct().getId() === product.getId()
         );
         if (existingProductIndex !== -1) {
             this.products[existingProductIndex].updateQuantity(quantity);

@@ -40,5 +40,17 @@ class Product {
     getColors() {
         return this.colors;
     }
+    updateStock(quantity) {
+        if (this.stock - quantity < 0) {
+            throw new Error('Not enough stock available');
+        }
+        this.stock -= quantity;
+    }
+    addStock(quantity) {
+        if (quantity <= 0) {
+            throw new Error('Invalid quantity to add');
+        }
+        this.stock += quantity;
+    }
 }
 exports.Product = Product;
