@@ -1,5 +1,3 @@
-import { Order } from './order';
-
 export abstract class User {
     private id?: number;
     private firstName: string;
@@ -14,6 +12,7 @@ export abstract class User {
         password: string;
         id?: number;
     }) {
+        this.validate(user);
         this.id = user.id;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
@@ -39,5 +38,15 @@ export abstract class User {
 
     getPassword(): string {
         return this.password;
+    }
+
+    validate(user: { firstName: string; lastName: string; email: string; password: string }) {
+        if (!user.firstName) throw new Error("The user's first name is required.");
+
+        if (!user.lastName) throw new Error("The user's last name is required.");
+
+        if (!user.email) throw new Error("The user's email is required.");
+
+        if (!user.password) throw new Error("The user's password is required.");
     }
 }

@@ -1,15 +1,3 @@
-type ProductDetails = {
-    id?: number;
-    name: string;
-    price: number;
-    stock: number;
-    category: string[];
-    description: string;
-    images: string[];
-    sizes: string[];
-    colors: string[];
-};
-
 export class Product {
     private id?: number;
     private name: string;
@@ -21,7 +9,17 @@ export class Product {
     private sizes: string[];
     private colors: string[];
 
-    constructor(product: ProductDetails) {
+    constructor(product: {
+        name: string;
+        price: number;
+        stock: number;
+        category: string[];
+        description: string;
+        images: string[];
+        sizes: string[];
+        colors: string[];
+        id?: number;
+    }) {
         this.id = product.id;
         this.name = product.name;
         this.price = product.price;

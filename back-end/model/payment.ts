@@ -1,19 +1,15 @@
-type PaymentDetails = {
-    id?: number;
-    amount: number;
-    date: Date;
-    paymentStatus: PaymentStatus;
-};
-
-type PaymentStatus = 'paid' | 'unpaid';
-
 export class Payment {
     private id?: number;
     private amount: number;
     private date: Date;
-    private paymentStatus: PaymentStatus;
+    private paymentStatus: string;
 
-    constructor(payment: PaymentDetails) {
+    constructor(payment: {
+        amount: number;
+        date: Date;
+        paymentStatus: 'paid' | 'unpaid';
+        id?: number;
+    }) {
         this.id = payment.id;
         this.amount = payment.amount;
         this.date = payment.date;
@@ -32,7 +28,7 @@ export class Payment {
         return this.date;
     }
 
-    getPaymentStatus(): PaymentStatus {
+    getPaymentStatus(): string {
         return this.paymentStatus;
     }
 }

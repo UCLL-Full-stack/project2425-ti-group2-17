@@ -3,14 +3,6 @@ import { OrderItem } from './orderItem';
 import { Payment } from './payment';
 import { Product } from './product';
 
-type OrderDetails = {
-    id?: number;
-    customer: Customer;
-    items: OrderItem[];
-    date: Date;
-    payment: Payment;
-};
-
 export class Order {
     private id?: number;
     private customer: Customer;
@@ -18,7 +10,13 @@ export class Order {
     private date: Date;
     private payment: Payment;
 
-    constructor(order: OrderDetails) {
+    constructor(order: {
+        customer: Customer;
+        items: OrderItem[];
+        date: Date;
+        payment: Payment;
+        id?: number;
+    }) {
         this.id = order.id;
         this.customer = order.customer;
         this.items = order.items;
