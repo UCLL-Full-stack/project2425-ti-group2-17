@@ -25,8 +25,24 @@ export class Cart {
         return this.products;
     }
 
+    validate(cart: { customer: Customer; products: CartItem[] }) {
+        if (!cart.customer) throw new Error('Customer cannot be null or undefined.');
+
+        if (!Array.isArray(cart.products) || cart.products.length === 0)
+            throw new Error('Cart must have at least one product.');
+    }
+
     addItem(product: Product, quantity: number) {
-        const cartItem = new CartItem({ cart: this, product, quantity });
-        this.products.push(cartItem);
+        if (quantity <= 0) throw new Error('Quantity must be greater than zero.');
+
+        const existingProductIndex = this.products.findIndex(
+            (item) => item.getProduct().id === product.id
+        );
+        if (existingProductIndex !== -1) {
+            this.products[existingProductIndex].updateQuantity(quantity);
+        } else {
+            const cartItem = new CartItem({ cart: this, product, quantity });
+            this.products.push(cartItem);
+        }
     }
 }

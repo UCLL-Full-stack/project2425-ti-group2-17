@@ -17,9 +17,23 @@ class Cart {
     getProducts() {
         return this.products;
     }
+    validate(cart) {
+        if (!cart.customer)
+            throw new Error('Customer cannot be null or undefined.');
+        if (!Array.isArray(cart.products) || cart.products.length === 0)
+            throw new Error('Cart must have at least one product.');
+    }
     addItem(product, quantity) {
-        const cartItem = new cartItem_1.CartItem({ cart: this, product, quantity });
-        this.products.push(cartItem);
+        if (quantity <= 0)
+            throw new Error('Quantity must be greater than zero.');
+        const existingProductIndex = this.products.findIndex((item) => item.getProduct().id === product.id);
+        if (existingProductIndex !== -1) {
+            this.products[existingProductIndex].updateQuantity(quantity);
+        }
+        else {
+            const cartItem = new cartItem_1.CartItem({ cart: this, product, quantity });
+            this.products.push(cartItem);
+        }
     }
 }
 exports.Cart = Cart;
