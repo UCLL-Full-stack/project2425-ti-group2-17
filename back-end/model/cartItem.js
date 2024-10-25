@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartItem = void 0;
 class CartItem {
     constructor(cartItem) {
+        this.validate(cartItem);
         this.id = cartItem.id;
         this.cart = cartItem.cart;
         this.product = cartItem.product;
@@ -39,7 +40,7 @@ class CartItem {
         if (quantityDifference > 0 && this.product.getStock() < quantityDifference) {
             throw new Error('Not enough stock available to update the quantity.');
         }
-        this.product.updateStock(quantityDifference);
+        this.product.updateStock(-quantityDifference);
         this.quantity = newQuantity;
     }
 }

@@ -67,12 +67,12 @@ export class Product {
         return this.colors;
     }
 
-    updateStock(quantity: number): void {
-        if (quantity > 0 && this.stock - quantity < 0) {
+    updateStock(quantityChange: number): void {
+        const newStock = this.stock + quantityChange;
+        if (newStock < 0) {
             throw new Error('Not enough stock available');
         }
-
-        this.stock -= quantity;
+        this.stock = newStock;
     }
 
     addStock(quantity: number): void {

@@ -40,11 +40,12 @@ class Product {
     getColors() {
         return this.colors;
     }
-    updateStock(quantity) {
-        if (quantity > 0 && this.stock - quantity < 0) {
+    updateStock(quantityChange) {
+        const newStock = this.stock + quantityChange;
+        if (newStock < 0) {
             throw new Error('Not enough stock available');
         }
-        this.stock -= quantity;
+        this.stock = newStock;
     }
     addStock(quantity) {
         if (quantity <= 0) {

@@ -8,6 +8,7 @@ export class CartItem {
     private quantity: number;
 
     constructor(cartItem: { cart: Cart; product: Product; quantity: number; id?: number }) {
+        this.validate(cartItem);
         this.id = cartItem.id;
         this.cart = cartItem.cart;
         this.product = cartItem.product;
@@ -50,11 +51,12 @@ export class CartItem {
         }
 
         const quantityDifference = newQuantity - this.quantity;
+
         if (quantityDifference > 0 && this.product.getStock() < quantityDifference) {
             throw new Error('Not enough stock available to update the quantity.');
         }
 
-        this.product.updateStock(quantityDifference);
+        this.product.updateStock(-quantityDifference);
         this.quantity = newQuantity;
     }
 }
