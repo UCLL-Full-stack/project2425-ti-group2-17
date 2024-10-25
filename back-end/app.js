@@ -30,6 +30,7 @@ const dotenv = __importStar(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const bodyParser = __importStar(require("body-parser"));
+const customer_routes_1 = require("./controller/customer.routes");
 const app = (0, express_1.default)();
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
@@ -38,6 +39,7 @@ app.use(bodyParser.json());
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
 });
+app.use('/', customer_routes_1.customerRouter);
 app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
