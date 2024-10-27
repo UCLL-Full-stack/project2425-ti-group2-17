@@ -41,6 +41,11 @@ test('given: valid cart, when: cart item is added to cart, then: cart item is ad
 
     expect(cart.getProducts()).toHaveLength(1);
 });
+test('given: invalid customer, when: cart is created, then: an error is thrown.', () => {
+    expect(() => new Cart({ customer: null as any, products: [] })).toThrow(
+        'Customer cannot be null or undefined.'
+    );
+});
 
 test('given: invalid quantity, when: cart item is added to cart, then: an error is thrown.', () => {
     expect(() => cart.addItem(product, -1)).toThrow('Quantity must be greater than zero.');

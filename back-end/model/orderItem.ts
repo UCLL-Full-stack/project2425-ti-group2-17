@@ -1,3 +1,4 @@
+import { CartItem } from './cartItem';
 import { Order } from './order';
 import { Product } from './product';
 
@@ -7,6 +8,7 @@ export class OrderItem {
     private quantity: number;
 
     constructor(orderItem: { order: Order; product: Product; quantity: number }) {
+        this.validate(orderItem);
         this.order = orderItem.order;
         this.product = orderItem.product;
         this.quantity = orderItem.quantity;
@@ -22,5 +24,18 @@ export class OrderItem {
 
     getQuantity(): number {
         return this.quantity;
+    }
+    validate(orderItem: { order: Order; product: Product; quantity: number }) {
+        if (!orderItem.order) {
+            throw new Error('Order cannot be null or undefined.');
+        }
+
+        if (!orderItem.product) {
+            throw new Error('Product cannot be null or undefined.');
+        }
+
+        if (orderItem.quantity <= 0) {
+            throw new Error('Quantity must be greater than zero.');
+        }
     }
 }

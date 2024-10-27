@@ -17,6 +17,7 @@ export class Order {
         payment: Payment;
         id?: number;
     }) {
+        this.validate(order);
         this.id = order.id;
         this.customer = order.customer;
         this.items = order.items;
@@ -42,6 +43,22 @@ export class Order {
 
     getPayment(): Payment {
         return this.payment;
+    }
+
+    validate(order: { customer: Customer; items: OrderItem[]; date: Date; payment: Payment }) {
+        if (!order.customer) {
+            throw new Error('Customer cannot be null or undefined.');
+        }
+        if (!(order.date instanceof Date) || isNaN(order.date.getTime())) {
+            throw new Error('Invalid date provided.');
+        }
+        const currentDate = new Date();
+        if (order.date > currentDate) {
+            throw new Error('Order date cannot be in the future.');
+        }
+        if (!order.payment) {
+            throw new Error('Payment cannot be null or undefined.');
+        }
     }
 
     addItem(product: Product, quantity: number) {
