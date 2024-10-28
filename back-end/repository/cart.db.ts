@@ -104,7 +104,18 @@ const getCartById = ({ id }: { id: number }): Cart | null => {
     return carts.find((cart) => cart.getId() === id) || null;
 };
 
+const getCartByCustomerEmail = ({ email }: { email: string }): Cart | null => {
+    return carts.find((cart) => cart.getCustomer().getEmail() === email) || null;
+};
+
+const createCart = (cart: Cart): Cart => {
+    carts.push(cart);
+    return cart;
+};
+
 export default {
     getCarts,
     getCartById,
+    createCart,
+    getCartByCustomerEmail,
 };

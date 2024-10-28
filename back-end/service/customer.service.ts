@@ -1,6 +1,8 @@
 import { Customer } from '../model/customer';
+import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
 import { CustomerInput } from '../types';
+import cartService from './cart.service';
 
 const getCustomers = (): Customer[] => customerDB.getCustomers();
 
@@ -23,6 +25,7 @@ const createCustomer = ({ firstName, lastName, email, password }: CustomerInput)
         recentOrders: [],
         id: customerId,
     });
+    cartService.createCart(customer);
     return customerDB.createCustomer(customer);
 };
 

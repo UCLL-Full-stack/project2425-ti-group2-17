@@ -1,4 +1,6 @@
+import { Cart } from '../../model/cart';
 import { Customer } from '../../model/customer';
+import cartDb from '../../repository/cart.db';
 import customerDb from '../../repository/customer.db';
 import customerService from '../../service/customer.service';
 import { CustomerInput } from '../../types';
@@ -26,12 +28,14 @@ let mockCustomerDbGetCustomers: jest.Mock;
 let mockCustomerDbGetCustomerById: jest.Mock;
 let mockCustomerDbGetCustomerByEmail: jest.Mock;
 let mockCustomerDbCreateCustomer: jest.Mock;
+let mockCartDbCreateCart: jest.Mock;
 
 beforeEach(() => {
     mockCustomerDbGetCustomers = jest.fn();
     mockCustomerDbGetCustomerById = jest.fn();
     mockCustomerDbGetCustomerByEmail = jest.fn();
     mockCustomerDbCreateCustomer = jest.fn();
+    mockCartDbCreateCart = jest.fn();
 });
 
 afterEach(() => {
@@ -66,11 +70,10 @@ test('given customers in the DB, when getting customer by incorrect id, then an 
 });
 
 test('given a valid customer input, when creating a new customer, then it successfully creates the customer', () => {
-    // given
     const newCustomerInput: CustomerInput = {
-        firstName: 'Alice',
+        firstName: 'Bob',
         lastName: 'Johnson',
-        email: 'alice.johnson@example.com',
+        email: 'bob.johnson@example.com',
         password: 'password789',
     };
 
@@ -84,6 +87,10 @@ test('given a valid customer input, when creating a new customer, then it succes
     });
     customerDb.createCustomer = mockCustomerDbCreateCustomer.mockReturnValue(createdCustomer);
 
+    const cart = new Cart({ customer: createdCustomer, products: [] });
+
+    cartDb.createCart = mockCartDbCreateCart.mockReturnValue(cart);
+
     const result = customerService.createCustomer(newCustomerInput);
 
     expect(result).toEqual(createdCustomer);
@@ -91,6 +98,7 @@ test('given a valid customer input, when creating a new customer, then it succes
         email: newCustomerInput.email,
     });
     expect(mockCustomerDbCreateCustomer).toHaveBeenCalledWith(createdCustomer);
+    expect(mockCartDbCreateCart).toHaveBeenCalledWith(cart);
 });
 
 test('given an existing customer, when creating that customer again, then an error is thrown', () => {
