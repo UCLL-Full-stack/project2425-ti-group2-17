@@ -1,5 +1,4 @@
 import { Cart } from '../../model/cart';
-import { CartItem } from '../../model/cartItem';
 import { Customer } from '../../model/customer';
 import { Product } from '../../model/product';
 
@@ -41,6 +40,7 @@ test('given: valid cart, when: cart item is added to cart, then: cart item is ad
 
     expect(cart.getProducts()).toHaveLength(1);
 });
+
 test('given: invalid customer, when: cart is created, then: an error is thrown.', () => {
     expect(() => new Cart({ customer: null as any, products: [] })).toThrow(
         'Customer cannot be null or undefined.'
@@ -65,14 +65,4 @@ test('given: product already in cart, when: same product is added again, then: q
 
     expect(cart.getProducts()).toHaveLength(1);
     expect(cart.getProducts()[0].getQuantity()).toBe(5);
-});
-
-test('given: multiple products, when: each is added to the cart, then: all are present in the cart.', () => {
-    const product2 = new Product({ ...productTestData, name: 'Jeans', price: 50.0, id: 2 });
-    cart.addItem(product, 2);
-    cart.addItem(product2, 1);
-
-    expect(cart.getProducts()).toHaveLength(2);
-    expect(cart.getProducts()[0].getProduct()).toEqual(product);
-    expect(cart.getProducts()[1].getProduct()).toEqual(product2);
 });

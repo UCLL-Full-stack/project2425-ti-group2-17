@@ -3,14 +3,16 @@ import { Product } from './product';
 
 export class CartItem {
     private id?: number;
-    private cart: Cart;
+    // private cart: Cart;
     private product: Product;
     private quantity: number;
 
-    constructor(cartItem: { cart: Cart; product: Product; quantity: number; id?: number }) {
+    constructor(cartItem: { product: Product; quantity: number; id?: number }) {
+        // constructor(cartItem: { cart: Cart; product: Product; quantity: number; id?: number }) {
+
         this.validate(cartItem);
         this.id = cartItem.id;
-        this.cart = cartItem.cart;
+        // this.cart = cartItem.cart;
         this.product = cartItem.product;
         this.quantity = cartItem.quantity;
     }
@@ -19,9 +21,9 @@ export class CartItem {
         return this.id;
     }
 
-    getCart(): Cart {
-        return this.cart;
-    }
+    // getCart(): Cart {
+    //     return this.cart;
+    // }
 
     getProduct(): Product {
         return this.product;
@@ -31,10 +33,11 @@ export class CartItem {
         return this.quantity;
     }
 
-    validate(cartItem: { cart: Cart; product: Product; quantity: number }) {
-        if (!cartItem.cart) {
-            throw new Error('Cart cannot be null or undefined.');
-        }
+    // validate(cartItem: { cart: Cart; product: Product; quantity: number }) {
+    validate(cartItem: { product: Product; quantity: number }) {
+        // if (!cartItem.cart) {
+        //     throw new Error('Cart cannot be null or undefined.');
+        // }
 
         if (!cartItem.product) {
             throw new Error('Product cannot be null or undefined.');

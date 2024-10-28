@@ -3,12 +3,14 @@ import { Order } from './order';
 import { Product } from './product';
 
 export class OrderItem {
+    private id?: number;
     private order: Order;
     private product: Product;
     private quantity: number;
 
-    constructor(orderItem: { order: Order; product: Product; quantity: number }) {
+    constructor(orderItem: { order: Order; product: Product; quantity: number; id?: number }) {
         this.validate(orderItem);
+        this.id = orderItem.id;
         this.order = orderItem.order;
         this.product = orderItem.product;
         this.quantity = orderItem.quantity;

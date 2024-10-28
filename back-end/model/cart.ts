@@ -43,7 +43,7 @@ export class Cart {
             const existingQuantity = this.products[existingProductIndex].getQuantity();
             this.products[existingProductIndex].updateQuantity(existingQuantity + quantity);
         } else {
-            const cartItem = new CartItem({ cart: this, product, quantity });
+            const cartItem = new CartItem({ product, quantity });
             this.products.push(cartItem);
         }
     }

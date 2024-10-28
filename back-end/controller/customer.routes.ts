@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import customerService from '../service/customer.service';
+import { CustomerInput } from '../types';
 
 const customerRouter = Router();
 
@@ -20,5 +21,15 @@ customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunctio
         next(error);
     }
 });
+
+// customerRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const customer = <CustomerInput>req.body;
+//         const result = await customerService.createCustomer(customer);
+//         res.status(200).json(result);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 export { customerRouter };
