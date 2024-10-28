@@ -42,9 +42,28 @@ const createCustomer = (customer: Customer): Customer => {
     return customer;
 };
 
+const updateCustomer = (updatedCustomer: Customer): Customer => {
+    const index = customers.findIndex((customer) => customer.getId() === updatedCustomer.getId());
+
+    if (index === -1) {
+        throw new Error('There is no customer with that id.');
+    }
+
+    customers[index] = updatedCustomer;
+    return customers[index];
+};
+
+const deleteCustomer = ({ id }: { id: number }) => {
+    const customerIndex = customers.findIndex((customer) => customer.getId() === id);
+
+    customers.splice(customerIndex, 1);
+};
+
 export default {
     getCustomers,
     getCustomerById,
     createCustomer,
     getCustomerByEmail,
+    updateCustomer,
+    deleteCustomer,
 };

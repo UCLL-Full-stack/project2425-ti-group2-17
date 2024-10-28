@@ -98,7 +98,7 @@ test('given a valid customer input, when creating a new customer, then it succes
         email: newCustomerInput.email,
     });
     expect(mockCustomerDbCreateCustomer).toHaveBeenCalledWith(createdCustomer);
-    expect(mockCartDbCreateCart).toHaveBeenCalledWith(cart);
+    expect(mockCartDbCreateCart).toHaveBeenCalledWith(createdCustomer);
 });
 
 test('given an existing customer, when creating that customer again, then an error is thrown', () => {

@@ -32,4 +32,23 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
     }
 });
 
+customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = <CustomerInput>req.body;
+        const result = await customerService.updateCustomer(Number(req.params.id), customer);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await customerService.deleteCustomer(Number(req.params.id));
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
 export { customerRouter };

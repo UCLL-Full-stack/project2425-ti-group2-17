@@ -63,3 +63,19 @@ test('given: invalid password less than 8 characters for customer, when: custome
         'The password must be at least 8 characters long.'
     );
 });
+
+test('given: valid values for update, when: updating the admin, then: admin is updated with those values.', () => {
+    const updatedData = {
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane.smith@gmail.com',
+        password: 'newpassword456',
+    };
+
+    customer.updateUser(updatedData);
+
+    expect(customer.getFirstName()).toEqual(updatedData.firstName);
+    expect(customer.getLastName()).toEqual(updatedData.lastName);
+    expect(customer.getEmail()).toEqual(updatedData.email);
+    expect(customer.getPassword()).toEqual(updatedData.password);
+});

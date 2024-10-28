@@ -108,9 +108,21 @@ const getCartByCustomerEmail = ({ email }: { email: string }): Cart | null => {
     return carts.find((cart) => cart.getCustomer().getEmail() === email) || null;
 };
 
-const createCart = (cart: Cart): Cart => {
+const getCartByCustomerId = ({ id }: { id: number }): Cart | null => {
+    return carts.find((cart) => cart.getCustomer().getId() === id) || null;
+};
+
+const createCart = (customer: Customer): Cart => {
+    const cart = new Cart({ customer, products: [] });
     carts.push(cart);
     return cart;
+};
+
+const deleteCart = ({ id }: { id: number }) => {
+    const cartIndex = carts.findIndex((cart) => cart.getId() === id);
+
+    carts.splice(cartIndex, 1);
+    return 'Cart successfully deleted.';
 };
 
 export default {
@@ -118,4 +130,6 @@ export default {
     getCartById,
     createCart,
     getCartByCustomerEmail,
+    getCartByCustomerId,
+    deleteCart,
 };

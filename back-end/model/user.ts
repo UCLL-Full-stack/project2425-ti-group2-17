@@ -57,4 +57,12 @@ export abstract class User {
         if (user.password.length < 8)
             throw new Error('The password must be at least 8 characters long.');
     }
+
+    updateUser(user: { firstName: string; lastName: string; email: string; password: string }) {
+        this.validate(user);
+        this.firstName = user.firstName;
+        this.lastName = user.lastName;
+        this.email = user.email;
+        this.password = user.password;
+    }
 }

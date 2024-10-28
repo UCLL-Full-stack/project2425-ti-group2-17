@@ -17,13 +17,21 @@ const createCart = (customer: Customer): Cart => {
     });
 
     if (existingCart) throw new Error('This customer already has a cart.');
+    return cartDB.createCart(customer);
+};
 
-    const cart = new Cart({ customer, products: [] });
-    return cartDB.createCart(cart);
+const deleteCart = (customerId: number) => {
+    const existingCart = cartDB.getCartByCustomerId({ id: customerId });
+    if (!existingCart) {
+        throw new Error('That customer does not have a cart.');
+    }
+
+    return cartDB.deleteCart({ id: customerId });
 };
 
 export default {
     getCarts,
     getCartById,
     createCart,
+    deleteCart,
 };

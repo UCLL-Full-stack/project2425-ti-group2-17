@@ -22,6 +22,14 @@ const customers: Customer[] = [
         recentOrders: [],
         id: 2,
     }),
+    new Customer({
+        firstName: 'Bob',
+        lastName: 'Smith',
+        email: 'bob.smith@example.com',
+        password: 'password789',
+        recentOrders: [],
+        id: 2,
+    }),
 ];
 const product1 = new Product({
     name: 'T-Shirt',
@@ -65,10 +73,18 @@ carts.push(cartJane);
 
 let mockCartDbGetCarts: jest.Mock;
 let mockCartDbGetCartById: jest.Mock;
+let mockCartDbCreateCart: jest.Mock;
+let mockCartDbDeleteCart: jest.Mock;
+let mockCartDbGetCartByCustomerEmail: jest.Mock;
+let mockCartDbGetCartByCustomerId: jest.Mock;
 
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
     mockCartDbGetCartById = jest.fn();
+    mockCartDbCreateCart = jest.fn();
+    mockCartDbDeleteCart = jest.fn();
+    mockCartDbGetCartByCustomerEmail = jest.fn();
+    mockCartDbGetCartByCustomerId = jest.fn();
 });
 
 afterEach(() => {
@@ -98,7 +114,51 @@ test('given carts in the DB, when getting a cart by incorrect id, then an error 
 
     const getCartById = () => cartService.getCartById(3);
 
-    // then
     expect(getCartById).toThrow('Cart with id 3 does not exist.');
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
+});
+
+test('given a new customer, when creating a cart, then the cart is created successfully', () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
+
+    const createdCart = new Cart({ customer: customers[2], products: [] });
+    cartDb.createCart = mockCartDbCreateCart.mockReturnValue(createdCart);
+
+    const result = cartService.createCart(customers[2]);
+
+    expect(result).toEqual(createdCart);
+    expect(mockCartDbCreateCart).toHaveBeenCalledWith(customers[2]);
+});
+
+test('given an existing customer with a cart, when creating a cart, then an error is thrown', () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(
+        new Cart({ customer: customers[0], products: [] })
+    );
+
+    const createCartFunction = () => cartService.createCart(customers[0]);
+
+    expect(createCartFunction).toThrow('This customer already has a cart.');
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: customers[0].getEmail(),
+    });
+});
+
+test('given a customer with a cart, when deleting the cart, then the cart is deleted successfully', () => {
+    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(carts[0]);
+
+    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
+
+    const result = cartService.deleteCart(1);
+
+    expect(result).toEqual('Cart successfully deleted.');
+    expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given a customer without a cart, when deleting the cart, then an error is thrown', () => {
+    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
+
+    const deleteCartFunction = () => cartService.deleteCart(3);
+
+    expect(deleteCartFunction).toThrow('That customer does not have a cart.');
+    expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 3 });
 });

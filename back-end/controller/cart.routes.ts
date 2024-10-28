@@ -23,14 +23,4 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
     }
 });
 
-cartRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const cart = <CartInput>req.body;
-        const result = await cartService.createCart(cart);
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
-
 export { cartRouter };
