@@ -29,6 +29,11 @@ const customers: Customer[] = [
 
 const getCustomers = (): Customer[] => customers;
 
+const getCustomerById = ({ id }: { id: number }): Customer | null => {
+    return customers.find((customer) => customer.getId() === id) || null;
+};
+
 export default {
     getCustomers,
+    getCustomerById,
 };

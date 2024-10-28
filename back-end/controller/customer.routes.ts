@@ -3,16 +3,21 @@ import customerService from '../service/customer.service';
 
 const customerRouter = Router();
 
-customerRouter.get('/customers', (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get('', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customers = customerService.getCustomers();
+        const customers = await customerService.getCustomers();
         res.status(200).json(customers);
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(400).json({ status: 'error', errorMessage: error.message });
-        } else {
-            res.status(400).json({ status: 'error', errorMessage: error });
-        }
+        next(error);
+    }
+});
+
+customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = await customerService.getCustomerById(Number(req.params.id));
+        res.status(200).json(customer);
+    } catch (error) {
+        next(error);
     }
 });
 
