@@ -4,20 +4,14 @@ import { Product } from './product';
 
 export class OrderItem {
     private id?: number;
-    private order: Order;
     private product: Product;
     private quantity: number;
 
-    constructor(orderItem: { order: Order; product: Product; quantity: number; id?: number }) {
+    constructor(orderItem: { product: Product; quantity: number; id?: number }) {
         this.validate(orderItem);
         this.id = orderItem.id;
-        this.order = orderItem.order;
         this.product = orderItem.product;
         this.quantity = orderItem.quantity;
-    }
-
-    getOrder(): Order {
-        return this.order;
     }
 
     getProduct(): Product {
@@ -27,11 +21,7 @@ export class OrderItem {
     getQuantity(): number {
         return this.quantity;
     }
-    validate(orderItem: { order: Order; product: Product; quantity: number }) {
-        if (!orderItem.order) {
-            throw new Error('Order cannot be null or undefined.');
-        }
-
+    validate(orderItem: { product: Product; quantity: number }) {
         if (!orderItem.product) {
             throw new Error('Product cannot be null or undefined.');
         }

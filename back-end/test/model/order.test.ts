@@ -3,9 +3,7 @@ import { Customer } from '../../model/customer';
 import { Product } from '../../model/product';
 import { Payment } from '../../model/payment';
 import { Order } from '../../model/order';
-import { OrderItem } from '../../model/orderItem';
 
-// Test data
 const customerTestData = {
     firstName: 'John',
     lastName: 'Doe',

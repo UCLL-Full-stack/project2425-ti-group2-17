@@ -33,37 +33,28 @@ const validPaymentTestData = {
 let customer: Customer;
 let product: Product;
 let payment: Payment;
-let order: Order;
 let orderItem: OrderItem;
 
 beforeEach(() => {
     customer = new Customer(validCustomerTestData);
     product = new Product(validProductTestData);
     payment = new Payment(validPaymentTestData);
-    order = new Order({ customer, items: [], date: validPaymentTestData.date, payment });
-    orderItem = new OrderItem({ order, product, quantity: 2 }); // Create an order item
+    orderItem = new OrderItem({ product, quantity: 2 });
 });
 
 test('given valid values for order item, when: order item is created, then: order item is created with those values', () => {
-    expect(orderItem.getOrder()).toEqual(order);
     expect(orderItem.getProduct()).toEqual(product);
     expect(orderItem.getQuantity()).toEqual(2);
 });
 
-test('given invalid order, when: order item is created, then: error is thrown.', () => {
-    expect(() => new OrderItem({ order: null as any, product, quantity: 2 })).toThrow(
-        'Order cannot be null or undefined.'
-    );
-});
-
 test('given invalid product, when: order item is created, then: error is thrown.', () => {
-    expect(() => new OrderItem({ order, product: null as any, quantity: 2 })).toThrow(
+    expect(() => new OrderItem({ product: null as any, quantity: 2 })).toThrow(
         'Product cannot be null or undefined.'
     );
 });
 
 test('given invalid quantity, when: order item is created, then: error is thrown.', () => {
-    expect(() => new OrderItem({ order, product, quantity: 0 })).toThrow(
+    expect(() => new OrderItem({ product, quantity: 0 })).toThrow(
         'Quantity must be greater than zero.'
     );
 });
