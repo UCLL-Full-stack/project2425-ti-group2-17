@@ -33,7 +33,18 @@ const getCustomerById = ({ id }: { id: number }): Customer | null => {
     return customers.find((customer) => customer.getId() === id) || null;
 };
 
+const getCustomerByEmail = ({ email }: { email: string }): Customer | null => {
+    return customers.find((customer) => customer.getEmail() === email) || null;
+};
+
+const createCustomer = (customer: Customer): Customer => {
+    customers.push(customer);
+    return customer;
+};
+
 export default {
     getCustomers,
     getCustomerById,
+    createCustomer,
+    getCustomerByEmail,
 };

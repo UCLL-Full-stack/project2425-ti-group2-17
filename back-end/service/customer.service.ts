@@ -1,5 +1,6 @@
 import { Customer } from '../model/customer';
 import customerDB from '../repository/customer.db';
+import { CustomerInput } from '../types';
 
 const getCustomers = (): Customer[] => customerDB.getCustomers();
 
@@ -9,38 +10,24 @@ const getCustomerById = (id: number): Customer => {
     return customer;
 };
 
-// const createCustomer = ({
-//     start,
-//     end,
-//     course: courseInput,
-//     lecturer: lecturerInput,
-// }: CustomerInput): Customer => {
-//     if (!courseInput.id) throw new Error('Course id is required');
-//     if (!lecturerInput.id) throw new Error('Lecturer id is required');
+const createCustomer = ({ firstName, lastName, email, password }: CustomerInput): Customer => {
+    const existingCustomer = customerDB.getCustomerByEmail({ email });
+    if (existingCustomer) throw new Error('A customer with this email already exists.');
 
-//     if (!start || !end) {
-//         throw new Error('Start and end date are required');
-//     }
-
-//     const course = courseDb.getCourseById({ id: courseInput.id });
-//     const lecturer = lecturerDb.getLecturerById({ id: lecturerInput.id });
-
-//     if (!course) throw new Error('Course not found');
-//     if (!lecturer) throw new Error('Lecturer not found');
-
-//     const existingCustomer = customerDB.getCustomerByCourseAndLecturer({
-//         courseId: courseInput.id,
-//         lecturerId: lecturerInput.id,
-//     });
-
-//     if (existingCustomer) throw new Error('This course is already customerd for this lecturer.');
-
-//     const customer = new Customer({ start, end, course, lecturer, students: [] });
-//     return customerDB.createCustomer(customer);
-// };
+    const customerId = customerDB.getCustomers().length + 1;
+    const customer = new Customer({
+        firstName,
+        lastName,
+        email,
+        password,
+        recentOrders: [],
+        id: customerId,
+    });
+    return customerDB.createCustomer(customer);
+};
 
 export default {
     getCustomers,
     getCustomerById,
-    // createCustomer,
+    createCustomer,
 };
