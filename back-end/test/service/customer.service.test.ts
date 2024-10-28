@@ -29,10 +29,10 @@ let mockCustomerDbGetCustomerById: jest.Mock;
 let mockCustomerDbGetCustomerByEmail: jest.Mock;
 let mockCustomerDbCreateCustomer: jest.Mock;
 let mockCartDbCreateCart: jest.Mock;
-
 let mockCustomerDbUpdateCustomer: jest.Mock;
 let mockCustomerDbDeleteCustomer: jest.Mock;
-let mockCartServiceDeleteCart: jest.Mock;
+let mockCartDbDeleteCart: jest.Mock;
+let mockCartDbGetCartByCustomerId: jest.Mock;
 
 beforeEach(() => {
     mockCustomerDbGetCustomers = jest.fn();
@@ -40,6 +40,10 @@ beforeEach(() => {
     mockCustomerDbGetCustomerByEmail = jest.fn();
     mockCustomerDbCreateCustomer = jest.fn();
     mockCartDbCreateCart = jest.fn();
+    mockCustomerDbUpdateCustomer = jest.fn();
+    mockCustomerDbDeleteCustomer = jest.fn();
+    mockCartDbDeleteCart = jest.fn();
+    mockCartDbGetCartByCustomerId = jest.fn();
 });
 
 afterEach(() => {
@@ -122,4 +126,89 @@ test('given an existing customer, when creating that customer again, then an err
         email: newCustomerInput.email,
     });
     expect(mockCustomerDbCreateCustomer).not.toHaveBeenCalled();
+});
+
+test('given an existing customer, when updating customer details, then customer is updated', () => {
+    const updatedCustomerData: CustomerInput = {
+        firstName: 'John',
+        lastName: 'Smith',
+        email: 'john.smith@example.com',
+        password: 'newpassword123',
+    };
+
+    const createdCustomer = new Customer({
+        ...updatedCustomerData,
+        recentOrders: [],
+        id: 1,
+    });
+
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.updateCustomer = mockCustomerDbUpdateCustomer.mockReturnValue(createdCustomer);
+
+    const result = customerService.updateCustomer(1, updatedCustomerData);
+
+    expect(result.getFirstName()).toEqual(updatedCustomerData.firstName);
+    expect(result.getLastName()).toEqual(updatedCustomerData.lastName);
+    expect(result.getEmail()).toEqual(updatedCustomerData.email);
+    expect(result.getPassword()).toEqual(updatedCustomerData.password);
+
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbUpdateCustomer).toHaveBeenCalledWith(
+        expect.objectContaining(updatedCustomerData)
+    );
+});
+
+test('given a non-existent customer, when updating customer, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+
+    const updatedCustomerData: CustomerInput = {
+        firstName: 'Non',
+        lastName: 'Existent',
+        email: 'non.existent@example.com',
+        password: 'nopassword',
+    };
+
+    const updateCustomer = () => customerService.updateCustomer(4, updatedCustomerData);
+
+    expect(updateCustomer).toThrow('This customer does not exist.');
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 4 });
+});
+
+test('given an existing customer, when deleting the customer, then the customer is deleted', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(customers[0]);
+    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue(
+        new Cart({ customer: customers[0], products: [], id: 1 })
+    );
+
+    customerDb.deleteCustomer = mockCustomerDbDeleteCustomer.mockReturnValue(
+        'Customer has been deleted.'
+    );
+    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart deleted');
+
+    const result = customerService.deleteCustomer(1);
+
+    expect(result).toEqual('Customer has been deleted.');
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbDeleteCustomer).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given a non-existent customer, when deleting the customer, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+
+    const deleteCustomer = () => customerService.deleteCustomer(4);
+
+    expect(deleteCustomer).toThrow('This customer does not exist.');
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 4 });
+});
+
+test('given a customer without a cart, when deleting the customer, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[1]);
+    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
+
+    const deleteCustomer = () => customerService.deleteCustomer(2);
+
+    expect(deleteCustomer).toThrow('That customer does not have a cart.');
+    expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 2 });
 });

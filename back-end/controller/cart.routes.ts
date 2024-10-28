@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import cartService from '../service/cart.service';
 import { CartInput } from '../types';
-// import cartService from "../service/cart.service";
 
 const cartRouter = Router();
 

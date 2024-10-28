@@ -26,7 +26,12 @@ const createCustomer = ({ firstName, lastName, email, password }: CustomerInput)
         recentOrders: [],
         id: customerId,
     });
-    cartService.createCart(customer);
+    const existingCart = cartDb.getCartByCustomerEmail({
+        email: customer.getEmail(),
+    });
+
+    if (existingCart) throw new Error('This customer already has a cart.');
+    cartDb.createCart(customer);
     return customerDB.createCustomer(customer);
 };
 
@@ -45,8 +50,12 @@ const updateCustomer = (
 const deleteCustomer = (customerId: number): string => {
     const existingCustomer = customerDB.getCustomerById({ id: customerId });
     if (!existingCustomer) throw new Error('This customer does not exist.');
+    const existingCart = cartDb.getCartByCustomerId({ id: customerId });
+    if (!existingCart) {
+        throw new Error('That customer does not have a cart.');
+    }
 
-    cartService.deleteCart(customerId);
+    cartDb.deleteCart({ id: existingCart.getId()! });
     return customerDB.deleteCustomer({ id: customerId });
 };
 

@@ -118,47 +118,47 @@ test('given carts in the DB, when getting a cart by incorrect id, then an error 
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
 });
 
-test('given a new customer, when creating a cart, then the cart is created successfully', () => {
-    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
+// test('given a new customer, when creating a cart, then the cart is created successfully', () => {
+//     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
 
-    const createdCart = new Cart({ customer: customers[2], products: [] });
-    cartDb.createCart = mockCartDbCreateCart.mockReturnValue(createdCart);
+//     const createdCart = new Cart({ customer: customers[2], products: [] });
+//     cartDb.createCart = mockCartDbCreateCart.mockReturnValue(createdCart);
 
-    const result = cartService.createCart(customers[2]);
+//     const result = cartService.createCart(customers[2]);
 
-    expect(result).toEqual(createdCart);
-    expect(mockCartDbCreateCart).toHaveBeenCalledWith(customers[2]);
-});
+//     expect(result).toEqual(createdCart);
+//     expect(mockCartDbCreateCart).toHaveBeenCalledWith(customers[2]);
+// });
 
-test('given an existing customer with a cart, when creating a cart, then an error is thrown', () => {
-    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(
-        new Cart({ customer: customers[0], products: [] })
-    );
+// test('given an existing customer with a cart, when creating a cart, then an error is thrown', () => {
+//     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(
+//         new Cart({ customer: customers[0], products: [] })
+//     );
 
-    const createCartFunction = () => cartService.createCart(customers[0]);
+//     const createCartFunction = () => cartService.createCart(customers[0]);
 
-    expect(createCartFunction).toThrow('This customer already has a cart.');
-    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
-        email: customers[0].getEmail(),
-    });
-});
+//     expect(createCartFunction).toThrow('This customer already has a cart.');
+//     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+//         email: customers[0].getEmail(),
+//     });
+// });
 
-test('given a customer with a cart, when deleting the cart, then the cart is deleted successfully', () => {
-    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(carts[0]);
+// test('given a customer with a cart, when deleting the cart, then the cart is deleted successfully', () => {
+//     cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(carts[0]);
 
-    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
+//     cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
 
-    const result = cartService.deleteCart(1);
+//     const result = cartService.deleteCart(1);
 
-    expect(result).toEqual('Cart successfully deleted.');
-    expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
-});
+//     expect(result).toEqual('Cart successfully deleted.');
+//     expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
+// });
 
-test('given a customer without a cart, when deleting the cart, then an error is thrown', () => {
-    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
+// test('given a customer without a cart, when deleting the cart, then an error is thrown', () => {
+//     cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
 
-    const deleteCartFunction = () => cartService.deleteCart(3);
+//     const deleteCartFunction = () => cartService.deleteCart(3);
 
-    expect(deleteCartFunction).toThrow('That customer does not have a cart.');
-    expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 3 });
-});
+//     expect(deleteCartFunction).toThrow('That customer does not have a cart.');
+//     expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 3 });
+// });

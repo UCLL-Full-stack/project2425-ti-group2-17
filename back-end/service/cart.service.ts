@@ -11,27 +11,27 @@ const getCartById = (id: number): Cart => {
     return cart;
 };
 
-const createCart = (customer: Customer): Cart => {
-    const existingCart = cartDB.getCartByCustomerEmail({
-        email: customer.getEmail(),
-    });
+// const createCart = (customer: Customer): Cart => {
+//     const existingCart = cartDB.getCartByCustomerEmail({
+//         email: customer.getEmail(),
+//     });
 
-    if (existingCart) throw new Error('This customer already has a cart.');
-    return cartDB.createCart(customer);
-};
+//     if (existingCart) throw new Error('This customer already has a cart.');
+//     return cartDB.createCart(customer);
+// };
 
-const deleteCart = (customerId: number) => {
-    const existingCart = cartDB.getCartByCustomerId({ id: customerId });
-    if (!existingCart) {
-        throw new Error('That customer does not have a cart.');
-    }
+// const deleteCart = (customerId: number) => {
+//     const existingCart = cartDB.getCartByCustomerId({ id: customerId });
+//     if (!existingCart) {
+//         throw new Error('That customer does not have a cart.');
+//     }
 
-    return cartDB.deleteCart({ id: customerId });
-};
+//     return cartDB.deleteCart({ id: customerId });
+// };
 
 export default {
     getCarts,
     getCartById,
-    createCart,
-    deleteCart,
+    // createCart,
+    // deleteCart,
 };
