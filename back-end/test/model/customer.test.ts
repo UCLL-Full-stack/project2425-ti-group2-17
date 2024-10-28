@@ -1,4 +1,5 @@
 import { Customer } from '../../model/customer';
+import { Product } from '../../model/product';
 
 const customerTestData = {
     firstName: 'John',
@@ -10,13 +11,13 @@ const customerTestData = {
 let customer: Customer;
 
 beforeEach(() => {
-    customer = new Customer({ ...customerTestData, recentOrders: [] });
+    customer = new Customer({ ...customerTestData, recentOrders: [], wishlist: [] });
 });
 
 const { firstName, lastName, email, password } = customerTestData;
 
 const createCustomer = (overrides = {}) =>
-    new Customer({ ...customerTestData, recentOrders: [], ...overrides });
+    new Customer({ ...customerTestData, recentOrders: [], wishlist: [], ...overrides });
 
 test('given: valid values for customer, when: customer is created, then: customer is created with those values.', () => {
     expect(customer.getFirstName()).toEqual(firstName);
@@ -24,6 +25,7 @@ test('given: valid values for customer, when: customer is created, then: custome
     expect(customer.getEmail()).toEqual(email);
     expect(customer.getPassword()).toEqual(password);
     expect(customer.getRecentOrders()).toHaveLength(0);
+    expect(customer.getWishlist()).toHaveLength(0);
 });
 
 test('given: invalid first name for customer, when: customer is created, then: an error is thrown.', () => {
@@ -78,4 +80,73 @@ test('given: valid values for update, when: updating the admin, then: admin is u
     expect(customer.getLastName()).toEqual(updatedData.lastName);
     expect(customer.getEmail()).toEqual(updatedData.email);
     expect(customer.getPassword()).toEqual(updatedData.password);
+});
+
+test('given: a product, when: added to wishlist, then: product appears in wishlist', () => {
+    const product = new Product({
+        name: 'T-Shirt',
+        price: 30.0,
+        stock: 100,
+        category: ['Clothing', 'Men', 'Tops'],
+        description: 'A comfortable cotton t-shirt',
+        images: ['image1.jpg', 'image2.jpg'],
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Black', 'White', 'Green'],
+    });
+
+    customer.addProductToWishlist(product);
+
+    expect(customer.getWishlist()).toContain(product);
+});
+
+test('given: a product in wishlist, when: removed from wishlist, then: product is no longer in wishlist', () => {
+    const product = new Product({
+        name: 'T-Shirt',
+        price: 30.0,
+        stock: 100,
+        category: ['Clothing', 'Men', 'Tops'],
+        description: 'A comfortable cotton t-shirt',
+        images: ['image1.jpg', 'image2.jpg'],
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Black', 'White', 'Green'],
+    });
+
+    customer.addProductToWishlist(product);
+    customer.removeProductFromWishlist(product);
+
+    expect(customer.getWishlist()).toHaveLength(0);
+});
+
+test('given: product already in wishlist, when: adding product again, then: throws an error.', () => {
+    const product = new Product({
+        name: 'T-Shirt',
+        price: 30.0,
+        stock: 100,
+        category: ['Clothing', 'Men', 'Tops'],
+        description: 'A comfortable cotton t-shirt',
+        images: ['image1.jpg', 'image2.jpg'],
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Black', 'White', 'Green'],
+    });
+    customer.addProductToWishlist(product);
+
+    expect(() => customer.addProductToWishlist(product)).toThrow(
+        'Product is already in the wishlist.'
+    );
+});
+
+test('given: product not in wishlist, when: removing product, then: throws an error.', () => {
+    const product = new Product({
+        name: 'T-Shirt',
+        price: 30.0,
+        stock: 100,
+        category: ['Clothing', 'Men', 'Tops'],
+        description: 'A comfortable cotton t-shirt',
+        images: ['image1.jpg', 'image2.jpg'],
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Black', 'White', 'Green'],
+    });
+    expect(() => customer.removeProductFromWishlist(product)).toThrow(
+        'Product is not in the wishlist.'
+    );
 });

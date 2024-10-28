@@ -10,6 +10,7 @@ const customerTestData = {
     email: 'john.doe@example.com',
     password: 'securepassword123',
     recentOrders: [],
+    wishlist: [],
 };
 
 const productTestData = {

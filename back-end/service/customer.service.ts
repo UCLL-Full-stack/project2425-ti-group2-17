@@ -24,6 +24,7 @@ const createCustomer = ({ firstName, lastName, email, password }: CustomerInput)
         email,
         password,
         recentOrders: [],
+        wishlist: [],
         id: customerId,
     });
     const existingCart = cartDb.getCartByCustomerEmail({

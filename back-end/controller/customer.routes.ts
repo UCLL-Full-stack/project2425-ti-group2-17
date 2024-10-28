@@ -18,6 +18,8 @@
  *           type: string
  *         recentOrders:
  *           type: array
+ *         wishlist:
+ *           type: array
  *
  *     CustomerInput:
  *       type: object

@@ -12,6 +12,7 @@ const customers: Customer[] = [
         email: 'john.doe@example.com',
         password: 'password123',
         recentOrders: [],
+        wishlist: [],
         id: 1,
     }),
     new Customer({
@@ -20,6 +21,7 @@ const customers: Customer[] = [
         email: 'jane.smith@example.com',
         password: 'password456',
         recentOrders: [],
+        wishlist: [],
         id: 2,
     }),
 ];
@@ -91,6 +93,7 @@ test('given a valid customer input, when creating a new customer, then it succes
     const createdCustomer = new Customer({
         ...newCustomerInput,
         recentOrders: [],
+        wishlist: [],
         id: 3,
     });
     customerDb.createCustomer = mockCustomerDbCreateCustomer.mockReturnValue(createdCustomer);
@@ -139,6 +142,7 @@ test('given an existing customer, when updating customer details, then customer 
     const createdCustomer = new Customer({
         ...updatedCustomerData,
         recentOrders: [],
+        wishlist: [],
         id: 1,
     });
 
