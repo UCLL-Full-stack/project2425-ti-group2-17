@@ -57,6 +57,7 @@ const deleteCustomer = ({ id }: { id: number }) => {
     const customerIndex = customers.findIndex((customer) => customer.getId() === id);
 
     customers.splice(customerIndex, 1);
+    return 'Customer has been deleted.';
 };
 
 export default {

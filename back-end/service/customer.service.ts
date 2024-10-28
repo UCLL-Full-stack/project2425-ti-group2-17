@@ -47,8 +47,7 @@ const deleteCustomer = (customerId: number): string => {
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
     cartService.deleteCart(customerId);
-    customerDB.deleteCustomer({ id: customerId });
-    return 'Customer has been deleted.';
+    return customerDB.deleteCustomer({ id: customerId });
 };
 
 export default {
