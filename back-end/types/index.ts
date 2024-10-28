@@ -12,7 +12,7 @@ type CustomerInput = {
     lastName: string;
     email: string;
     password: string;
-    recentOrders: OrderInput[];
+    recentOrders?: OrderInput[];
 };
 
 type CartInput = {
