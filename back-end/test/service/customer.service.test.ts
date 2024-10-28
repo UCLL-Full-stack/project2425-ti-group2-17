@@ -30,6 +30,10 @@ let mockCustomerDbGetCustomerByEmail: jest.Mock;
 let mockCustomerDbCreateCustomer: jest.Mock;
 let mockCartDbCreateCart: jest.Mock;
 
+let mockCustomerDbUpdateCustomer: jest.Mock;
+let mockCustomerDbDeleteCustomer: jest.Mock;
+let mockCartServiceDeleteCart: jest.Mock;
+
 beforeEach(() => {
     mockCustomerDbGetCustomers = jest.fn();
     mockCustomerDbGetCustomerById = jest.fn();
