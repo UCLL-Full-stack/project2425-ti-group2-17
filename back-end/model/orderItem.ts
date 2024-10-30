@@ -21,6 +21,7 @@ export class OrderItem {
     getQuantity(): number {
         return this.quantity;
     }
+
     validate(orderItem: { product: Product; quantity: number }) {
         if (!orderItem.product) {
             throw new Error('Product cannot be null or undefined.');
