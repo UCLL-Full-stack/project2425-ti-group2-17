@@ -1,7 +1,9 @@
 import { Customer } from '../model/customer';
+import { Order } from '../model/order';
 import { User } from '../model/user';
 import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
+import orderDb from '../repository/order.db';
 import { CustomerInput } from '../types';
 import cartService from './cart.service';
 
@@ -74,10 +76,23 @@ const deleteCustomer = (customerId: number): string => {
     return customerDB.deleteCustomer({ id: customerId });
 };
 
+const getOrdersByCustomer = (id: number): Order[] => {
+    const customer = customerDB.getCustomerById({ id });
+
+    if (!customer) throw new Error(`Customer with id ${id} does not exist.`);
+
+    const orders = orderDb.getOrdersByCustomer({ id });
+
+    if (orders.length === 0) throw new Error('The customer has no orders yet.');
+
+    return orders;
+};
+
 export default {
     getCustomers,
     getCustomerById,
     createCustomer,
     updateCustomer,
     deleteCustomer,
+    getOrdersByCustomer,
 };

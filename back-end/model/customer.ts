@@ -49,4 +49,8 @@ export class Customer extends User {
 
         this.wishlist = this.wishlist.filter((item) => item !== product);
     }
+
+    setRecentOrders(orders: Order[]): void {
+        this.recentOrders = orders;
+    }
 }

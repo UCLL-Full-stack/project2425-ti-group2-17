@@ -46,7 +46,7 @@ const customerRouter = Router();
  * @swagger
  * /customers:
  *   get:
- *     summary: Get  all customers
+ *     summary: Get all customers
  *     responses:
  *       200:
  *         description: All customers
@@ -58,7 +58,7 @@ const customerRouter = Router();
  *                 $ref: '#/components/schemas/Customer'
  */
 
-customerRouter.get('', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customers = await customerService.getCustomers();
         res.status(200).json(customers);
@@ -185,6 +185,37 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
     try {
         const result = await customerService.deleteCustomer(Number(req.params.id));
         res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /customers/{id}/orders:
+ *   get:
+ *     summary: Get orders by customer
+ *     parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            description: The customer id.
+ *            schema:
+ *              type: integer
+ *     responses:
+ *       200:
+ *         description: The orders with that customer id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               $ref: '#/components/schemas/Order'
+ */
+
+customerRouter.get('/:id/orders', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orders = await customerService.getOrdersByCustomer(Number(req.params.id));
+        res.status(200).json(orders);
     } catch (error) {
         next(error);
     }

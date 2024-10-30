@@ -23,10 +23,6 @@ test('given: valid values for payment, when: payment is created, then: payment i
     expect(payment.getPaymentStatus()).toEqual('paid');
 });
 
-test('given: no amount for payment, when: payment is created, then: an error is thrown.', () => {
-    expect(() => createPayment({ amount: 0 })).toThrow('Amount must be greater than zero.');
-});
-
 test('given: invalid paymentStatus for payment, when: payment is created, then: an error is thrown.', () => {
     expect(() => createPayment({ paymentStatus: 'false' })).toThrow(
         'Payment status must be either paid or unpaid.'

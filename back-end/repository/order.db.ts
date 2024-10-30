@@ -41,59 +41,70 @@ const customer = new Customer({
 const orderItem1 = new OrderItem({
     product: product1,
     quantity: 2,
-    id: 1,
 });
 
 const orderItem2 = new OrderItem({
     product: product2,
     quantity: 1,
-    id: 2,
-});
-
-const totalAmount =
-    orderItem1.getProduct().getPrice() * orderItem1.getQuantity() +
-    orderItem2.getProduct().getPrice() * orderItem2.getQuantity();
-
-const payment = new Payment({
-    amount: totalAmount,
-    date: new Date(),
-    paymentStatus: 'paid',
-    id: 1,
 });
 
 const order1 = new Order({
     customer: customer,
     items: [orderItem1, orderItem2],
     date: new Date(),
-    payment: payment,
+    payment: new Payment({
+        amount: 0,
+        date: new Date(),
+        paymentStatus: 'unpaid',
+    }),
     id: 1,
 });
+
+order1.getPayment().setAmount(order1.getTotalAmount());
+order1.getPayment().pay();
 
 const orderItem3 = new OrderItem({
     product: product1,
     quantity: 3,
-    id: 3,
-});
-
-const totalAmount2 = orderItem3.getProduct().getPrice() * orderItem3.getQuantity();
-
-const payment2 = new Payment({
-    amount: totalAmount2,
-    date: new Date(),
-    paymentStatus: 'unpaid',
-    id: 2,
 });
 
 const order2 = new Order({
     customer: customer,
     items: [orderItem3],
     date: new Date(),
-    payment: payment2,
+    payment: new Payment({
+        amount: 0,
+        date: new Date(),
+        paymentStatus: 'unpaid',
+    }),
     id: 2,
 });
 
-const orders: Order[] = [];
-orders.push(order1);
-orders.push(order2);
+order2.getPayment().setAmount(order2.getTotalAmount());
 
-console.log(orders);
+const orders: Order[] = [order1, order2];
+
+const getOrders = (): Order[] => orders;
+
+const getOrderById = ({ id }: { id: number }): Order | undefined => {
+    const order = orders.find((order) => order.getId() === id);
+    return order;
+};
+
+const getOrdersByCustomer = ({ id }: { id: number }): Order[] => {
+    return orders.filter((order) => order.getCustomer().getId() === id);
+};
+
+const deleteOrder = ({ id }: { id: number }) => {
+    const orderIndex = orders.findIndex((order) => order.getId() === id);
+
+    orders.splice(orderIndex, 1);
+    return 'Order has been deleted.';
+};
+
+export default {
+    getOrders,
+    getOrderById,
+    getOrdersByCustomer,
+    deleteOrder,
+};

@@ -1,7 +1,12 @@
 import { Cart } from '../../model/cart';
 import { Customer } from '../../model/customer';
+import { Order } from '../../model/order';
+import { OrderItem } from '../../model/orderItem';
+import { Payment } from '../../model/payment';
+import { Product } from '../../model/product';
 import cartDb from '../../repository/cart.db';
 import customerDb from '../../repository/customer.db';
+import orderDb from '../../repository/order.db';
 import customerService from '../../service/customer.service';
 import { CustomerInput } from '../../types';
 
@@ -26,6 +31,34 @@ const customers: Customer[] = [
     }),
 ];
 
+customers[0].setRecentOrders([
+    new Order({
+        customer: customers[0],
+        items: [
+            new OrderItem({
+                product: new Product({
+                    name: 'Sample Product',
+                    price: 99.99,
+                    stock: 10,
+                    category: ['Category1'],
+                    description: 'Sample description',
+                    images: ['image1.jpg'],
+                    sizes: ['M'],
+                    colors: ['Red'],
+                }),
+                quantity: 1,
+            }),
+        ],
+        date: new Date(),
+        payment: new Payment({
+            amount: 99.99,
+            date: new Date(),
+            paymentStatus: 'paid',
+        }),
+        id: 1,
+    }),
+]);
+
 let mockCustomerDbGetCustomers: jest.Mock;
 let mockCustomerDbGetCustomerById: jest.Mock;
 let mockCustomerDbGetCustomerByEmail: jest.Mock;
@@ -35,6 +68,7 @@ let mockCustomerDbUpdateCustomer: jest.Mock;
 let mockCustomerDbDeleteCustomer: jest.Mock;
 let mockCartDbDeleteCart: jest.Mock;
 let mockCartDbGetCartByCustomerId: jest.Mock;
+let mockOrderDbGetOrdersByCustomer: jest.Mock;
 
 beforeEach(() => {
     mockCustomerDbGetCustomers = jest.fn();
@@ -46,6 +80,7 @@ beforeEach(() => {
     mockCustomerDbDeleteCustomer = jest.fn();
     mockCartDbDeleteCart = jest.fn();
     mockCartDbGetCartByCustomerId = jest.fn();
+    mockOrderDbGetOrdersByCustomer = jest.fn();
 });
 
 afterEach(() => {
@@ -215,4 +250,37 @@ test('given a customer without a cart, when deleting the customer, then an error
 
     expect(deleteCustomer).toThrow('That customer does not have a cart.');
     expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 2 });
+});
+
+test('given a customer with orders, when getting orders by customer id, then orders are returned', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    orderDb.getOrdersByCustomer = mockOrderDbGetOrdersByCustomer.mockReturnValue(
+        customers[0].getRecentOrders()
+    );
+
+    const result = customerService.getOrdersByCustomer(1);
+
+    expect(result).toEqual(customers[0].getRecentOrders());
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockOrderDbGetOrdersByCustomer).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given a customer without orders, when getting orders by customer id, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[1]);
+    orderDb.getOrdersByCustomer = mockOrderDbGetOrdersByCustomer.mockReturnValue([]);
+
+    const getOrdersByCustomer = () => customerService.getOrdersByCustomer(2);
+
+    expect(getOrdersByCustomer).toThrow('The customer has no orders yet.');
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 2 });
+    expect(mockOrderDbGetOrdersByCustomer).toHaveBeenCalledWith({ id: 2 });
+});
+
+test('given a non-existent customer, when getting orders by customer id, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+
+    const getOrdersByCustomer = () => customerService.getOrdersByCustomer(3);
+
+    expect(getOrdersByCustomer).toThrow('Customer with id 3 does not exist.');
+    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 3 });
 });

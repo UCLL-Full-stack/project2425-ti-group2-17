@@ -37,10 +37,6 @@ export class Payment {
     }
 
     validate(payment: { amount: number; date: Date; paymentStatus: string }) {
-        if (payment.amount <= 0) {
-            throw new Error('Amount must be greater than zero.');
-        }
-
         if (payment.paymentStatus !== 'paid' && payment.paymentStatus !== 'unpaid') {
             throw new Error('Payment status must be either paid or unpaid.');
         }
