@@ -46,6 +46,7 @@ const customers: Customer[] = [
         email: 'john.doe@example.com',
         password: 'password123',
         recentOrders: [],
+        wishlist: [],
         id: 1,
     }),
     new Customer({
@@ -54,6 +55,7 @@ const customers: Customer[] = [
         email: 'jane.smith@example.com',
         password: 'password456',
         recentOrders: [],
+        wishlist: [],
         id: 2,
     }),
     new Customer({
@@ -62,6 +64,7 @@ const customers: Customer[] = [
         email: 'alice.johnson@example.com',
         password: 'password789',
         recentOrders: [],
+        wishlist: [],
         id: 3,
     }),
 ];
