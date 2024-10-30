@@ -68,6 +68,38 @@ export class Product {
         return this.colors;
     }
 
+    setName(name: string): void {
+        this.name = name;
+    }
+
+    setPrice(price: number): void {
+        this.price = price;
+    }
+
+    setStock(stock: number): void {
+        this.stock = stock;
+    }
+
+    setCategory(category: string[]): void {
+        this.category = category;
+    }
+
+    setDescription(description: string): void {
+        this.description = description;
+    }
+
+    setImages(images: string[]): void {
+        this.images = images;
+    }
+
+    setSizes(sizes: string[]): void {
+        this.sizes = sizes;
+    }
+
+    setColors(colors: string[]): void {
+        this.colors = colors;
+    }
+
     validate(product: {
         name: string;
         price: number;

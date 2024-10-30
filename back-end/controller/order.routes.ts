@@ -21,6 +21,8 @@
  *           $ref: '#/components/schemas/Payment'
  *
  *     OrderInput:
+ *       type: object
+ *       properties:
  *         customer:
  *           $ref: '#/components/schemas/CustomerInput'
  *         items:
@@ -36,6 +38,8 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import orderService from '../service/order.service';
+import orderItemService from '../service/orderItem.service';
+import { OrderItemInput } from '../types';
 
 const orderRouter = Router();
 
@@ -116,6 +120,16 @@ orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
 orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await orderService.deleteOrder(Number(req.params.id));
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+orderRouter.post('/orders/:id/items', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orderItem = <OrderItemInput>req.body;
+        const result = await orderItemService.addOrderItem(orderItem);
         res.status(200).json(result);
     } catch (error) {
         next(error);

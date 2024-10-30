@@ -67,6 +67,7 @@ export {
     CartInput,
     CartItemInput,
     OrderInput,
+    OrderItemInput,
     PaymentInput,
     ProductInput,
 };
