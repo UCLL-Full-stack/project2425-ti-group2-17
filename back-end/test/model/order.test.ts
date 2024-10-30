@@ -85,3 +85,16 @@ test('given: future date, when: order is created, then: error is thrown.', () =>
             })
     ).toThrow('Order date cannot be in the future.');
 });
+
+test('given: order with multiple items, when: getTotalAmount is called, then: correct total amount is returned', () => {
+    const product2 = new Product({ ...productTestData, name: 'Jeans', price: 50.0 });
+    order.addItem(product2, 1);
+
+    const expectedTotalAmount = product.getPrice() * 2 + product2.getPrice();
+    expect(order.getTotalAmount()).toBe(expectedTotalAmount);
+});
+
+test('given: order with no items, when: getTotalAmount is called, then: total amount is zero', () => {
+    const emptyOrder = new Order({ customer, items: [], date: paymentTestData.date, payment });
+    expect(emptyOrder.getTotalAmount()).toBe(0);
+});

@@ -28,6 +28,14 @@ export class Payment {
         return this.paymentStatus;
     }
 
+    setAmount(amount: number): void {
+        if (amount <= 0) {
+            throw new Error('Amount must be greater than zero.');
+        }
+
+        this.amount = amount;
+    }
+
     validate(payment: { amount: number; date: Date; paymentStatus: string }) {
         if (payment.amount <= 0) {
             throw new Error('Amount must be greater than zero.');

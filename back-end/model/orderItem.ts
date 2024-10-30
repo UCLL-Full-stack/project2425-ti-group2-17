@@ -22,6 +22,10 @@ export class OrderItem {
         return this.quantity;
     }
 
+    getTotalPrice(): number {
+        return this.product.getPrice() * this.quantity;
+    }
+
     validate(orderItem: { product: Product; quantity: number }) {
         if (!orderItem.product) {
             throw new Error('Product cannot be null or undefined.');

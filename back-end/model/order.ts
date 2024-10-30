@@ -45,10 +45,15 @@ export class Order {
         return this.payment;
     }
 
+    getTotalAmount(): number {
+        return this.items.reduce((total, item) => total + item.getTotalPrice(), 0);
+    }
+
     validate(order: { customer: Customer; items: OrderItem[]; date: Date; payment: Payment }) {
         if (!order.customer) {
             throw new Error('Customer cannot be null or undefined.');
         }
+
         if (!(order.date instanceof Date) || isNaN(order.date.getTime())) {
             throw new Error('Invalid date provided.');
         }

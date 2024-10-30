@@ -48,3 +48,16 @@ test('given: future date for payment, when: payment is created, then: an error i
 test('given: paid payment, when: payment is initialized, then: an error is thrown.', () => {
     expect(() => payment.pay()).toThrow('Payment has already been made.');
 });
+
+test('given: valid amount, when: setAmount is called, then: amount is updated', () => {
+    payment.setAmount(100);
+    expect(payment.getAmount()).toEqual(100);
+});
+
+test('given: invalid amount (zero), when: setAmount is called, then: an error is thrown', () => {
+    expect(() => payment.setAmount(0)).toThrow('Amount must be greater than zero.');
+});
+
+test('given: invalid amount (negative), when: setAmount is called, then: an error is thrown', () => {
+    expect(() => payment.setAmount(-50)).toThrow('Amount must be greater than zero.');
+});
