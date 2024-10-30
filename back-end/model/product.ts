@@ -78,26 +78,33 @@ export class Product {
         sizes: string[];
         colors: string[];
     }) {
-        console.log('Validating product:', product);
         if (!product.name.trim()) throw new Error('The product name is required.');
+
         if (product.name.length < 2 || product.name.length > 50)
             throw new Error('The product name must be between 2 and 50 characters.');
+
         if (product.price <= 0) {
             throw new Error('Price must be greater than zero.');
         }
+
         if (product.stock < 0) {
             throw new Error('Stock must be positive.');
         }
+
         if (product.category.length === 0) {
             throw new Error('Product must belong to at least one category.');
         }
+
         if (!product.description.trim()) throw new Error('The product description is required.');
+
         if (product.images.length === 0) {
             throw new Error('Product must have at least one image.');
         }
+
         if (product.sizes.length === 0) {
             throw new Error('Product must be available in at least one size.');
         }
+
         if (
             !product.sizes.every(
                 (size) =>
@@ -114,9 +121,11 @@ export class Product {
 
     updateStock(quantityChange: number): void {
         const newStock = this.stock + quantityChange;
+
         if (newStock < 0) {
             throw new Error('Not enough stock available');
         }
+
         this.stock = newStock;
     }
 
@@ -124,6 +133,7 @@ export class Product {
         if (quantity <= 0) {
             throw new Error('Invalid quantity to add');
         }
+
         this.stock += quantity;
     }
 }

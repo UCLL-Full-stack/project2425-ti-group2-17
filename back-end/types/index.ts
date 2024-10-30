@@ -13,6 +13,7 @@ type CustomerInput = {
     email: string;
     password: string;
     recentOrders?: OrderInput[];
+    wishlist?: ProductInput[];
 };
 
 type CartInput = {

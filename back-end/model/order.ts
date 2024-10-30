@@ -52,7 +52,9 @@ export class Order {
         if (!(order.date instanceof Date) || isNaN(order.date.getTime())) {
             throw new Error('Invalid date provided.');
         }
+
         const currentDate = new Date();
+
         if (order.date > currentDate) {
             throw new Error('Order date cannot be in the future.');
         }
@@ -63,6 +65,7 @@ export class Order {
 
     addItem(product: Product, quantity: number) {
         const orderItem = new OrderItem({ product, quantity });
+
         this.items.push(orderItem);
     }
 }

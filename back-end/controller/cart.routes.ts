@@ -4,7 +4,7 @@ import { CartInput } from '../types';
 
 const cartRouter = Router();
 
-cartRouter.get('', (req: Request, res: Response, next: NextFunction) => {
+cartRouter.get('/', (req: Request, res: Response, next: NextFunction) => {
     try {
         const carts = cartService.getCarts();
         res.status(200).json(carts);

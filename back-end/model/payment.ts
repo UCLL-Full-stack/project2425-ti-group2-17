@@ -32,13 +32,17 @@ export class Payment {
         if (payment.amount <= 0) {
             throw new Error('Amount must be greater than zero.');
         }
+
         if (payment.paymentStatus !== 'paid' && payment.paymentStatus !== 'unpaid') {
             throw new Error('Payment status must be either paid or unpaid.');
         }
+
         if (!(payment.date instanceof Date) || isNaN(payment.date.getTime())) {
             throw new Error('Invalid date provided.');
         }
+
         const currentDate = new Date();
+
         if (payment.date > currentDate) {
             throw new Error('Payment date cannot be in the future.');
         }
@@ -48,7 +52,9 @@ export class Payment {
         if (this.paymentStatus === 'paid') {
             throw new Error('Payment has already been made.');
         }
+
         this.date = new Date();
+
         this.paymentStatus = 'paid';
     }
 }
