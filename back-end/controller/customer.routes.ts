@@ -18,8 +18,12 @@
  *           type: string
  *         recentOrders:
  *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Order'
  *         wishlist:
  *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Product'
  *
  *     CustomerInput:
  *       type: object
@@ -30,10 +34,10 @@
  *           type: string
  *         email:
  *           type: string
- *           default: name@email.be
+ *           default: "name@email.be"
  *         password:
  *           type: string
- *           default: password
+ *           default: "password"
  */
 
 import { NextFunction, Request, Response, Router } from 'express';
@@ -47,15 +51,18 @@ const customerRouter = Router();
  * /customers:
  *   get:
  *     summary: Get all customers
+ *     tags: [Customers]
  *     responses:
  *       200:
- *         description: All customers
+ *         description: A list of customers
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -71,21 +78,26 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  * @swagger
  * /customers/{id}:
  *   get:
- *     summary: Get a customer by id
+ *     summary: Get a customer by ID
+ *     tags: [Customers]
  *     parameters:
- *          - in: path
- *            name: id
- *            required: true
- *            description: The customer id.
- *            schema:
- *              type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the customer to retrieve
  *     responses:
  *       200:
- *         description: The customer with that id
+ *         description: Customer details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Customer'
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -102,6 +114,7 @@ customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunctio
  * /customers:
  *   post:
  *     summary: Create a new customer
+ *     tags: [Customers]
  *     requestBody:
  *       required: true
  *       content:
@@ -110,11 +123,15 @@ customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunctio
  *             $ref: '#/components/schemas/CustomerInput'
  *     responses:
  *       200:
- *         description: The new customer
+ *         description: Customer successfully created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Customer'
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -131,14 +148,15 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
  * @swagger
  * /customers/{id}:
  *   put:
- *     summary: Update an existing customer
+ *     summary: Update a customer by ID
+ *     tags: [Customers]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of the customer
  *         schema:
  *           type: integer
+ *         description: Numeric ID of the customer to update
  *     requestBody:
  *       required: true
  *       content:
@@ -147,11 +165,17 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
  *             $ref: '#/components/schemas/CustomerInput'
  *     responses:
  *       200:
- *         description: The updated customer
+ *         description: Customer successfully updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Customer'
+ *       400:
+ *         description: Invalid request data
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -168,17 +192,30 @@ customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunctio
  * @swagger
  * /customers/{id}:
  *   delete:
- *     summary: Delete a customer
+ *     summary: Delete a customer by ID
+ *     tags: [Customers]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of the customer
  *         schema:
  *           type: integer
+ *         description: Numeric ID of the customer to delete
  *     responses:
  *       200:
- *         description: Customer deletion confirmed
+ *         description: Customer successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Customer deleted successfully
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -194,22 +231,28 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
  * @swagger
  * /customers/{id}/orders:
  *   get:
- *     summary: Get orders by customer
+ *     summary: Retrieve orders for a specific customer
+ *     tags: [Customers, Orders]
  *     parameters:
- *          - in: path
- *            name: id
- *            required: true
- *            description: The customer id.
- *            schema:
- *              type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the customer whose orders to retrieve
  *     responses:
  *       200:
- *         description: The orders with that customer id
+ *         description: A list of orders for the specified customer
  *         content:
  *           application/json:
  *             schema:
  *               type: array
- *               $ref: '#/components/schemas/Order'
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Internal server error
  */
 
 customerRouter.get('/:id/orders', async (req: Request, res: Response, next: NextFunction) => {
