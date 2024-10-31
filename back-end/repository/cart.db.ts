@@ -128,6 +128,12 @@ const deleteCart = ({ id }: { id: number }) => {
     return 'Cart successfully deleted.';
 };
 
+const addCartItem = (cartId: number, product: Product, quantity: number): CartItem => {
+    const cart = getCartById({ id: cartId })!;
+    const cartItem = cart.addItem(product, quantity);
+    return cartItem;
+};
+
 export default {
     getCarts,
     getCartById,
@@ -135,4 +141,5 @@ export default {
     getCartByCustomerEmail,
     getCartByCustomerId,
     deleteCart,
+    addCartItem,
 };

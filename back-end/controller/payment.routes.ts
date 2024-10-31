@@ -41,7 +41,7 @@ const paymentRouter = Router();
 /**
  * @swagger
  * /payments:
- *   post:
+ *   put:
  *     summary: Create a new payment for an order
  *     tags: [Payments]
  *     requestBody:

@@ -231,7 +231,7 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
 /**
  * @swagger
  * /orders/{id}/items:
- *   post:
+ *   put:
  *     summary: Add an item to an order
  *     tags: [Orders]
  *     parameters:

@@ -1,7 +1,10 @@
 import { Cart } from '../model/cart';
+import { Product } from '../model/product';
+import { CartItem } from '../model/cartItem';
 import { Customer } from '../model/customer';
 import cartDB from '../repository/cart.db';
-import { CartInput, CustomerInput } from '../types';
+import { CartInput, CartItemInput, CustomerInput } from '../types';
+import productDb from '../repository/product.db';
 
 const getCarts = (): Cart[] => cartDB.getCarts();
 
@@ -29,9 +32,18 @@ const getCartById = (id: number): Cart => {
 //     return cartDB.deleteCart({ id: customerId });
 // };
 
+const addCartItem = (cartId: number, productId: number, quantity: number): CartItem => {
+    const checkExistingCart = getCartById(cartId);
+    const product = productDb.getProductById({ id: productId });
+    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+
+    return cartDB.addCartItem(cartId, product, quantity);
+};
+
 export default {
     getCarts,
     getCartById,
     // createCart,
     // deleteCart,
+    addCartItem,
 };
