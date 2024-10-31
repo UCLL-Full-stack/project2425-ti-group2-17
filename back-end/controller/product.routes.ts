@@ -166,11 +166,6 @@ productRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
 productRouter.get('/search', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { query } = req.query as { query: string };
-
-        if (!query) {
-            return res.status(400).json({ message: 'Search query is required' });
-        }
-
         const result = await productService.getProductsBySearch(query);
         res.status(200).json(result);
     } catch (error) {
@@ -290,7 +285,7 @@ productRouter.put('/:id', async (req: Request, res: Response, next: NextFunction
 
 productRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await productService.deleteCustomer(Number(req.params.id));
+        const result = await productService.deleteProduct(Number(req.params.id));
         res.status(200).json(result);
     } catch (error) {
         next(error);

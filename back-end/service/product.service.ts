@@ -43,7 +43,12 @@ const getProductById = (id: number): Product => {
     return product;
 };
 
-const getProductsBySearch = (query: string): Product[] => productDb.getProductsBySearch(query);
+const getProductsBySearch = (query: string): Product[] => {
+    if (!query) {
+        throw new Error('Search query is required');
+    }
+    return productDb.getProductsBySearch(query);
+};
 
 const updateProduct = (id: number, productData: Partial<ProductInput>): Product => {
     const existingProduct = productDb.getProductById({ id });
@@ -73,10 +78,10 @@ const updateProduct = (id: number, productData: Partial<ProductInput>): Product 
     return productDb.updateProduct(existingProduct);
 };
 
-const deleteCustomer = (productId: number): string => {
-    const existingCustomer = productDb.getProductById({ id: productId });
+const deleteProduct = (productId: number): string => {
+    const existingProduct = productDb.getProductById({ id: productId });
 
-    if (!existingCustomer) throw new Error('This product does not exist.');
+    if (!existingProduct) throw new Error('This product does not exist.');
 
     return productDb.deleteProduct({ id: productId });
 };
@@ -87,5 +92,5 @@ export default {
     getProductById,
     getProductsBySearch,
     updateProduct,
-    deleteCustomer,
+    deleteProduct,
 };

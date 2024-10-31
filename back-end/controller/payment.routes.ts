@@ -63,7 +63,7 @@ const paymentRouter = Router();
  *         description: Internal server error
  */
 
-paymentRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+paymentRouter.put('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { orderId, amount } = req.body;
         const paymentInput: PaymentInput = {

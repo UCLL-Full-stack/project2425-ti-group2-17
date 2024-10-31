@@ -177,7 +177,7 @@ test('given an existing product, when deleting the product, then the product is 
         'Product has been deleted.'
     );
 
-    const result = productService.deleteCustomer(1);
+    const result = productService.deleteProduct(1);
 
     expect(result).toEqual('Product has been deleted.');
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 1 });
@@ -187,7 +187,7 @@ test('given an existing product, when deleting the product, then the product is 
 test('given a non-existent product, when deleting the product, then an error is thrown', () => {
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-    const deleteProduct = () => productService.deleteCustomer(3);
+    const deleteProduct = () => productService.deleteProduct(3);
 
     expect(deleteProduct).toThrow('This product does not exist.');
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 3 });

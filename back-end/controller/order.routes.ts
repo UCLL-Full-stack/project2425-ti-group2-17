@@ -112,7 +112,6 @@ const orderRouter = Router();
 orderRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orders = await orderService.getOrders();
-
         res.status(200).json(orders);
     } catch (error) {
         next(error);
@@ -261,7 +260,7 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
  *         description: Internal server error
  */
 
-orderRouter.post('/orders/:id/items', async (req: Request, res: Response, next: NextFunction) => {
+orderRouter.put('/orders/:id/items', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderItem = <OrderItemInput>req.body;
         const result = await orderItemService.addOrderItem(orderItem);
