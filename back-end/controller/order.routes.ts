@@ -39,7 +39,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import orderService from '../service/order.service';
 import orderItemService from '../service/orderItem.service';
-import { OrderItemInput } from '../types';
+import { OrderInput, OrderItemInput } from '../types';
 
 const orderRouter = Router();
 
@@ -120,6 +120,16 @@ orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
 orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await orderService.deleteOrder(Number(req.params.id));
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const order = <OrderInput>req.body;
+        const result = await orderService.createOrder(order);
         res.status(200).json(result);
     } catch (error) {
         next(error);

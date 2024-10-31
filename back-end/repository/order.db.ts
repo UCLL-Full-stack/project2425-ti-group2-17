@@ -102,9 +102,15 @@ const deleteOrder = ({ id }: { id: number }) => {
     return 'Order has been deleted.';
 };
 
+const createOrder = (order: Order): Order => {
+    orders.push(order);
+    return order;
+};
+
 export default {
     getOrders,
     getOrderById,
     getOrdersByCustomer,
     deleteOrder,
+    createOrder,
 };
