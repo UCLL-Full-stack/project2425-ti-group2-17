@@ -17,10 +17,6 @@ export class Order {
         payment: Payment;
         id?: number;
     }) {
-        if (typeof order.date === 'string') {
-            order.date = new Date(order.date);
-        }
-
         this.validate(order);
         this.id = order.id;
         this.customer = order.customer;

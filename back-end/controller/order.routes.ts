@@ -2,29 +2,58 @@
  * @swagger
  * components:
  *   schemas:
+ *     Customer:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         email:
+ *           type: string
+ *         recentOrders:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Order'
+ *         wishlist:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProductInput'
+ *
+ *     Payment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         amount:
+ *           type: number
+ *           format: float
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         paymentStatus:
+ *           type: string
+ *           example: "Completed"
+ *
+ *     OrderItemInput:
+ *       type: object
+ *       properties:
+ *         order:
+ *           $ref: '#/components/schemas/Order'
+ *         product:
+ *           $ref: '#/components/schemas/ProductInput'
+ *         quantity:
+ *           type: integer
+ *
  *     Order:
  *       type: object
  *       properties:
  *         id:
  *           type: integer
- *           format: int64
  *         customer:
  *           $ref: '#/components/schemas/Customer'
- *         items:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/OrderItem'
- *         date:
- *           type: string
- *           format: date
- *         payment:
- *           $ref: '#/components/schemas/Payment'
- *
- *     OrderInput:
- *       type: object
- *       properties:
- *         customer:
- *           $ref: '#/components/schemas/CustomerInput'
  *         items:
  *           type: array
  *           items:
@@ -33,7 +62,25 @@
  *           type: string
  *           format: date-time
  *         payment:
- *           $ref: '#/components/schemas/PaymentInput'
+ *           $ref: '#/components/schemas/Payment'
+ *         totalAmount:
+ *           type: number
+ *           format: float
+ *
+ *     OrderInput:
+ *       type: object
+ *       properties:
+ *         customer:
+ *           $ref: '#/components/schemas/Customer'
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/OrderItemInput'
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         payment:
+ *           $ref: '#/components/schemas/Payment'
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
@@ -47,16 +94,19 @@ const orderRouter = Router();
  * @swagger
  * /orders:
  *   get:
- *     summary: Get all orders
+ *     summary: Retrieve a list of orders
+ *     tags: [Orders]
  *     responses:
  *       200:
- *         description: All Orders
+ *         description: A list of orders
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Order'
+ *       500:
+ *         description: Internal server error
  */
 
 orderRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -73,21 +123,26 @@ orderRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
  * @swagger
  * /orders/{id}:
  *   get:
- *     summary: Get a order by id
+ *     summary: Get order by ID
+ *     tags: [Orders]
  *     parameters:
- *          - in: path
- *            name: id
- *            required: true
- *            description: The order id.
- *            schema:
- *              type: integer
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the order to retrieve
  *     responses:
  *       200:
- *         description: The order with that id
+ *         description: Order details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Internal server error
  */
 
 orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -104,17 +159,30 @@ orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
  * @swagger
  * /orders/{id}:
  *   delete:
- *     summary: Delete a order
+ *     summary: Delete an order by ID
+ *     tags: [Orders]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of the order
  *         schema:
  *           type: integer
+ *         description: Numeric ID of the order to delete
  *     responses:
  *       200:
- *         description: Order deletion confirmed
+ *         description: Order successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Order deleted successfully
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Internal server error
  */
 
 orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
@@ -126,6 +194,31 @@ orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunctio
     }
 });
 
+/**
+ * @swagger
+ * /orders:
+ *   post:
+ *     summary: Create a new order
+ *     tags: [Orders]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/OrderInput'
+ *     responses:
+ *       200:
+ *         description: The order was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+
 orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const order = <OrderInput>req.body;
@@ -135,6 +228,38 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
         next(error);
     }
 });
+
+/**
+ * @swagger
+ * /orders/{id}/items:
+ *   post:
+ *     summary: Add an item to an order
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the order to add an item to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/OrderItemInput'
+ *     responses:
+ *       200:
+ *         description: The item was successfully added to the order
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
 
 orderRouter.post('/orders/:id/items', async (req: Request, res: Response, next: NextFunction) => {
     try {
