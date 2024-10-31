@@ -42,11 +42,10 @@ export class CartItem {
 
         const quantityDifference = newQuantity - this.quantity;
 
-        if (quantityDifference > 0 && this.product.getStock() < quantityDifference) {
+        if (quantityDifference > 0 && this.product.getStock() < newQuantity) {
             throw new Error('Not enough stock available to update the quantity.');
         }
 
-        this.product.updateStock(-quantityDifference);
         this.quantity = newQuantity;
     }
 }

@@ -2,42 +2,45 @@ import { Cart } from '../model/cart';
 import { Customer } from '../model/customer';
 import { CartItem } from '../model/cartItem';
 import { Product } from '../model/product';
+import productDb from './product.db';
 
-const product1 = new Product({
-    name: 'T-Shirt',
-    price: 20.0,
-    stock: 100,
-    category: ['Clothing'],
-    description: 'A comfortable cotton T-shirt',
-    images: ['image1.jpg'],
-    sizes: ['S', 'M', 'L', 'XL'],
-    colors: ['Red', 'Blue', 'Green'],
-    id: 1,
-});
+// const product1 = new Product({
+//     name: 'T-Shirt',
+//     price: 20.0,
+//     stock: 100,
+//     category: ['Clothing'],
+//     description: 'A comfortable cotton T-shirt',
+//     images: ['image1.jpg'],
+//     sizes: ['S', 'M', 'L', 'XL'],
+//     colors: ['Red', 'Blue', 'Green'],
+//     id: 1,
+// });
 
-const product2 = new Product({
-    name: 'Sneakers',
-    price: 50.0,
-    stock: 50,
-    category: ['Footwear'],
-    description: 'Stylish and comfortable sneakers',
-    images: ['image2.jpg'],
-    sizes: ['M', 'L'],
-    colors: ['Black', 'White'],
-    id: 2,
-});
+// const product2 = new Product({
+//     name: 'Sneakers',
+//     price: 50.0,
+//     stock: 50,
+//     category: ['Footwear'],
+//     description: 'Stylish and comfortable sneakers',
+//     images: ['image2.jpg'],
+//     sizes: ['M', 'L'],
+//     colors: ['Black', 'White'],
+//     id: 2,
+// });
 
-const product3 = new Product({
-    name: 'Jeans',
-    price: 40.0,
-    stock: 80,
-    category: ['Clothing'],
-    description: 'Classic blue jeans',
-    images: ['image3.jpg'],
-    sizes: ['M', 'L', 'XL'],
-    colors: ['Blue'],
-    id: 3,
-});
+// const product3 = new Product({
+//     name: 'Jeans',
+//     price: 40.0,
+//     stock: 80,
+//     category: ['Clothing'],
+//     description: 'Classic blue jeans',
+//     images: ['image3.jpg'],
+//     sizes: ['M', 'L', 'XL'],
+//     colors: ['Blue'],
+//     id: 3,
+// });
+
+const products: Product[] = productDb.getProducts();
 
 const customers: Customer[] = [
     new Customer({
@@ -74,8 +77,8 @@ const carts: Cart[] = [];
 const cartJohn = new Cart({
     customer: customers[0],
     products: [
-        new CartItem({ product: product1, quantity: 2 }),
-        new CartItem({ product: product2, quantity: 1 }),
+        new CartItem({ product: products[0], quantity: 2 }),
+        new CartItem({ product: products[1], quantity: 1 }),
     ],
     id: 1,
 });
@@ -84,8 +87,8 @@ carts.push(cartJohn);
 const cartJane = new Cart({
     customer: customers[1],
     products: [
-        new CartItem({ product: product1, quantity: 1 }),
-        new CartItem({ product: product3, quantity: 2 }),
+        new CartItem({ product: products[0], quantity: 1 }),
+        new CartItem({ product: products[2], quantity: 2 }),
     ],
     id: 2,
 });
@@ -94,8 +97,8 @@ carts.push(cartJane);
 const cartAlice = new Cart({
     customer: customers[2],
     products: [
-        new CartItem({ product: product2, quantity: 2 }),
-        new CartItem({ product: product3, quantity: 1 }),
+        new CartItem({ product: products[1], quantity: 2 }),
+        new CartItem({ product: products[2], quantity: 1 }),
     ],
     id: 3,
 });
