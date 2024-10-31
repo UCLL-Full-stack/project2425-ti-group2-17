@@ -4,42 +4,6 @@ import { CartItem } from '../model/cartItem';
 import { Product } from '../model/product';
 import productDb from './product.db';
 
-// const product1 = new Product({
-//     name: 'T-Shirt',
-//     price: 20.0,
-//     stock: 100,
-//     category: ['Clothing'],
-//     description: 'A comfortable cotton T-shirt',
-//     images: ['image1.jpg'],
-//     sizes: ['S', 'M', 'L', 'XL'],
-//     colors: ['Red', 'Blue', 'Green'],
-//     id: 1,
-// });
-
-// const product2 = new Product({
-//     name: 'Sneakers',
-//     price: 50.0,
-//     stock: 50,
-//     category: ['Footwear'],
-//     description: 'Stylish and comfortable sneakers',
-//     images: ['image2.jpg'],
-//     sizes: ['M', 'L'],
-//     colors: ['Black', 'White'],
-//     id: 2,
-// });
-
-// const product3 = new Product({
-//     name: 'Jeans',
-//     price: 40.0,
-//     stock: 80,
-//     category: ['Clothing'],
-//     description: 'Classic blue jeans',
-//     images: ['image3.jpg'],
-//     sizes: ['M', 'L', 'XL'],
-//     colors: ['Blue'],
-//     id: 3,
-// });
-
 const products: Product[] = productDb.getProducts();
 
 const customers: Customer[] = [

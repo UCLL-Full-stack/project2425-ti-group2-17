@@ -56,13 +56,14 @@ test('given: product not in cart, when: product is added, then: product is added
 
     expect(cart.getProducts()).toHaveLength(1);
     expect(cart.getProducts()[0].getProduct()).toEqual(product);
-    expect(cart.getProducts()[0].getQuantity()).toBe(2);
+    expect(cart.getProducts()[0].getQuantity()).toEqual(2);
 });
 
-test('given: product already in cart, when: same product is added again, then: quantity is updated.', () => {
+test('given: product already in cart, when: same product is added again, then: quantity is updated and stock remains the same.', () => {
     cart.addItem(product, 2);
     cart.addItem(product, 3);
 
     expect(cart.getProducts()).toHaveLength(1);
-    expect(cart.getProducts()[0].getQuantity()).toBe(5);
+    expect(cart.getProducts()[0].getQuantity()).toEqual(5);
+    expect(product.getStock()).toEqual(100);
 });
