@@ -33,11 +33,19 @@ const getCartById = (id: number): Cart => {
 // };
 
 const addCartItem = (cartId: number, productId: number, quantity: number): CartItem => {
-    const checkExistingCart = getCartById(cartId);
+    const existingCart = getCartById(cartId);
     const product = productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
-    return cartDB.addCartItem(cartId, product, quantity);
+    return cartDB.addCartItem(existingCart, product, quantity);
+};
+
+const removeCartItem = (cartId: number, productId: number, quantity: number): CartItem | string => {
+    const existingCart = getCartById(cartId);
+    const product = productDb.getProductById({ id: productId });
+    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+
+    return cartDB.removeCartItem(existingCart, product, quantity);
 };
 
 export default {
@@ -46,4 +54,5 @@ export default {
     // createCart,
     // deleteCart,
     addCartItem,
+    removeCartItem,
 };

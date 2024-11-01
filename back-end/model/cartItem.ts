@@ -35,7 +35,7 @@ export class CartItem {
         }
     }
 
-    updateQuantity(newQuantity: number): void {
+    increaseQuantity(newQuantity: number): void {
         if (newQuantity <= 0) {
             throw new Error('Quantity must be greater than zero.');
         }
@@ -45,6 +45,20 @@ export class CartItem {
         if (quantityDifference > 0 && this.product.getStock() < newQuantity) {
             throw new Error('Not enough stock available to update the quantity.');
         }
+
+        this.quantity = newQuantity;
+    }
+
+    decreaseQuantity(newQuantity: number): void {
+        // if (newQuantity >= 0) {
+        //     throw new Error('Quantity must be greater than zero.');
+        // }
+
+        // const quantityDifference = newQuantity - this.quantity;
+
+        // if (quantityDifference > 0 && this.product.getStock() < newQuantity) {
+        //     throw new Error('Not enough stock available to update the quantity.');
+        // }
 
         this.quantity = newQuantity;
     }
