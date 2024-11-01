@@ -3,6 +3,7 @@ import { CartItem } from '../../model/cartItem';
 import { Customer } from '../../model/customer';
 import { Product } from '../../model/product';
 import cartDb from '../../repository/cart.db';
+import productDb from '../../repository/product.db';
 import cartService from '../../service/cart.service';
 
 const customers: Customer[] = [
@@ -76,18 +77,16 @@ carts.push(cartJane);
 
 let mockCartDbGetCarts: jest.Mock;
 let mockCartDbGetCartById: jest.Mock;
-let mockCartDbCreateCart: jest.Mock;
-let mockCartDbDeleteCart: jest.Mock;
-let mockCartDbGetCartByCustomerEmail: jest.Mock;
-let mockCartDbGetCartByCustomerId: jest.Mock;
+let mockCartDbAddCartItem: jest.Mock;
+let mockCartDbRemoveCartItem: jest.Mock;
+let mockProductDbGetProductById: jest.Mock;
 
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
     mockCartDbGetCartById = jest.fn();
-    mockCartDbCreateCart = jest.fn();
-    mockCartDbDeleteCart = jest.fn();
-    mockCartDbGetCartByCustomerEmail = jest.fn();
-    mockCartDbGetCartByCustomerId = jest.fn();
+    mockCartDbAddCartItem = jest.fn();
+    mockCartDbRemoveCartItem = jest.fn();
+    mockProductDbGetProductById = jest.fn();
 });
 
 afterEach(() => {
@@ -121,47 +120,80 @@ test('given carts in the DB, when getting a cart by incorrect id, then an error 
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
 });
 
-// test('given a new customer, when creating a cart, then the cart is created successfully', () => {
-//     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
+test('given valid cart and product, when adding an item to cart, then the item is added', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product2);
+    cartDb.addCartItem = mockCartDbAddCartItem.mockReturnValue(
+        new CartItem({ product: product2, quantity: 1 })
+    );
 
-//     const createdCart = new Cart({ customer: customers[2], products: [] });
-//     cartDb.createCart = mockCartDbCreateCart.mockReturnValue(createdCart);
+    const result = cartService.addCartItem(1, 2, 1);
 
-//     const result = cartService.createCart(customers[2]);
+    expect(result).toEqual(new CartItem({ product: product2, quantity: 1 }));
+    expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product2, 1);
+});
 
-//     expect(result).toEqual(createdCart);
-//     expect(mockCartDbCreateCart).toHaveBeenCalledWith(customers[2]);
-// });
+test('given valid cart with existing product, when adding quantity to existing product, then quantity is updated', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
+    cartDb.addCartItem = mockCartDbAddCartItem.mockReturnValue(
+        new CartItem({ product: product1, quantity: 3 })
+    );
 
-// test('given an existing customer with a cart, when creating a cart, then an error is thrown', () => {
-//     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(
-//         new Cart({ customer: customers[0], products: [] })
-//     );
+    const result = cartService.addCartItem(1, 1, 1);
 
-//     const createCartFunction = () => cartService.createCart(customers[0]);
+    expect(result.getQuantity()).toEqual(3);
+    expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product1, 1);
+});
 
-//     expect(createCartFunction).toThrow('This customer already has a cart.');
-//     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
-//         email: customers[0].getEmail(),
-//     });
-// });
+test('given non-existent product, when adding item to cart, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-// test('given a customer with a cart, when deleting the cart, then the cart is deleted successfully', () => {
-//     cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(carts[0]);
+    expect(() => cartService.addCartItem(1, 3, 1)).toThrow('Product with id 3 does not exist.');
+});
 
-//     cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
+test('given product in cart, when decreasing quantity, then quantity is decreased', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
+    cartDb.removeCartItem = mockCartDbRemoveCartItem.mockReturnValue(
+        new CartItem({ product: product1, quantity: 1 })
+    );
 
-//     const result = cartService.deleteCart(1);
+    const result = cartService.removeCartItem(1, 1, 1);
 
-//     expect(result).toEqual('Cart successfully deleted.');
-//     expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
-// });
+    expect(result).toBeInstanceOf(CartItem);
+    expect((result as CartItem).getQuantity()).toEqual(1);
 
-// test('given a customer without a cart, when deleting the cart, then an error is thrown', () => {
-//     cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
+    expect(mockCartDbRemoveCartItem).toHaveBeenCalledWith(cartJohn, product1, 1);
+});
 
-//     const deleteCartFunction = () => cartService.deleteCart(3);
+test('given product in cart, when removing entire quantity, then item is removed from cart', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
+    cartDb.removeCartItem = mockCartDbRemoveCartItem.mockReturnValue('Item removed from cart.');
 
-//     expect(deleteCartFunction).toThrow('That customer does not have a cart.');
-//     expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 3 });
-// });
+    const result = cartService.removeCartItem(1, 1, 2);
+
+    expect(result).toEqual('Item removed from cart.');
+    expect(mockCartDbRemoveCartItem).toHaveBeenCalledWith(cartJohn, product1, 2);
+});
+
+test('given non-existent product, when removing item from cart, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
+
+    expect(() => cartService.removeCartItem(1, 3, 1)).toThrow('Product with id 3 does not exist.');
+});
+
+test('given quantity greater than in cart, when removing item from cart, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
+    cartDb.removeCartItem = mockCartDbRemoveCartItem.mockImplementation(() => {
+        throw new Error('There are not that many products in the cart to remove.');
+    });
+
+    expect(() => cartService.removeCartItem(1, 1, 5)).toThrow(
+        'There are not that many products in the cart to remove.'
+    );
+});
