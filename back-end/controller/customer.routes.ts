@@ -264,4 +264,92 @@ customerRouter.get('/:id/orders', async (req: Request, res: Response, next: Next
     }
 });
 
+/**
+ * @swagger
+ * /customers/addWishlist/{customerId}/{productId}:
+ *   put:
+ *     summary: Add a product to a customer's wishlist
+ *     tags: [Customers]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the customer
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the product to add to the wishlist
+ *     responses:
+ *       200:
+ *         description: Product successfully added to the wishlist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ */
+
+customerRouter.put(
+    '/addWishlist/:customerId/:productId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const customerId = Number(req.params.customerId);
+            const productId = Number(req.params.productId);
+            const result = await customerService.addProductToWishlist(customerId, productId);
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/**
+ * @swagger
+ * /customers/removeWishlist/{customerId}/{productId}:
+ *   put:
+ *     summary: Remove a product from a customer's wishlist
+ *     tags: [Customers]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the customer
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the product to remove from the wishlist
+ *     responses:
+ *       200:
+ *         description: Product successfully removed from the wishlist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Product removed from wishlist"
+ */
+
+customerRouter.put(
+    '/removeWishlist/:customerId/:productId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const customerId = Number(req.params.customerId);
+            const productId = Number(req.params.productId);
+            const result = await customerService.removeProductFromWishlist(customerId, productId);
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export { customerRouter };

@@ -1,4 +1,8 @@
 import { Customer } from '../model/customer';
+import { Product } from '../model/product';
+import productDb from './product.db';
+
+const products: Product[] = productDb.getProducts();
 
 const customers: Customer[] = [
     new Customer({
@@ -7,7 +11,7 @@ const customers: Customer[] = [
         email: 'john.doe@example.com',
         password: 'password123',
         recentOrders: [],
-        wishlist: [],
+        wishlist: [products[0]],
         id: 1,
     }),
     new Customer({
@@ -16,7 +20,7 @@ const customers: Customer[] = [
         email: 'jane.smith@example.com',
         password: 'password456',
         recentOrders: [],
-        wishlist: [],
+        wishlist: [products[1]],
         id: 2,
     }),
     new Customer({
@@ -25,7 +29,7 @@ const customers: Customer[] = [
         email: 'alice.johnson@example.com',
         password: 'password789',
         recentOrders: [],
-        wishlist: [],
+        wishlist: [products[2]],
         id: 3,
     }),
 ];
@@ -63,6 +67,14 @@ const deleteCustomer = ({ id }: { id: number }) => {
     return 'Customer has been deleted.';
 };
 
+const addProductToWishlist = (customer: Customer, product: Product): Product => {
+    return customer.addProductToWishlist(product);
+};
+
+const removeProductFromWishlist = (customer: Customer, product: Product): string => {
+    return customer.removeProductFromWishlist(product);
+};
+
 export default {
     getCustomers,
     getCustomerById,
@@ -70,4 +82,6 @@ export default {
     getCustomerByEmail,
     updateCustomer,
     deleteCustomer,
+    addProductToWishlist,
+    removeProductFromWishlist,
 };

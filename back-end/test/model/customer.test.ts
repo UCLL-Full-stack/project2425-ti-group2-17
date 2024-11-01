@@ -94,8 +94,9 @@ test('given: a product, when: added to wishlist, then: product appears in wishli
         colors: ['Black', 'White', 'Green'],
     });
 
-    customer.addProductToWishlist(product);
+    const result = customer.addProductToWishlist(product);
 
+    expect(result).toEqual(product);
     expect(customer.getWishlist()).toContain(product);
 });
 
@@ -112,8 +113,9 @@ test('given: a product in wishlist, when: removed from wishlist, then: product i
     });
 
     customer.addProductToWishlist(product);
-    customer.removeProductFromWishlist(product);
+    const result = customer.removeProductFromWishlist(product);
 
+    expect(result).toEqual('Product removed from wishlist.');
     expect(customer.getWishlist()).toHaveLength(0);
 });
 

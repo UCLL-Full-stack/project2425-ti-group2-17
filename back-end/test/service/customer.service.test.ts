@@ -7,8 +7,34 @@ import { Product } from '../../model/product';
 import cartDb from '../../repository/cart.db';
 import customerDb from '../../repository/customer.db';
 import orderDb from '../../repository/order.db';
+import productDb from '../../repository/product.db';
 import customerService from '../../service/customer.service';
 import { CustomerInput } from '../../types';
+
+const products: Product[] = [
+    new Product({
+        name: 'Plain T-Shirt',
+        price: 19.99,
+        stock: 100,
+        category: ['Clothing', 'Tops'],
+        description: 'A comfortable, everyday t-shirt available in multiple colors.',
+        images: ['https://example.com/images/tshirt1.jpg'],
+        sizes: ['S', 'M', 'L', 'XL'],
+        colors: ['Red', 'Blue', 'Black'],
+        id: 1,
+    }),
+    new Product({
+        name: 'Sports Shoes',
+        price: 69.99,
+        stock: 50,
+        category: ['Footwear', 'Sports'],
+        description: 'Lightweight and comfortable shoes designed for running.',
+        images: ['https://example.com/images/shoes1.jpg'],
+        sizes: ['M', 'L', 'XL'],
+        colors: ['White', 'Black'],
+        id: 2,
+    }),
+];
 
 const customers: Customer[] = [
     new Customer({
@@ -17,7 +43,7 @@ const customers: Customer[] = [
         email: 'john.doe@example.com',
         password: 'password123',
         recentOrders: [],
-        wishlist: [],
+        wishlist: [products[0]],
         id: 1,
     }),
     new Customer({
@@ -69,6 +95,9 @@ let mockCustomerDbDeleteCustomer: jest.Mock;
 let mockCartDbDeleteCart: jest.Mock;
 let mockCartDbGetCartByCustomerId: jest.Mock;
 let mockOrderDbGetOrdersByCustomer: jest.Mock;
+let mockCustomerDbAddProductToWishlist: jest.Mock;
+let mockCustomerDbRemoveProductFromWishlist: jest.Mock;
+let mockProductDbGetProductById: jest.Mock;
 
 beforeEach(() => {
     mockCustomerDbGetCustomers = jest.fn();
@@ -81,6 +110,9 @@ beforeEach(() => {
     mockCartDbDeleteCart = jest.fn();
     mockCartDbGetCartByCustomerId = jest.fn();
     mockOrderDbGetOrdersByCustomer = jest.fn();
+    mockCustomerDbAddProductToWishlist = jest.fn();
+    mockCustomerDbRemoveProductFromWishlist = jest.fn();
+    mockProductDbGetProductById = jest.fn();
 });
 
 afterEach(() => {
@@ -283,4 +315,57 @@ test('given a non-existent customer, when getting orders by customer id, then an
 
     expect(getOrdersByCustomer).toThrow('Customer with id 3 does not exist.');
     expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 3 });
+});
+
+test('given a customer, when adding a product to wishlist, then the product is added', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[1]);
+    customerDb.addProductToWishlist = mockCustomerDbAddProductToWishlist.mockReturnValue(
+        products[1]
+    );
+
+    const result = customerService.addProductToWishlist(1, 2);
+
+    expect(result).toEqual(products[1]);
+    expect(mockCustomerDbAddProductToWishlist).toHaveBeenCalledWith(customers[0], products[1]);
+});
+
+test('given a customer with existing wishlist, when adding a duplicate product to wishlist, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[0]);
+
+    const addProductToWishlist = () => customerService.addProductToWishlist(1, 1);
+
+    expect(addProductToWishlist).toThrow('Product with id 1 is already in the wishlist.');
+});
+
+test('given a customer, when removing a product from wishlist, then the product is removed', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[0]);
+    customerDb.removeProductFromWishlist = mockCustomerDbRemoveProductFromWishlist.mockReturnValue(
+        'Product removed from wishlist.'
+    );
+
+    const result = customerService.removeProductFromWishlist(1, 1);
+
+    expect(result).toEqual('Product removed from wishlist.');
+    expect(mockCustomerDbRemoveProductFromWishlist).toHaveBeenCalledWith(customers[0], products[0]);
+});
+
+test('given a customer, when removing a product not in the wishlist, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[1]);
+
+    const removeProductFromWishlist = () => customerService.removeProductFromWishlist(1, 2);
+
+    expect(removeProductFromWishlist).toThrow('Product with id 2 is not in the wishlist.');
+});
+
+test('given a non-existent product, when adding to wishlist, then an error is thrown', () => {
+    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
+
+    const addProductToWishlist = () => customerService.addProductToWishlist(1, 3);
+
+    expect(addProductToWishlist).toThrow('Product with id 3 does not exist.');
 });

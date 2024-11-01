@@ -1,9 +1,11 @@
 import { Customer } from '../model/customer';
 import { Order } from '../model/order';
+import { Product } from '../model/product';
 import { User } from '../model/user';
 import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
 import orderDb from '../repository/order.db';
+import productDb from '../repository/product.db';
 import { CustomerInput } from '../types';
 import cartService from './cart.service';
 
@@ -88,6 +90,26 @@ const getOrdersByCustomer = (id: number): Order[] => {
     return orders;
 };
 
+const addProductToWishlist = (customerId: number, productId: number): Product => {
+    const customer = getCustomerById(customerId);
+    const product = productDb.getProductById({ id: productId });
+    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+    if (customer.getWishlist().some((item) => item.getId() === productId)) {
+        throw new Error(`Product with id ${productId} is already in the wishlist.`);
+    }
+    return customerDB.addProductToWishlist(customer, product);
+};
+
+const removeProductFromWishlist = (customerId: number, productId: number): string => {
+    const customer = getCustomerById(customerId);
+    const product = productDb.getProductById({ id: productId });
+    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+    if (!customer.getWishlist().some((item) => item.getId() === productId)) {
+        throw new Error(`Product with id ${productId} is not in the wishlist.`);
+    }
+    return customerDB.removeProductFromWishlist(customer, product);
+};
+
 export default {
     getCustomers,
     getCustomerById,
@@ -95,4 +117,6 @@ export default {
     updateCustomer,
     deleteCustomer,
     getOrdersByCustomer,
+    addProductToWishlist,
+    removeProductFromWishlist,
 };

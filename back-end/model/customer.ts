@@ -38,6 +38,7 @@ export class Customer extends User {
         }
 
         this.wishlist.push(product);
+        return product;
     }
 
     removeProductFromWishlist(product: Product) {
@@ -48,6 +49,7 @@ export class Customer extends User {
         }
 
         this.wishlist = this.wishlist.filter((item) => item !== product);
+        return 'Product removed from wishlist.';
     }
 
     setRecentOrders(orders: Order[]): void {
