@@ -14,6 +14,18 @@ const Products: React.FC = () => {
         setProducts(products);
     };
 
+    const updateProduct = async (id: number) => {
+        console.log('test');
+        const response = await ProductService.deleteProduct(id as unknown as string);
+        getProducts();
+    };
+
+    const deleteProduct = async (id: number) => {
+        console.log('test');
+        const response = await ProductService.deleteProduct(id as unknown as string);
+        getProducts();
+    };
+
     useEffect(() => {
         getProducts();
     }, []);
@@ -26,8 +38,13 @@ const Products: React.FC = () => {
             <main className="d-flex flex-column justify-content-center align-items-center">
                 <h1>Products</h1>
                 <section>
-                    <h2>Products overview</h2>
-                    {products && <ProductOverviewTable products={products} />}
+                    {products && (
+                        <ProductOverviewTable
+                            products={products}
+                            updateProduct={updateProduct}
+                            deleteProduct={deleteProduct}
+                        />
+                    )}
                 </section>
             </main>
         </>

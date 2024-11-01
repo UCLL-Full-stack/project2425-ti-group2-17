@@ -61,4 +61,15 @@ type Product = {
     colors: string[];
 };
 
-export type { Admin, Customer, Cart, CartItem, Order, OrderItem, Payment, Product };
+type ProductInput = {
+    name: string;
+    price: number;
+    stock: number;
+    category: string[];
+    description: string;
+    images: string[];
+    sizes: string[];
+    colors: string[];
+};
+
+export type { Admin, Customer, Cart, CartItem, Order, OrderItem, Payment, Product, ProductInput };
