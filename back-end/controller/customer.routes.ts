@@ -232,7 +232,7 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
  * /customers/{id}/orders:
  *   get:
  *     summary: Retrieve orders for a specific customer
- *     tags: [Customers, Orders]
+ *     tags: [Customers]
  *     parameters:
  *       - in: path
  *         name: id

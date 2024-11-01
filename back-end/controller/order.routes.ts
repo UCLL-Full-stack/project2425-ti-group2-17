@@ -260,7 +260,7 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
  *         description: Internal server error
  */
 
-orderRouter.put('/orders/:id/items', async (req: Request, res: Response, next: NextFunction) => {
+orderRouter.put('/:id/items', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderItem = <OrderItemInput>req.body;
         const result = await orderItemService.addOrderItem(orderItem);
