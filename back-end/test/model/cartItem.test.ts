@@ -25,13 +25,11 @@ const productTestData = {
 
 let customer: Customer;
 let product: Product;
-let cart: Cart;
 let cartItem: CartItem;
 
 beforeEach(() => {
     customer = new Customer(customerTestData);
     product = new Product(productTestData);
-    cart = new Cart({ customer, products: [] });
     cartItem = new CartItem({ product, quantity: 2 });
 });
 
@@ -50,4 +48,25 @@ test('given: invalid quantity, when: cartItem is created, then: error is thrown.
     expect(() => new CartItem({ product, quantity: 0 })).toThrow(
         'Quantity must be greater than zero.'
     );
+});
+
+test('given: valid new quantity, when: increasingQuantity, then: quantity is updated.', () => {
+    cartItem.increaseQuantity(5);
+    expect(cartItem.getQuantity()).toEqual(5);
+});
+
+test('given: not enough stock, when: increasingQuantity, then: error is thrown.', () => {
+    product.setStock(4);
+    expect(() => cartItem.increaseQuantity(10)).toThrow(
+        'Not enough stock available to update the quantity.'
+    );
+});
+
+test('given: invalid quantity, when: increasingQuantity, then: error is thrown.', () => {
+    expect(() => cartItem.increaseQuantity(0)).toThrow('Quantity must be greater than zero.');
+});
+
+test('given: valid quantity, when: decreasingQuantity, then: quantity is updated.', () => {
+    cartItem.decreaseQuantity(1);
+    expect(cartItem.getQuantity()).toEqual(1);
 });

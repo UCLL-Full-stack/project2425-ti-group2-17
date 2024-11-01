@@ -3,38 +3,11 @@ import { Customer } from '../model/customer';
 import { CartItem } from '../model/cartItem';
 import { Product } from '../model/product';
 import productDb from './product.db';
+import customerDb from './customer.db';
+
+const customers: Customer[] = customerDb.getCustomers();
 
 const products: Product[] = productDb.getProducts();
-
-const customers: Customer[] = [
-    new Customer({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: 'password123',
-        recentOrders: [],
-        wishlist: [],
-        id: 1,
-    }),
-    new Customer({
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@example.com',
-        password: 'password456',
-        recentOrders: [],
-        wishlist: [],
-        id: 2,
-    }),
-    new Customer({
-        firstName: 'Alice',
-        lastName: 'Johnson',
-        email: 'alice.johnson@example.com',
-        password: 'password789',
-        recentOrders: [],
-        wishlist: [],
-        id: 3,
-    }),
-];
 
 const carts: Cart[] = [];
 

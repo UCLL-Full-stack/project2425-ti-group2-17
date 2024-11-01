@@ -69,15 +69,5 @@ export class Cart {
         } else {
             return this.products[existingProductIndex];
         }
-
-        // if (existingProductIndex !== -1) {
-        //     const existingQuantity = this.products[existingProductIndex].getQuantity();
-        //     this.products[existingProductIndex].increaseQuantity(existingQuantity + quantity);
-        //     return this.products[existingProductIndex];
-        // } else {
-        //     const cartItem = new CartItem({ product, quantity });
-        //     this.products.push(cartItem);
-        //     return cartItem;
-        // }
     }
 }

@@ -67,3 +67,34 @@ test('given: product already in cart, when: same product is added again, then: q
     expect(cart.getProducts()[0].getQuantity()).toEqual(5);
     expect(product.getStock()).toEqual(100);
 });
+
+test('given: product in cart, when: decrease quantity, then: quantity is decreased.', () => {
+    cart.addItem(product, 5);
+    const result = cart.removeItem(product, 3);
+
+    expect(result).toEqual(cart.getProducts()[0]);
+    expect(cart.getProducts()[0].getQuantity()).toEqual(2);
+});
+
+test('given: product in cart, when: decrease quantity to zero, then: item is removed from cart.', () => {
+    cart.addItem(product, 5);
+    const result = cart.removeItem(product, 5);
+
+    expect(result).toEqual('Item removed from cart.');
+    expect(cart.getProducts()).toHaveLength(0);
+});
+
+test('given: product not in cart, when: removing item, then: error is thrown.', () => {
+    expect(() => cart.removeItem(product, 1)).toThrow('Product not in cart.');
+});
+
+test('given: product in cart, when: removing more items than there are in the cart, then: error is thrown.', () => {
+    cart.addItem(product, 2);
+    expect(() => cart.removeItem(product, 5)).toThrow(
+        'There are not that many products in the cart to remove.'
+    );
+});
+
+test('given: invalid quantity, when: removing item, then: error is thrown.', () => {
+    expect(() => cart.removeItem(product, 0)).toThrow('Quantity must be greater than zero.');
+});
