@@ -9,14 +9,46 @@ const getAllProducts = async () => {
     });
 };
 
+const createProduct = async (productData: ProductInput) => {
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage || 'Failed to create product');
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
 const updateProduct = async (productId: string, productData: ProductInput) => {
-    return fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${productId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData),
-    });
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage || 'Failed to update product');
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
 };
 
 const deleteProduct = async (productId: string) => {
@@ -30,6 +62,7 @@ const deleteProduct = async (productId: string) => {
 
 const ProductService = {
     getAllProducts,
+    createProduct,
     updateProduct,
     deleteProduct,
 };

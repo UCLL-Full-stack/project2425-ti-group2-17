@@ -5,12 +5,14 @@ import styles from '@styles/home.module.css';
 
 type Props = {
     products: Array<Product>;
+    createProduct: () => void;
     updateProduct: (id: number) => void;
     deleteProduct: (id: number) => void;
 };
 
 const ProductOverviewTable: React.FC<Props> = ({
     products,
+    createProduct,
     updateProduct,
     deleteProduct,
 }: Props) => {
@@ -24,6 +26,15 @@ const ProductOverviewTable: React.FC<Props> = ({
 
     return (
         <>
+            <div className="d-flex flex-column justify-content-center align-items-center">
+                <button
+                    type="button"
+                    onClick={() => createProduct()}
+                    className="w-min bg-black text-white py-2 rounded px-1"
+                >
+                    Create product
+                </button>
+            </div>
             {products && products.length > 0 ? (
                 <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
                     {products.map((product) => (
@@ -48,6 +59,11 @@ const ProductOverviewTable: React.FC<Props> = ({
                                             Price: ${product.price}
                                         </p>
                                         <p className="text-gray-600">Stock: {product.stock}</p>
+                                        {product.stock < 5 && (
+                                            <p className="text-red-500 font-semibold">
+                                                Low stock: Only {product.stock} left.
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -91,14 +107,14 @@ const ProductOverviewTable: React.FC<Props> = ({
                                 <button
                                     type="button"
                                     onClick={() => updateProduct(product.id)}
-                                    className="w-min bg-yellow-500 text-white py-2 rounded px-1"
+                                    className="w-min bg-black text-white py-2 rounded px-1"
                                 >
                                     Update
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => deleteProduct(product.id)}
-                                    className="w-min bg-yellow-500 text-white py-2 rounded px-1"
+                                    className="w-min bg-black text-white py-2 rounded px-1"
                                 >
                                     Delete
                                 </button>
