@@ -27,10 +27,10 @@ const Home: React.FC = () => {
 
                 <div className={styles.description}>
                     <p>
-                        Courses lets you see as a lecturer all the courses you are teaching and as a
-                        student all the courses you are enrolled in. <br />
-                        You can also see when the courses are scheduled and the students enrolled in
-                        each course.
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, harum
+                        aperiam facere quaerat est soluta voluptatibus cumque voluptate eaque
+                        adipisci ea magnam? Maiores sapiente temporibus, obcaecati vero quia
+                        necessitatibus error!
                     </p>
                 </div>
             </main>
