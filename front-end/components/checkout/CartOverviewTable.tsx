@@ -16,7 +16,7 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                 <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
                     {cart.products.map((cartItem) => (
                         <article
-                            key={cartItem.id}
+                            key={cartItem.product.id}
                             className="flex flex-row bg-gray-50 border border-gray-300 rounded-lg overflow-hidden m-4 p-4 shadow-md w-full"
                         >
                             <Image
@@ -61,13 +61,13 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                                 <div>
                                     <button
                                         onClick={() => updateQuantity(cartItem.product.id, 1)}
-                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded"
+                                        className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Add one
                                     </button>
                                     <button
                                         onClick={() => updateQuantity(cartItem.product.id, -1)}
-                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded"
+                                        className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Remove one
                                     </button>
