@@ -17,6 +17,25 @@ const getAllCarts = async () => {
     }
 };
 
+const getCartById = async (cartId: string) => {
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/carts/${cartId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
 const addItemToCart = async (cartId: string, productId: string, quantity: string) => {
     try {
         const response = await fetch(
@@ -41,6 +60,7 @@ const addItemToCart = async (cartId: string, productId: string, quantity: string
 
 const CartService = {
     getAllCarts,
+    getCartById,
     addItemToCart,
 };
 
