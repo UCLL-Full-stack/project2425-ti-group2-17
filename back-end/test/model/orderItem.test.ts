@@ -24,6 +24,7 @@ beforeEach(() => {
 test('given: valid values for order item, when: order item is created, then: order item is created with those values', () => {
     expect(orderItem.getProduct()).toEqual(product);
     expect(orderItem.getQuantity()).toEqual(2);
+    expect(orderItem.getProduct().getStock()).toEqual(98);
 });
 
 test('given: invalid product, when: order item is created, then: error is thrown.', () => {

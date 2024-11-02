@@ -12,6 +12,7 @@ export class OrderItem {
         this.id = orderItem.id;
         this.product = orderItem.product;
         this.quantity = orderItem.quantity;
+        this.product.updateStock(-this.quantity);
     }
 
     getProduct(): Product {
