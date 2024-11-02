@@ -1,12 +1,23 @@
 import { ProductInput } from '@types';
 
 const getAllProducts = async () => {
+    // try {
+    //     const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/products', {
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/products', {
         method: 'GET',
         headers: {
             'content-Type': 'application/json',
         },
     });
+    //     if (!response.ok) {
+    //         const errorResponse = await response.json();
+    //         throw new Error(errorResponse.message);
+    //     }
+
+    //     return response.json();
+    // } catch (error) {
+    //     throw error;
+    // }
 };
 
 const createProduct = async (productData: ProductInput) => {
@@ -20,8 +31,8 @@ const createProduct = async (productData: ProductInput) => {
         });
 
         if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(errorMessage || 'Failed to create product');
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
         }
 
         return response.json();
@@ -41,8 +52,8 @@ const updateProduct = async (productId: string, productData: ProductInput) => {
         });
 
         if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(errorMessage || 'Failed to update product');
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
         }
 
         return response.json();
@@ -52,12 +63,22 @@ const updateProduct = async (productId: string, productData: ProductInput) => {
 };
 
 const deleteProduct = async (productId: string) => {
-    return fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${productId}`, {
-        method: 'DELETE',
-        headers: {
-            'content-Type': 'application/json',
-        },
-    });
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
 };
 
 const ProductService = {

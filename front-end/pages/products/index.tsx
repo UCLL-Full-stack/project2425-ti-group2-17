@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import ProductService from '@services/ProductService';
 import ProductOverviewTable from '@components/products/ProductOverviewTable';
+import CartService from '@services/CartService';
 
 const Products: React.FC = () => {
     const [products, setProducts] = useState<Array<Product>>();
@@ -15,10 +16,9 @@ const Products: React.FC = () => {
             const products = await response.json();
             setProducts(products);
         } catch (err: any) {
-            try {
-                const errorResponse = await err.response.json();
-                setError(errorResponse.message);
-            } catch {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
                 setError('Failed to get products.');
             }
         }
@@ -68,13 +68,12 @@ const Products: React.FC = () => {
 
         try {
             setError(null);
-            const response = await ProductService.createProduct(newProduct);
+            await ProductService.createProduct(newProduct);
             getProducts();
         } catch (err: any) {
-            try {
-                const errorResponse = await err.response.json();
-                setError(errorResponse.message);
-            } catch {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
                 setError('Failed to create product.');
             }
         }
@@ -135,14 +134,13 @@ const Products: React.FC = () => {
 
         try {
             setError(null);
-            const response = await ProductService.updateProduct(id.toString(), updatedProduct);
+            await ProductService.updateProduct(id.toString(), updatedProduct);
             getProducts();
         } catch (err: any) {
-            try {
-                const errorResponse = await err.response.json();
-                setError(errorResponse.message);
-            } catch {
-                setError('Failed to update product.');
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed update product.');
             }
         }
     };
@@ -153,11 +151,23 @@ const Products: React.FC = () => {
             const response = await ProductService.deleteProduct(id.toString());
             getProducts();
         } catch (err: any) {
-            try {
-                const errorResponse = await err.response.json();
-                setError(errorResponse.message);
-            } catch {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
                 setError('Failed to delete product.');
+            }
+        }
+    };
+
+    const addItemToCart = async (productid: number) => {
+        try {
+            await CartService.addItemToCart('4', productid.toString(), '1');
+            // getProducts();
+        } catch (err: any) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to add product to cart.');
             }
         }
     };
@@ -181,6 +191,7 @@ const Products: React.FC = () => {
                             createProduct={createProduct}
                             updateProduct={updateProduct}
                             deleteProduct={deleteProduct}
+                            addItemToCart={addItemToCart}
                         />
                     )}
                 </section>

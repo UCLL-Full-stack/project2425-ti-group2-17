@@ -8,6 +8,7 @@ type Props = {
     createProduct: () => void;
     updateProduct: (id: number) => void;
     deleteProduct: (id: number) => void;
+    addItemToCart: (id: number) => void;
 };
 
 const ProductOverviewTable: React.FC<Props> = ({
@@ -15,6 +16,7 @@ const ProductOverviewTable: React.FC<Props> = ({
     createProduct,
     updateProduct,
     deleteProduct,
+    addItemToCart,
 }: Props) => {
     const handleAddToCart = (productId: number) => {
         console.log(`Product ${productId} added to cart`);
@@ -81,7 +83,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                             </div>
                             <div className="flex flex-col justify-center items-center ml-4">
                                 <button
-                                    onClick={() => handleAddToCart(product.id)}
+                                    onClick={() => addItemToCart(product.id)}
                                     className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
                                 >
                                     <Image

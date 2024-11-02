@@ -14,7 +14,7 @@ const createProduct = ({
 }: ProductInput) => {
     const existingProduct = productDb.getProductByName({ name });
 
-    if (existingProduct) throw new Error('A product with this id already exists.');
+    if (existingProduct) throw new Error('A product with this name already exists.');
 
     const productId = productDb.getProducts().length + 1;
 
