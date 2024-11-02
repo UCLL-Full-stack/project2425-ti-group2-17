@@ -81,7 +81,10 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
             )}
             {cart && cart.products.length > 0 ? (
                 <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
-                    <article className="flex flex-row bg-gray-50 border border-gray-300 rounded-lg overflow-hidden m-4 p-4 shadow-md w-full">
+                    <article
+                        key="overview"
+                        className="flex flex-row bg-gray-50 border border-gray-300 rounded-lg overflow-hidden m-4 p-4 shadow-md w-full"
+                    >
                         <h2>Overview</h2>
                         <p className="text-left mt-8">
                             Total price: ${Math.round(cart.totalAmount * 100) / 100}
