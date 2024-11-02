@@ -34,10 +34,17 @@ const removeCartItem = (cartId: number, productId: number, quantity: number): Ca
     return cartDB.removeCartItem(existingCart, product, quantity);
 };
 
-const convertCartToOrder = (cartId: number, paymentInfo: any): Order => {
+const convertCartToOrder = (cartId: number, paymentStatus: string): Order => {
     const cart = getCartById(cartId);
 
     if (!cart) throw new Error(`Cart with id ${cartId} does not exist.`);
+
+    if (!paymentStatus) {
+        throw new Error('Payment status is required.');
+    }
+    if (paymentStatus !== 'paid' && paymentStatus !== 'unpaid') {
+        throw new Error('Payment status must be paid or unpaid.');
+    }
 
     const customer = cart.getCustomer();
     const items = cart.getProducts().map(
@@ -48,14 +55,10 @@ const convertCartToOrder = (cartId: number, paymentInfo: any): Order => {
             })
     );
 
-    if (!paymentInfo || !paymentInfo.status) {
-        throw new Error('Payment status is required.');
-    }
-
     const payment = new Payment({
         amount: items.reduce((total, item) => total + item.getTotalPrice(), 0),
         date: new Date(),
-        paymentStatus: paymentInfo.status,
+        paymentStatus: paymentStatus,
     });
 
     const orderId = orderDb.getOrders().length + 1;
@@ -69,7 +72,7 @@ const convertCartToOrder = (cartId: number, paymentInfo: any): Order => {
     });
 
     orderDb.createOrder(order);
-    cartDB.deleteCart({ id: cartId });
+    cartDB.emptyCart(cart);
 
     return order;
 };

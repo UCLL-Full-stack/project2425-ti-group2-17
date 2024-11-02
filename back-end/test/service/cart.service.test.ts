@@ -120,6 +120,7 @@ let mockCartDbRemoveCartItem: jest.Mock;
 let mockProductDbGetProductById: jest.Mock;
 let mockOrderDbCreateOrder: jest.Mock;
 let mockCartDbDeleteCart: jest.Mock;
+let mockCartDbEmptyCart: jest.Mock;
 
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
@@ -129,6 +130,7 @@ beforeEach(() => {
     mockProductDbGetProductById = jest.fn();
     mockOrderDbCreateOrder = jest.fn();
     mockCartDbDeleteCart = jest.fn();
+    mockCartDbEmptyCart = jest.fn();
 });
 
 afterEach(() => {
@@ -243,10 +245,9 @@ test('given quantity greater than in cart, when removing item from cart, then an
 test('given valid cart and payment info, when converting cart to order, then order is created', () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
     orderDb.createOrder = mockOrderDbCreateOrder.mockReturnValue(order1);
-    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
+    cartDb.emptyCart = mockCartDbEmptyCart.mockReturnValue('cart successfully emptied.');
 
-    const paymentInfo = { status: 'paid' };
-    const result = cartService.convertCartToOrder(1, paymentInfo);
+    const result = cartService.convertCartToOrder(1, 'paid');
 
     expect(result.getCustomer()).toEqual(order1.getCustomer());
     expect(result.getItems()).toEqual(order1.getItems());
@@ -263,32 +264,30 @@ test('given valid cart and payment info, when converting cart to order, then ord
             }),
         })
     );
-    expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCartDbEmptyCart).toHaveBeenCalled();
 });
 
 test('given non-existent cart, when converting cart to order, then an error is thrown', () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(null);
 
-    const paymentInfo = { status: 'paid' };
-    expect(() => cartService.convertCartToOrder(3, paymentInfo)).toThrow(
+    expect(() => cartService.convertCartToOrder(3, 'paid')).toThrow(
         'Cart with id 3 does not exist.'
     );
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
 });
 
-test('given invalid payment info, when converting cart to order, then an error is thrown', () => {
+test('given missing payment info, when converting cart to order, then an error is thrown', () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
 
-    const paymentInfo = { status: null };
-    expect(() => cartService.convertCartToOrder(1, paymentInfo)).toThrow(
-        'Payment status is required.'
-    );
+    expect(() => cartService.convertCartToOrder(1, '')).toThrow('Payment status is required.');
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given valid cart but no payment info, when converting cart to order, then an error is thrown', () => {
+test('given invalid payment info, when converting cart to order, then an error is thrown', () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
 
-    expect(() => cartService.convertCartToOrder(1, null)).toThrow('Payment status is required.');
+    expect(() => cartService.convertCartToOrder(1, 'invalid')).toThrow(
+        'Payment status must be paid or unpaid.'
+    );
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
 });

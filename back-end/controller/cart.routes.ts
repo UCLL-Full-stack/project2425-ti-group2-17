@@ -217,21 +217,13 @@ cartRouter.put(
  *         schema:
  *           type: integer
  *         description: Numeric ID of the cart to convert
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               paymentInfo:
- *                 type: object
- *                 description: Payment information for the order
- *                 properties:
- *                   status:
- *                     type: string
- *                     description: Payment status
- *                     example: "paid"
+ *       - in: query
+ *         name: paymentStatus
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [paid, unpaid]
+ *         description: Payment status of the order
  *     responses:
  *       200:
  *         description: Order successfully created
@@ -252,8 +244,8 @@ cartRouter.post(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const cartId = Number(req.params.cartId);
-            const paymentInfo = req.body.paymentInfo;
-            const order = await cartService.convertCartToOrder(cartId, paymentInfo);
+            const { paymentStatus } = req.query as { paymentStatus: string };
+            const order = await cartService.convertCartToOrder(cartId, paymentStatus);
             res.status(200).json(order);
         } catch (error) {
             next(error);

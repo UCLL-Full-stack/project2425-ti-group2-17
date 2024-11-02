@@ -70,4 +70,7 @@ export class Cart {
             return this.products[existingProductIndex];
         }
     }
+    emptyCart() {
+        this.products = [];
+    }
 }

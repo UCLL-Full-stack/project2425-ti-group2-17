@@ -76,6 +76,11 @@ const removeCartItem = (cart: Cart, product: Product, quantity: number): CartIte
     return cart.removeItem(product, quantity);
 };
 
+const emptyCart = (cart: Cart): string => {
+    cart.emptyCart();
+    return 'cart successfully emptied.';
+};
+
 export default {
     getCarts,
     getCartById,
@@ -85,4 +90,5 @@ export default {
     deleteCart,
     addCartItem,
     removeCartItem,
+    emptyCart,
 };
