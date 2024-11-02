@@ -32,6 +32,15 @@ const customers: Customer[] = [
         wishlist: [products[2]],
         id: 3,
     }),
+    new Customer({
+        firstName: 'Temp',
+        lastName: 'Login',
+        email: 'temp.login@example.com',
+        password: 'loginpassword',
+        recentOrders: [],
+        wishlist: [],
+        id: 4,
+    }),
 ];
 
 const getCustomers = (): Customer[] => customers;

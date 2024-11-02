@@ -41,6 +41,13 @@ const cartAlice = new Cart({
 });
 carts.push(cartAlice);
 
+const cartTempLogin = new Cart({
+    customer: customers[3],
+    products: [],
+    id: 4,
+});
+carts.push(cartAlice);
+
 const getCarts = (): Cart[] => carts;
 
 const getCartById = ({ id }: { id: number }): Cart | null => {
