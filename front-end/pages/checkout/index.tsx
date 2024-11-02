@@ -23,6 +23,19 @@ const Checkout: React.FC = () => {
         }
     };
 
+    const convertCartToOrder = async (cartId: number, paymentStatus: string) => {
+        try {
+            await CartService.convertCartToOrder(cartId.toString(), paymentStatus);
+            getCartById(4);
+        } catch (err: any) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to get cart by id.');
+            }
+        }
+    };
+
     useEffect(() => {
         getCartById(4);
     }, []);
@@ -35,7 +48,11 @@ const Checkout: React.FC = () => {
             <main className="d-flex flex-column justify-content-center align-items-center">
                 <h1>Checkout</h1>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <section>{cart && <CartOverviewTable cart={cart} />}</section>
+                <section>
+                    {cart && (
+                        <CartOverviewTable cart={cart} convertCartToOrder={convertCartToOrder} />
+                    )}
+                </section>
             </main>
         </>
     );

@@ -5,9 +5,10 @@ import styles from '@styles/home.module.css';
 
 type Props = {
     cart: Cart;
+    convertCartToOrder: (id: number, paymentStatus: string) => void;
 };
 
-const CartOverviewTable: React.FC<Props> = ({ cart }) => {
+const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder }) => {
     return (
         <>
             {cart && cart.products.length > 0 ? (
@@ -75,10 +76,17 @@ const CartOverviewTable: React.FC<Props> = ({ cart }) => {
                         <p className="text-left mt-8">
                             Total price: ${Math.round(cart.totalAmount * 100) / 100}
                         </p>
+                        <button
+                            type="button"
+                            onClick={() => convertCartToOrder(4, 'paid')}
+                            className="w-min bg-black text-white py-2 rounded px-1"
+                        >
+                            Order
+                        </button>
                     </article>
                 </div>
             ) : (
-                <p className="text-center mt-8">No products in cart.</p>
+                <p className="text-center mt-8"></p>
             )}
         </>
     );

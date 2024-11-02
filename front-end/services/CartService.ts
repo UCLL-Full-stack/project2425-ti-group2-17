@@ -58,10 +58,34 @@ const addItemToCart = async (cartId: string, productId: string, quantity: string
     }
 };
 
+const convertCartToOrder = async (cartId: string, paymentStatus: string) => {
+    try {
+        const response = await fetch(
+            process.env.NEXT_PUBLIC_API_URL +
+                `/carts/convertToOrder/${cartId}?paymentStatus=${paymentStatus}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
 const CartService = {
     getAllCarts,
     getCartById,
     addItemToCart,
+    convertCartToOrder,
 };
 
 export default CartService;
