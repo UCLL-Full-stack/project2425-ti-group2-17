@@ -36,6 +36,7 @@ beforeEach(() => {
 test('given: valid values for cartItem, when: cartItem is created, then: cartItem is created with those values.', () => {
     expect(cartItem.getProduct()).toEqual(product);
     expect(cartItem.getQuantity()).toEqual(2);
+    expect(cartItem.getTotalPrice()).toEqual(60);
 });
 
 test('given: invalid product, when: cartItem is created, then: error is thrown.', () => {

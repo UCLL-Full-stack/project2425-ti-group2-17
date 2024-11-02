@@ -33,12 +33,16 @@ beforeEach(() => {
 test('given: valid values for cart, when: cart is created, then: cart is created with those values.', () => {
     expect(cart.getCustomer()).toEqual(customer);
     expect(cart.getProducts()).toHaveLength(0);
+    expect(cart.getTotalAmount()).toEqual(0);
 });
 
-test('given: valid cart, when: cart item is added to cart, then: cart item is added to products array.', () => {
+test('given: product not in cart, when: product is added, then: product is added as a new CartItem.', () => {
     cart.addItem(product, 2);
 
     expect(cart.getProducts()).toHaveLength(1);
+    expect(cart.getProducts()[0].getProduct()).toEqual(product);
+    expect(cart.getProducts()[0].getQuantity()).toEqual(2);
+    expect(cart.getTotalAmount()).toEqual(60);
 });
 
 test('given: invalid customer, when: cart is created, then: an error is thrown.', () => {
@@ -51,14 +55,6 @@ test('given: invalid quantity, when: cart item is added to cart, then: an error 
     expect(() => cart.addItem(product, -1)).toThrow('Quantity must be greater than zero.');
 });
 
-test('given: product not in cart, when: product is added, then: product is added as a new CartItem.', () => {
-    cart.addItem(product, 2);
-
-    expect(cart.getProducts()).toHaveLength(1);
-    expect(cart.getProducts()[0].getProduct()).toEqual(product);
-    expect(cart.getProducts()[0].getQuantity()).toEqual(2);
-});
-
 test('given: product already in cart, when: same product is added again, then: quantity is updated and stock remains the same.', () => {
     cart.addItem(product, 2);
     cart.addItem(product, 3);
@@ -66,6 +62,7 @@ test('given: product already in cart, when: same product is added again, then: q
     expect(cart.getProducts()).toHaveLength(1);
     expect(cart.getProducts()[0].getQuantity()).toEqual(5);
     expect(product.getStock()).toEqual(100);
+    expect(cart.getTotalAmount()).toEqual(150);
 });
 
 test('given: product in cart, when: decrease quantity, then: quantity is decreased.', () => {
@@ -74,6 +71,7 @@ test('given: product in cart, when: decrease quantity, then: quantity is decreas
 
     expect(result).toEqual(cart.getProducts()[0]);
     expect(cart.getProducts()[0].getQuantity()).toEqual(2);
+    expect(cart.getTotalAmount()).toEqual(60);
 });
 
 test('given: product in cart, when: decrease quantity to zero, then: item is removed from cart.', () => {
@@ -82,6 +80,7 @@ test('given: product in cart, when: decrease quantity to zero, then: item is rem
 
     expect(result).toEqual('Item removed from cart.');
     expect(cart.getProducts()).toHaveLength(0);
+    expect(cart.getTotalAmount()).toEqual(0);
 });
 
 test('given: product not in cart, when: removing item, then: error is thrown.', () => {

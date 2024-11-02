@@ -119,7 +119,7 @@ test('given an existing product, when creating that product again, then an error
 
     const createProduct = () => productService.createProduct(newProductInput);
 
-    expect(createProduct).toThrow('A product with this id already exists.');
+    expect(createProduct).toThrow('A product with this name already exists.');
     expect(mockProductDbGetProductByName).toHaveBeenCalledWith({ name: newProductInput.name });
     expect(mockProductDbCreateProduct).not.toHaveBeenCalled();
 });
