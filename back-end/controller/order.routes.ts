@@ -85,7 +85,6 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import orderService from '../service/order.service';
-import orderItemService from '../service/orderItem.service';
 import { OrderInput, OrderItemInput } from '../types';
 
 const orderRouter = Router();
@@ -222,48 +221,6 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
     try {
         const order = <OrderInput>req.body;
         const result = await orderService.createOrder(order);
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @swagger
- * /orders/{id}/items:
- *   put:
- *     summary: Add an item to an order
- *     tags: [Orders]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Numeric ID of the order to add an item to
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/OrderItemInput'
- *     responses:
- *       200:
- *         description: The item was successfully added to the order
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Order'
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal server error
- */
-
-orderRouter.put('/:id/items', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const orderItem = <OrderItemInput>req.body;
-        const result = await orderItemService.addOrderItem(orderItem);
         res.status(200).json(result);
     } catch (error) {
         next(error);
