@@ -9,7 +9,6 @@ const customerTestData = {
     lastName: 'Doe',
     email: 'john.doe@example.com',
     password: 'securepassword123',
-    recentOrders: [],
     wishlist: [],
 };
 

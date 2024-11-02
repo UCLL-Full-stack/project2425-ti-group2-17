@@ -25,7 +25,7 @@ let product: Product;
 let cart: Cart;
 
 beforeEach(() => {
-    customer = new Customer({ ...customerTestData, recentOrders: [], wishlist: [] });
+    customer = new Customer({ ...customerTestData, wishlist: [] });
     product = new Product(productTestData);
     cart = new Cart({ customer, products: [] });
 });

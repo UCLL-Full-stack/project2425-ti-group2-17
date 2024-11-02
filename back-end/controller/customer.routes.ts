@@ -229,43 +229,6 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
 
 /**
  * @swagger
- * /customers/{id}/orders:
- *   get:
- *     summary: Retrieve orders for a specific customer
- *     tags: [Customers]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Numeric ID of the customer whose orders to retrieve
- *     responses:
- *       200:
- *         description: A list of orders for the specified customer
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Order'
- *       404:
- *         description: Customer not found
- *       500:
- *         description: Internal server error
- */
-
-customerRouter.get('/:id/orders', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const orders = await customerService.getOrdersByCustomer(Number(req.params.id));
-        res.status(200).json(orders);
-    } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @swagger
  * /customers/addWishlist/{customerId}/{productId}:
  *   put:
  *     summary: Add a product to a customer's wishlist

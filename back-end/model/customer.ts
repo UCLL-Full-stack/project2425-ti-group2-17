@@ -3,7 +3,6 @@ import { Product } from './product';
 import { User } from './user';
 
 export class Customer extends User {
-    private recentOrders: Order[];
     private wishlist: Product[];
 
     constructor(customer: {
@@ -11,21 +10,11 @@ export class Customer extends User {
         lastName: string;
         email: string;
         password: string;
-        recentOrders: Order[];
         wishlist: Product[];
         id?: number;
     }) {
         super(customer);
-        this.recentOrders = customer.recentOrders;
         this.wishlist = customer.wishlist;
-    }
-
-    getRecentOrders(): Order[] {
-        return this.recentOrders;
-    }
-
-    addOrder(order: Order) {
-        this.recentOrders.push(order);
     }
 
     getWishlist(): Product[] {
@@ -50,9 +39,5 @@ export class Customer extends User {
 
         this.wishlist = this.wishlist.filter((item) => item !== product);
         return 'Product removed from wishlist.';
-    }
-
-    setRecentOrders(orders: Order[]): void {
-        this.recentOrders = orders;
     }
 }

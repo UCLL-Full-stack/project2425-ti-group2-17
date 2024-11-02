@@ -13,7 +13,6 @@ const orders: Order[] = [
             lastName: 'Johnson',
             email: 'alice.johnson@example.com',
             password: 'securepassword123',
-            recentOrders: [],
             wishlist: [],
             id: 1,
         }),

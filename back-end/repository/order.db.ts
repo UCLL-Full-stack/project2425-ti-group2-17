@@ -10,40 +10,6 @@ const customers: Customer[] = customerDb.getCustomers();
 
 const products: Product[] = productDb.getProducts();
 
-// const product1 = new Product({
-//     id: 1,
-//     name: 'Classic T-Shirt',
-//     price: 19.99,
-//     stock: 200,
-//     category: ['Clothing', 'Men'],
-//     description: 'Comfortable cotton T-Shirt.',
-//     images: ['tshirt_front.jpg', 'tshirt_back.jpg'],
-//     sizes: ['S', 'M', 'L', 'XL'],
-//     colors: ['Red', 'Blue', 'Black'],
-// });
-
-// const product2 = new Product({
-//     id: 2,
-//     name: 'Leather Jacket',
-//     price: 199.99,
-//     stock: 50,
-//     category: ['Clothing', 'Outerwear'],
-//     description: 'Stylish genuine leather jacket.',
-//     images: ['jacket_front.jpg', 'jacket_back.jpg'],
-//     sizes: ['M', 'L', 'XL'],
-//     colors: ['Black'],
-// });
-
-// const customer = new Customer({
-//     firstName: 'Alice',
-//     lastName: 'Johnson',
-//     email: 'alice.johnson@example.com',
-//     password: 'securepassword123',
-//     recentOrders: [],
-//     wishlist: [],
-//     id: 1,
-// });
-
 const orderItem1 = new OrderItem({
     product: products[0],
     quantity: 2,

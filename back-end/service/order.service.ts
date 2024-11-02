@@ -41,7 +41,6 @@ const createOrder = (orderInput: OrderInput): Order => {
     } else {
         newCustomer = new Customer({
             ...customer,
-            recentOrders: [],
             wishlist: [],
         });
     }

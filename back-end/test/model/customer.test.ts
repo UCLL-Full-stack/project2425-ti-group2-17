@@ -11,20 +11,19 @@ const customerTestData = {
 let customer: Customer;
 
 beforeEach(() => {
-    customer = new Customer({ ...customerTestData, recentOrders: [], wishlist: [] });
+    customer = new Customer({ ...customerTestData, wishlist: [] });
 });
 
 const { firstName, lastName, email, password } = customerTestData;
 
 const createCustomer = (overrides = {}) =>
-    new Customer({ ...customerTestData, recentOrders: [], wishlist: [], ...overrides });
+    new Customer({ ...customerTestData, wishlist: [], ...overrides });
 
 test('given: valid values for customer, when: customer is created, then: customer is created with those values.', () => {
     expect(customer.getFirstName()).toEqual(firstName);
     expect(customer.getLastName()).toEqual(lastName);
     expect(customer.getEmail()).toEqual(email);
     expect(customer.getPassword()).toEqual(password);
-    expect(customer.getRecentOrders()).toHaveLength(0);
     expect(customer.getWishlist()).toHaveLength(0);
 });
 

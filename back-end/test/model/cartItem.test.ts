@@ -8,7 +8,6 @@ const customerTestData = {
     lastName: 'Doe',
     email: 'john.doe@gmail.com',
     password: 'password',
-    recentOrders: [],
     wishlist: [],
 };
 
