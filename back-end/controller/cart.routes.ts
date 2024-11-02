@@ -204,4 +204,61 @@ cartRouter.put(
     }
 );
 
+/**
+ * @swagger
+ * /carts/convertToOrder/{cartId}:
+ *   post:
+ *     summary: Convert a cart to an order
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the cart to convert
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentInfo:
+ *                 type: object
+ *                 description: Payment information for the order
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: Payment status
+ *                     example: "paid"
+ *     responses:
+ *       200:
+ *         description: Order successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Invalid request data
+ *       404:
+ *         description: Cart not found
+ *       500:
+ *         description: Internal server error
+ */
+
+cartRouter.post(
+    '/convertToOrder/:cartId',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const cartId = Number(req.params.cartId);
+            const paymentInfo = req.body.paymentInfo;
+            const order = await cartService.convertCartToOrder(cartId, paymentInfo);
+            res.status(200).json(order);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export { cartRouter };

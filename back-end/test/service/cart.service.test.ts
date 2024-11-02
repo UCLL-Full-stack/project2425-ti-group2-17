@@ -1,8 +1,12 @@
 import { Cart } from '../../model/cart';
 import { CartItem } from '../../model/cartItem';
 import { Customer } from '../../model/customer';
+import { Order } from '../../model/order';
+import { OrderItem } from '../../model/orderItem';
+import { Payment } from '../../model/payment';
 import { Product } from '../../model/product';
 import cartDb from '../../repository/cart.db';
+import orderDb from '../../repository/order.db';
 import productDb from '../../repository/product.db';
 import cartService from '../../service/cart.service';
 
@@ -75,11 +79,47 @@ const cartJane = new Cart({
 });
 carts.push(cartJane);
 
+const order1 = new Order({
+    customer: customers[0],
+    items: [
+        new OrderItem({
+            product: product1,
+            quantity: 2,
+        }),
+    ],
+    date: new Date('2024-11-02T13:05:28.149Z'),
+    payment: new Payment({
+        amount: 40.0,
+        date: new Date('2024-11-02T13:05:28.149Z'),
+        paymentStatus: 'paid',
+    }),
+    id: 1,
+});
+
+const order2 = new Order({
+    customer: customers[1],
+    items: [
+        new OrderItem({
+            product: product2,
+            quantity: 1,
+        }),
+    ],
+    date: new Date(),
+    payment: new Payment({
+        amount: 50.0,
+        date: new Date(),
+        paymentStatus: 'paid',
+    }),
+    id: 2,
+});
+
 let mockCartDbGetCarts: jest.Mock;
 let mockCartDbGetCartById: jest.Mock;
 let mockCartDbAddCartItem: jest.Mock;
 let mockCartDbRemoveCartItem: jest.Mock;
 let mockProductDbGetProductById: jest.Mock;
+let mockOrderDbCreateOrder: jest.Mock;
+let mockCartDbDeleteCart: jest.Mock;
 
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
@@ -87,6 +127,8 @@ beforeEach(() => {
     mockCartDbAddCartItem = jest.fn();
     mockCartDbRemoveCartItem = jest.fn();
     mockProductDbGetProductById = jest.fn();
+    mockOrderDbCreateOrder = jest.fn();
+    mockCartDbDeleteCart = jest.fn();
 });
 
 afterEach(() => {
@@ -196,4 +238,57 @@ test('given quantity greater than in cart, when removing item from cart, then an
     expect(() => cartService.removeCartItem(1, 1, 5)).toThrow(
         'There are not that many products in the cart to remove.'
     );
+});
+
+test('given valid cart and payment info, when converting cart to order, then order is created', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    orderDb.createOrder = mockOrderDbCreateOrder.mockReturnValue(order1);
+    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart successfully deleted.');
+
+    const paymentInfo = { status: 'paid' };
+    const result = cartService.convertCartToOrder(1, paymentInfo);
+
+    expect(result.getCustomer()).toEqual(order1.getCustomer());
+    expect(result.getItems()).toEqual(order1.getItems());
+    expect(result.getPayment().getAmount()).toEqual(order1.getPayment().getAmount());
+    expect(result.getPayment().getPaymentStatus()).toEqual(order1.getPayment().getPaymentStatus());
+    expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockOrderDbCreateOrder).toHaveBeenCalledWith(
+        expect.objectContaining({
+            customer: order1.getCustomer(),
+            items: order1.getItems(),
+            payment: expect.objectContaining({
+                amount: order1.getPayment().getAmount(),
+                paymentStatus: order1.getPayment().getPaymentStatus(),
+            }),
+        })
+    );
+    expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given non-existent cart, when converting cart to order, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(null);
+
+    const paymentInfo = { status: 'paid' };
+    expect(() => cartService.convertCartToOrder(3, paymentInfo)).toThrow(
+        'Cart with id 3 does not exist.'
+    );
+    expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
+});
+
+test('given invalid payment info, when converting cart to order, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+
+    const paymentInfo = { status: null };
+    expect(() => cartService.convertCartToOrder(1, paymentInfo)).toThrow(
+        'Payment status is required.'
+    );
+    expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given valid cart but no payment info, when converting cart to order, then an error is thrown', () => {
+    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+
+    expect(() => cartService.convertCartToOrder(1, null)).toThrow('Payment status is required.');
+    expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
 });

@@ -5,6 +5,10 @@ import { Customer } from '../model/customer';
 import cartDB from '../repository/cart.db';
 import { CartInput, CartItemInput, CustomerInput } from '../types';
 import productDb from '../repository/product.db';
+import { Payment } from '../model/payment';
+import { OrderItem } from '../model/orderItem';
+import { Order } from '../model/order';
+import orderDb from '../repository/order.db';
 
 const getCarts = (): Cart[] => cartDB.getCarts();
 
@@ -30,9 +34,50 @@ const removeCartItem = (cartId: number, productId: number, quantity: number): Ca
     return cartDB.removeCartItem(existingCart, product, quantity);
 };
 
+const convertCartToOrder = (cartId: number, paymentInfo: any): Order => {
+    const cart = getCartById(cartId);
+
+    if (!cart) throw new Error(`Cart with id ${cartId} does not exist.`);
+
+    const customer = cart.getCustomer();
+    const items = cart.getProducts().map(
+        (cartItem) =>
+            new OrderItem({
+                product: cartItem.getProduct(),
+                quantity: cartItem.getQuantity(),
+            })
+    );
+
+    if (!paymentInfo || !paymentInfo.status) {
+        throw new Error('Payment status is required.');
+    }
+
+    const payment = new Payment({
+        amount: items.reduce((total, item) => total + item.getTotalPrice(), 0),
+        date: new Date(),
+        paymentStatus: paymentInfo.status,
+    });
+
+    const orderId = orderDb.getOrders().length + 1;
+
+    const order = new Order({
+        customer,
+        items,
+        date: new Date(),
+        payment,
+        id: orderId,
+    });
+
+    orderDb.createOrder(order);
+    cartDB.deleteCart({ id: cartId });
+
+    return order;
+};
+
 export default {
     getCarts,
     getCartById,
     addCartItem,
     removeCartItem,
+    convertCartToOrder,
 };
