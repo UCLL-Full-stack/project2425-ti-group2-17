@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Cart } from '@types';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
@@ -6,9 +6,10 @@ import styles from '@styles/home.module.css';
 type Props = {
     cart: Cart;
     convertCartToOrder: (id: number, paymentStatus: string) => void;
+    updateQuantity: (id: number, quantity: number) => void;
 };
 
-const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder }) => {
+const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQuantity }) => {
     return (
         <>
             {cart && cart.products.length > 0 ? (
@@ -41,11 +42,6 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder }) => {
                                         <p className="font-bold text-2xl text-green-700">
                                             Amount in cart: {cartItem.quantity}
                                         </p>
-                                        {cartItem.product.stock < 5 && (
-                                            <p className="text-red-500 font-semibold">
-                                                Low stock: Only {cartItem.product.stock} left.
-                                            </p>
-                                        )}
                                     </div>
                                 </div>
 
@@ -61,6 +57,20 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder }) => {
                                         <strong>Colors:</strong>{' '}
                                         {cartItem.product.colors.join(', ')}
                                     </div>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() => updateQuantity(cartItem.product.id, 1)}
+                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded"
+                                    >
+                                        Add one
+                                    </button>
+                                    <button
+                                        onClick={() => updateQuantity(cartItem.product.id, -1)}
+                                        className="mt-2 w-full bg-blue-500 text-white py-1 rounded"
+                                    >
+                                        Remove one
+                                    </button>
                                 </div>
                             </div>
                         </article>

@@ -58,6 +58,29 @@ const addItemToCart = async (cartId: string, productId: string, quantity: string
     }
 };
 
+const removeItemFromCart = async (cartId: string, productId: string, quantity: string) => {
+    try {
+        const response = await fetch(
+            process.env.NEXT_PUBLIC_API_URL +
+                `/carts/removeItems/${cartId}/${productId}/${quantity}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'content-Type': 'application/json',
+                },
+            }
+        );
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
 const convertCartToOrder = async (cartId: string, paymentStatus: string) => {
     try {
         const response = await fetch(
@@ -85,6 +108,7 @@ const CartService = {
     getAllCarts,
     getCartById,
     addItemToCart,
+    removeItemFromCart,
     convertCartToOrder,
 };
 
