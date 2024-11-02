@@ -6,12 +6,14 @@ export class Cart {
     private id?: number;
     private customer: Customer;
     private products: CartItem[];
+    private totalAmount: number;
 
     constructor(cart: { customer: Customer; products: CartItem[]; id?: number }) {
         this.validate(cart);
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;
+        this.totalAmount = this.calculateTotalAmount();
     }
 
     getId(): number | undefined {
@@ -24,6 +26,10 @@ export class Cart {
 
     getProducts(): CartItem[] {
         return this.products;
+    }
+
+    getTotalAmount() {
+        return this.totalAmount;
     }
 
     validate(cart: { customer: Customer; products: CartItem[] }) {
@@ -42,10 +48,12 @@ export class Cart {
         if (existingProductIndex !== -1) {
             const existingQuantity = this.products[existingProductIndex].getQuantity();
             this.products[existingProductIndex].increaseQuantity(existingQuantity + quantity);
+            this.calculateTotalAmount();
             return this.products[existingProductIndex];
         } else {
             const cartItem = new CartItem({ product, quantity });
             this.products.push(cartItem);
+            this.calculateTotalAmount();
             return cartItem;
         }
     }
@@ -65,12 +73,19 @@ export class Cart {
 
         if (this.products[existingProductIndex].getQuantity() === 0) {
             this.products.splice(existingProductIndex, 1);
+            this.calculateTotalAmount();
             return 'Item removed from cart.';
         } else {
+            this.calculateTotalAmount();
             return this.products[existingProductIndex];
         }
     }
     emptyCart() {
         this.products = [];
+    }
+
+    calculateTotalAmount() {
+        this.totalAmount = this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
+        return this.totalAmount;
     }
 }

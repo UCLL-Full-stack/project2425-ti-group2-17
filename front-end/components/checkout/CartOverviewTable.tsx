@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cart } from '@types'; // Ensure that @types path is correct
+import { Cart } from '@types';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
 
@@ -66,7 +66,19 @@ const CartOverviewTable: React.FC<Props> = ({ cart }) => {
                     ))}
                 </div>
             ) : (
-                <p className="text-center mt-8">No products in cart available.</p>
+                <p className="text-center mt-8">No products in cart.</p>
+            )}
+            {cart && cart.products.length > 0 ? (
+                <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
+                    <article className="flex flex-row bg-gray-50 border border-gray-300 rounded-lg overflow-hidden m-4 p-4 shadow-md w-full">
+                        <h2>Overview</h2>
+                        <p className="text-left mt-8">
+                            Total price: ${Math.round(cart.totalAmount * 100) / 100}
+                        </p>
+                    </article>
+                </div>
+            ) : (
+                <p className="text-center mt-8">No products in cart.</p>
             )}
         </>
     );

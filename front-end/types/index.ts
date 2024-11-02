@@ -20,6 +20,7 @@ type Cart = {
     id: number;
     customer: Customer;
     products: CartItem[];
+    totalAmount: number;
 };
 
 type CartItem = {

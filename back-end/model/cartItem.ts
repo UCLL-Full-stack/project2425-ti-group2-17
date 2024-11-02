@@ -52,4 +52,8 @@ export class CartItem {
     decreaseQuantity(newQuantity: number): void {
         this.quantity = newQuantity;
     }
+
+    getTotalPrice(): number {
+        return this.product.getPrice() * this.quantity;
+    }
 }

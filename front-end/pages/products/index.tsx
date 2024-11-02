@@ -159,11 +159,9 @@ const Products: React.FC = () => {
         }
     };
 
-    const addItemToCart = async (productId: number): Promise<number> => {
+    const addItemToCart = async (productId: number) => {
         try {
-            const response = await CartService.addItemToCart('4', productId.toString(), '1');
-            const cartItem = await response.json();
-            return cartItem.getQuantity() || 0;
+            await CartService.addItemToCart('4', productId.toString(), '1');
         } catch (err: any) {
             if (err instanceof Error) {
                 setError(err.message);

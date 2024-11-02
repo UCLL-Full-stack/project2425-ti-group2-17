@@ -20,6 +20,7 @@ type CartInput = {
     id?: number;
     customer: CustomerInput;
     products: CartItemInput[];
+    totalAmount: number;
 };
 
 type CartItemInput = {
