@@ -28,7 +28,7 @@ const Checkout: React.FC = () => {
         try {
             await CartService.convertCartToOrder(cartId.toString(), paymentStatus);
             getCartById(4);
-            setOrderStatus('Your order has been placed.');
+            setOrderStatus('Your order has been placed and an invoice has been sent.');
         } catch (err: any) {
             if (err instanceof Error) {
                 setError(err.message);
