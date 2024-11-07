@@ -77,6 +77,52 @@ const main = async () => {
             colors: ['Blue', 'Black'],
         },
     });
+
+    const johnDoe = await prisma.customer.create({
+        data: {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john.doe@example.com',
+            password: 'password123',
+            wishlist: {
+                connect: [{ id: tShirt.id }],
+            },
+        },
+    });
+
+    const janeSmith = await prisma.customer.create({
+        data: {
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane.smith@example.com',
+            password: 'password456',
+            wishlist: {
+                connect: [{ id: runningShoes.id }],
+            },
+        },
+    });
+
+    const aliceJohnson = await prisma.customer.create({
+        data: {
+            firstName: 'Alice',
+            lastName: 'Johnson',
+            email: 'alice.johnson@example.com',
+            password: 'password789',
+            wishlist: {
+                connect: [{ id: casualHoodie.id }],
+            },
+        },
+    });
+
+    const tempLogin = await prisma.customer.create({
+        data: {
+            firstName: 'Temp',
+            lastName: 'Login',
+            email: 'temp.login@example.com',
+            password: 'loginpassword',
+            wishlist: {},
+        },
+    });
 };
 
 (async () => {
