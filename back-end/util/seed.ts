@@ -123,6 +123,91 @@ const main = async () => {
             wishlist: {},
         },
     });
+
+    const cartJohn = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: johnDoe.id },
+            },
+            products: {
+                create: [
+                    {
+                        product: {
+                            connect: { id: tShirt.id },
+                        },
+                        quantity: 2,
+                    },
+                    {
+                        product: {
+                            connect: { id: runningShoes.id },
+                        },
+                        quantity: 1,
+                    },
+                ],
+            },
+            // totalAmount: ,
+        },
+    });
+
+    const cartJaneSmith = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: janeSmith.id },
+            },
+            products: {
+                create: [
+                    {
+                        product: {
+                            connect: { id: tShirt.id },
+                        },
+                        quantity: 1,
+                    },
+                    {
+                        product: {
+                            connect: { id: casualHoodie.id },
+                        },
+                        quantity: 2,
+                    },
+                ],
+            },
+            // totalAmount: ,
+        },
+    });
+
+    const cartAliceJohnson = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: aliceJohnson.id },
+            },
+            products: {
+                create: [
+                    {
+                        product: {
+                            connect: { id: runningShoes.id },
+                        },
+                        quantity: 2,
+                    },
+                    {
+                        product: {
+                            connect: { id: casualHoodie.id },
+                        },
+                        quantity: 1,
+                    },
+                ],
+            },
+            // totalAmount: ,
+        },
+    });
+
+    const cartTempLogin = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: tempLogin.id },
+            },
+            products: {},
+            // totalAmount: ,
+        },
+    });
 };
 
 (async () => {

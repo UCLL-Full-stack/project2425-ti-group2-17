@@ -45,5 +45,4 @@ model Cart {
   customer     Customer  @relation(fields: [customerId], references: [id])
   customerId   Int       @unique
   products     CartItem[]
-  totalAmount  Int
 }
