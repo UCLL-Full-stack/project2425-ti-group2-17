@@ -1,3 +1,5 @@
+import { Product as ProductPrisma } from '@prisma/client';
+
 export class Product {
     private id?: number;
     private name: string;
@@ -167,5 +169,29 @@ export class Product {
         }
 
         this.stock += quantity;
+    }
+
+    static from({
+        id,
+        name,
+        price,
+        stock,
+        category,
+        description,
+        images,
+        sizes,
+        colors,
+    }: ProductPrisma) {
+        return new Product({
+            id,
+            name,
+            price,
+            stock,
+            category,
+            description,
+            images,
+            sizes,
+            colors,
+        });
     }
 }

@@ -1,6 +1,12 @@
 import { CartItem } from './cartItem';
 import { Customer } from './customer';
 import { Product } from './product';
+import {
+    Customer as CustomerPrisma,
+    Product as ProductPrisma,
+    CartItem as CartItemPrisma,
+    Cart as CartPrisma,
+} from '@prisma/client';
 
 export class Cart {
     private id?: number;
@@ -88,4 +94,19 @@ export class Cart {
     //     this.totalAmount = this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
     //     return this.totalAmount;
     // }
+
+    // static from({
+    //     id,
+    //     customer,
+    //     products,
+    // }: CartPrisma & { Customer: CustomerPrisma; products: CartItemPrisma[] }) {
+    //     return new Cart({
+    //         id,
+    //         customer: Customer.from(customer),
+    //         products: products.map((product: CartItemPrisma) => CartItem.from(product)),
+    //     });
+    // }
 }
+
+// }: CartPrisma & { Customer: CustomerPrisma; products: (CartItemPrisma & { Product: ProductPrisma })[] }) {
+// // private totalAmount: number;

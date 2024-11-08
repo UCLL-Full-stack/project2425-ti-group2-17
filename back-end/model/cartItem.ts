@@ -1,5 +1,6 @@
 import { Cart } from './cart';
 import { Product } from './product';
+import { Product as ProductPrisma, CartItem as CartItemPrisma } from '@prisma/client';
 
 export class CartItem {
     private id?: number;
@@ -55,5 +56,13 @@ export class CartItem {
 
     getTotalPrice(): number {
         return this.product.getPrice() * this.quantity;
+    }
+
+    static from({ id, product, quantity }: CartItemPrisma & { product: ProductPrisma }) {
+        return new CartItem({
+            id,
+            product: Product.from(product),
+            quantity,
+        });
     }
 }

@@ -1,6 +1,7 @@
 import { Order } from './order';
 import { Product } from './product';
 import { User } from './user';
+import { Product as ProductPrisma, Customer as CustomerPrisma } from '@prisma/client';
 
 export class Customer extends User {
     private wishlist: Product[];
@@ -39,5 +40,23 @@ export class Customer extends User {
 
         this.wishlist = this.wishlist.filter((item) => item !== product);
         return 'Product removed from wishlist.';
+    }
+
+    static from({
+        id,
+        firstName,
+        lastName,
+        email,
+        password,
+        wishlist,
+    }: CustomerPrisma & { wishlist: ProductPrisma[] }) {
+        return new Customer({
+            id,
+            firstName,
+            lastName,
+            email,
+            password,
+            wishlist: wishlist.map((product: ProductPrisma) => Product.from(product)),
+        });
     }
 }
