@@ -59,4 +59,15 @@ export class Customer extends User {
             wishlist: wishlist.map((product: ProductPrisma) => Product.from(product)),
         });
     }
+
+    static fromWithoutWishlist({ id, firstName, lastName, email, password }: CustomerPrisma) {
+        return new Customer({
+            id,
+            firstName,
+            lastName,
+            email,
+            password,
+            wishlist: [],
+        });
+    }
 }

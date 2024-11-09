@@ -1,9 +1,10 @@
-// import { Cart } from '../model/cart';
-// import { Customer } from '../model/customer';
-// import { CartItem } from '../model/cartItem';
-// import { Product } from '../model/product';
-// import productDb from './product.db';
-// import customerDb from './customer.db';
+import { Cart } from '../model/cart';
+import { Customer } from '../model/customer';
+import { CartItem } from '../model/cartItem';
+import { Product } from '../model/product';
+import productDb from './product.db';
+import customerDb from './customer.db';
+import database from './database';
 
 // const customers: Customer[] = customerDb.getCustomers();
 
@@ -50,6 +51,20 @@
 
 // const getCarts = (): Cart[] => carts;
 
+// const getCarts = async (): Promise<Cart[]> => {
+//     try {
+//         const cartsPrisma = await database.cart.findMany({
+//             include: {
+//                 customer: true,
+//                 cartItems: { include: { product: true } },
+//             },
+//         });
+//         return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
+//     } catch (error) {
+//         throw new Error('Databse Error. See server log for details.');
+//     }
+// };
+
 // const getCartById = ({ id }: { id: number }): Cart | null => {
 //     return carts.find((cart) => cart.getId() === id) || null;
 // };
@@ -88,14 +103,14 @@
 //     return 'cart successfully emptied.';
 // };
 
-// export default {
-//     getCarts,
-//     getCartById,
-//     createCart,
-//     getCartByCustomerEmail,
-//     getCartByCustomerId,
-//     deleteCart,
-//     addCartItem,
-//     removeCartItem,
-//     emptyCart,
-// };
+export default {
+    // getCarts,
+    //     getCartById,
+    //     createCart,
+    //     getCartByCustomerEmail,
+    //     getCartByCustomerId,
+    //     deleteCart,
+    //     addCartItem,
+    //     removeCartItem,
+    //     emptyCart,
+};

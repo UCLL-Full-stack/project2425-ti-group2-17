@@ -1,63 +1,63 @@
-// /**
-//  * @swagger
-//  * components:
-//  *   schemas:
-//  *     CartItem:
-//  *       type: object
-//  *       properties:
-//  *         product:
-//  *           $ref: '#/components/schemas/Product'
-//  *         quantity:
-//  *           type: integer
-//  *           description: Quantity of the product in the cart
-//  *
-//  *     Cart:
-//  *       type: object
-//  *       properties:
-//  *         id:
-//  *           type: integer
-//  *         customer:
-//  *           $ref: '#/components/schemas/Customer'
-//  *         products:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/CartItem'
-//  *
-//  *     CartInput:
-//  *       type: object
-//  *       properties:
-//  *         customer:
-//  *           $ref: '#/components/schemas/Customer'
-//  *         products:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/CartItem'
-//  */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CartItem:
+ *       type: object
+ *       properties:
+ *         product:
+ *           $ref: '#/components/schemas/Product'
+ *         quantity:
+ *           type: integer
+ *           description: Quantity of the product in the cart
+ *
+ *     Cart:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         customer:
+ *           $ref: '#/components/schemas/Customer'
+ *         products:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CartItem'
+ *
+ *     CartInput:
+ *       type: object
+ *       properties:
+ *         customer:
+ *           $ref: '#/components/schemas/Customer'
+ *         products:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CartItem'
+ */
 
-// import { NextFunction, Request, Response, Router } from 'express';
-// import cartService from '../service/cart.service';
-// import { CartInput, CartItemInput } from '../types';
+import { NextFunction, Request, Response, Router } from 'express';
+import cartService from '../service/cart.service';
+import { CartInput, CartItemInput } from '../types';
 
-// const cartRouter = Router();
+const cartRouter = Router();
 
-// /**
-//  * @swagger
-//  * /carts:
-//  *   get:
-//  *     summary: Retrieve a list of carts
-//  *     tags: [Carts]
-//  *     responses:
-//  *       200:
-//  *         description: A list of carts
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                 $ref: '#/components/schemas/Cart'
-//  *       500:
-//  *         description: Internal server error
-//  */
+/**
+ * @swagger
+ * /carts:
+ *   get:
+ *     summary: Retrieve a list of carts
+ *     tags: [Carts]
+ *     responses:
+ *       200:
+ *         description: A list of carts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cart'
+ *       500:
+ *         description: Internal server error
+ */
 
 // cartRouter.get('/', (req: Request, res: Response, next: NextFunction) => {
 //     try {
@@ -253,4 +253,4 @@
 //     }
 // );
 
-// export { cartRouter };
+export { cartRouter };

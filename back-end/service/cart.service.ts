@@ -1,8 +1,8 @@
-// import { Cart } from '../model/cart';
+import { Cart } from '../model/cart';
 // import { Product } from '../model/product';
 // import { CartItem } from '../model/cartItem';
 // import { Customer } from '../model/customer';
-// import cartDB from '../repository/cart.db';
+import cartDB from '../repository/cart.db';
 // import { CartInput, CartItemInput, CustomerInput } from '../types';
 // import productDb from '../repository/product.db';
 // import { Payment } from '../model/payment';
@@ -10,7 +10,7 @@
 // import { Order } from '../model/order';
 // import orderDb from '../repository/order.db';
 
-// const getCarts = (): Cart[] => cartDB.getCarts();
+// const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
 // const getCartById = (id: number): Cart => {
 //     const cart = cartDB.getCartById({ id });
@@ -77,10 +77,10 @@
 //     return order;
 // };
 
-// export default {
-//     getCarts,
-//     getCartById,
-//     addCartItem,
-//     removeCartItem,
-//     convertCartToOrder,
-// };
+export default {
+    // getCarts,
+    //     getCartById,
+    //     addCartItem,
+    //     removeCartItem,
+    //     convertCartToOrder,
+};

@@ -95,20 +95,154 @@ export class Cart {
     //     return this.totalAmount;
     // }
 
+    // static from(cartPrisma: CartPrisma & { products: CartItem[]; customer: Customer }) {
+    //     const customer = cartPrisma.customer;
+    //     const products = cartPrisma.products.map((cartItem) => CartItem.from(cartItem));
+
+    //     return new Cart({
+    //         id: cartPrisma.id,
+    //         customer: Customercustomer,
+    //         products: products,
+    //     });
+    // }
+
     // static from({
     //     id,
     //     customer,
     //     products,
-    // }: CartPrisma & { Customer: CustomerPrisma; products: CartItemPrisma[] }) {
+    // }: CartPrisma & { customer: CustomerPrisma; products: CartItemPrisma[] }) {
     //     return new Cart({
     //         id,
-    //         customer: Customer.from(customer),
+    //         customer: Customer.fromWithoutWishlist(customer),
     //         products: products.map((product: CartItemPrisma) => CartItem.from(product)),
     //     });
     // }
+    //     static from({ id, product, quantity }: CartItemPrisma & { product: ProductPrisma }) {
+
+    // static from(cartPrisma: CartPrisma & { products: CartItemPrisma[]; customer: CustomerPrisma }) {
+    //     const customer = Customer.from(cartPrisma.customer);
+    //     const products = cartPrisma.products.map((cartItemPrisma) =>
+    //         CartItem.from({
+    //             id: cartItemPrisma.id,
+    //             product: Product.from(cartItemPrisma.product),
+    //             quantity: cartItemPrisma.quantity,
+    //         })
+    //     );
+
+    //     return new Cart({
+    //         id: cartPrisma.id,
+    //         customer: customer,
+    //         products: products,
+    //     });
+    // }
+
+    // static from(cartPrisma: CartPrisma & { products: CartItemPrisma[]; customer: CustomerPrisma }) {
+    //     const customer = cartPrisma.customer;
+    //     const products = cartPrisma.products.map((cartItemPrisma) =>
+    //         CartItem.from({
+    //             id: cartItemPrisma.id,
+    //             product: Product.from(cartItemPrisma.product),
+    //             quantity: cartItemPrisma.quantity,
+    //         })
+    //     );
+
+    //     return new Cart({
+    //         id: cartPrisma.id,
+    //         customer: customer,
+    //         products: products,
+    //     });
+    // }
+
+    // static from({
+    //     id,
+    //     customer,
+    //     products,
+    // }: CartPrisma & { customer: CustomerPrisma; products: CartItemPrisma[] }) {
+    //     return new Cart({
+    //         id,
+    //         customer: Customer.from(customer),
+    //         products: products.map((cartItem: CartItemPrisma) => CartItem.from(cartItem)),
+    //     });
+    // }
+
+    // static from(cartPrisma: {
+    //     id: number;
+    //     customer: {
+    //         id: number;
+    //         firstName: string;
+    //         lastName: string;
+    //         email: string;
+    //         password: string;
+    //     };
+    //     cartItems: Array<{
+    //         product: {
+    //             id: number;
+    //             name: string;
+    //             price: number;
+    //             stock: number;
+    //             category: string[];
+    //             description: string;
+    //             images: string[];
+    //             sizes: string[];
+    //             colors: string[];
+    //         };
+    //         quantity: number;
+    //     }>;
+    // }): CartPrisma {
+    //     const customer = Customer.fromWithoutWishlist(cartPrisma.customer);
+    //     const products = cartPrisma.cartItems.map(
+    //         (item) =>
+    //             new CartItem({
+    //                 product: Product.from(item.product),
+    //                 quantity: item.quantity,
+    //             })
+    //     );
+
+    //     return new Cart({
+    //         id: cartPrisma.id,
+    //         customer: customer,
+    //         products: products,
+    //     });
+    // }
 }
-
-// }: CartPrisma & { Customer: CustomerPrisma; products: (CartItemPrisma & { Product: ProductPrisma })[] }) {
-//     }: CartPrisma & { Customer: CustomerPrisma; products: CartItemPrisma[] }) {
-
 // // private totalAmount: number;
+
+// static from(cartPrisma: {
+//     id: number;
+//     customer: {
+//         id: number;
+//         firstName: string;
+//         lastName: string;
+//         email: string;
+//         password: string;
+//     };
+//     cartItems: Array<{
+//         product: {
+//             id: number;
+//             name: string;
+//             price: number;
+//             stock: number;
+//             category: string[];
+//             description: string;
+//             images: string[];
+//             sizes: string[];
+//             colors: string[];
+//         };
+//         quantity: number;
+//     }>;
+// }): Cart {
+//     const customer = Customer.fromWithoutWishlist(cartPrisma.customer);
+//     const products = cartPrisma.cartItems.map(
+//         (item) =>
+//             new CartItem({
+//                 product: Product.from(item.product),
+//                 quantity: item.quantity,
+//             })
+//     );
+
+//     return new Cart({
+//         id: cartPrisma.id,
+//         customer: customer,
+//         products: products,
+//     });
+// }
