@@ -2,29 +2,31 @@ import { Customer } from '../model/customer';
 import { Order } from '../model/order';
 import { Product } from '../model/product';
 import { User } from '../model/user';
-import cartDb from '../repository/cart.db';
+// import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
-import orderDb from '../repository/order.db';
 import productDb from '../repository/product.db';
 import { CustomerInput } from '../types';
-import cartService from './cart.service';
+// import cartService from './cart.service';
 
-const getCustomers = (): Customer[] => customerDB.getCustomers();
+const getCustomers = async (): Promise<Customer[]> => await customerDB.getCustomers();
 
-const getCustomerById = (id: number): Customer => {
-    const customer = customerDB.getCustomerById({ id });
+const getCustomerById = async (id: number): Promise<Customer | null> => {
+    const customer = await customerDB.getCustomerById({ id });
 
     if (!customer) throw new Error(`Customer with id ${id} does not exist.`);
 
     return customer;
 };
 
-const createCustomer = ({ firstName, lastName, email, password }: CustomerInput): Customer => {
-    const existingCustomer = customerDB.getCustomerByEmail({ email });
+const createCustomer = async ({
+    firstName,
+    lastName,
+    email,
+    password,
+}: CustomerInput): Promise<Customer> => {
+    const existingCustomer = await customerDB.getCustomerByEmail({ email });
 
     if (existingCustomer) throw new Error('A customer with this email already exists.');
-
-    const customerId = customerDB.getCustomers().length + 1;
 
     const customer = new Customer({
         firstName,
@@ -32,69 +34,71 @@ const createCustomer = ({ firstName, lastName, email, password }: CustomerInput)
         email,
         password,
         wishlist: [],
-        id: customerId,
     });
 
-    const existingCart = cartDb.getCartByCustomerEmail({
-        email: customer.getEmail(),
-    });
+    // const existingCart = await cartDb.getCartByCustomerEmail({
+    //     email: customer.getEmail(),
+    // });
 
-    if (existingCart) throw new Error('This customer already has a cart.');
+    // if (existingCart) throw new Error('This customer already has a cart.');
 
-    cartDb.createCart(customer);
+    // await cartDb.createCart(customer);
 
-    return customerDB.createCustomer(customer);
+    return await customerDB.createCustomer(customer);
 };
 
-const updateCustomer = (
+const updateCustomer = async (
     id: number,
     { firstName, lastName, email, password }: CustomerInput
-): Customer => {
-    const existingCustomer = customerDB.getCustomerById({ id });
-
+): Promise<Customer> => {
+    const existingCustomer = await customerDB.getCustomerById({ id });
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
     const newUserData = { firstName, lastName, email, password };
 
     existingCustomer.updateUser(newUserData);
 
-    return customerDB.updateCustomer(existingCustomer);
+    return await customerDB.updateCustomer(existingCustomer);
 };
 
-const deleteCustomer = (customerId: number): string => {
-    const existingCustomer = customerDB.getCustomerById({ id: customerId });
+const deleteCustomer = async (customerId: number): Promise<string> => {
+    const existingCustomer = await customerDB.getCustomerById({ id: customerId });
 
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
-    const existingCart = cartDb.getCartByCustomerId({ id: customerId });
+    // const existingCart = await cartDb.getCartByCustomerId({ id: customerId });
 
-    if (!existingCart) {
-        throw new Error('That customer does not have a cart.');
-    }
+    // if (!existingCart) {
+    //     throw new Error('That customer does not have a cart.');
+    // }
 
-    cartDb.deleteCart({ id: existingCart.getId()! });
+    // await cartDb.deleteCart({ id: existingCart.getId()! });
 
-    return customerDB.deleteCustomer({ id: customerId });
+    return await customerDB.deleteCustomer({ id: customerId });
 };
 
-const addProductToWishlist = (customerId: number, productId: number): Product => {
-    const customer = getCustomerById(customerId);
-    const product = productDb.getProductById({ id: productId });
+const addProductToWishlist = async (customerId: number, productId: number): Promise<Product> => {
+    const customer = await getCustomerById(customerId);
+    const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
-    if (customer.getWishlist().some((item) => item.getId() === productId)) {
+
+    if (customer!.getWishlist().some((item) => item.getId() === productId)) {
         throw new Error(`Product with id ${productId} is already in the wishlist.`);
     }
-    return customerDB.addProductToWishlist(customer, product);
+    return await customerDB.addProductToWishlist(customer!, product);
 };
 
-const removeProductFromWishlist = (customerId: number, productId: number): string => {
-    const customer = getCustomerById(customerId);
-    const product = productDb.getProductById({ id: productId });
+const removeProductFromWishlist = async (
+    customerId: number,
+    productId: number
+): Promise<string> => {
+    const customer = await getCustomerById(customerId);
+    const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
-    if (!customer.getWishlist().some((item) => item.getId() === productId)) {
+    if (!customer!.getWishlist().some((item) => item.getId() === productId)) {
         throw new Error(`Product with id ${productId} is not in the wishlist.`);
     }
-    return customerDB.removeProductFromWishlist(customer, product);
+    return await customerDB.removeProductFromWishlist(customer!, product);
 };
 
 export default {

@@ -1,4 +1,5 @@
 import { Product } from '../model/product';
+import database from './database';
 
 const products: Product[] = [
     new Product({
@@ -65,8 +66,23 @@ const createProduct = (product: Product): Product => {
 
 const getProducts = (): Product[] => products;
 
-const getProductById = ({ id }: { id: number }): Product | null => {
-    return products.find((product) => product.getId() === id) || null;
+// const getProductById = ({ id }: { id: number }): Product | null => {
+//     return products.find((product) => product.getId() === id) || null;
+// };
+
+const getProductById = async ({ id }: { id: number }): Promise<Product | null> => {
+    try {
+        const productPrisma = await database.product.findUnique({
+            where: { id: id },
+        });
+
+        if (!productPrisma) {
+            return null;
+        }
+        return Product.from(productPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
 };
 
 const getProductByName = ({ name }: { name: string }): Product | null => {

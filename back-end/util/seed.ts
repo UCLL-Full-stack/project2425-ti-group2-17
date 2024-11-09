@@ -7,10 +7,16 @@ import { set } from 'date-fns';
 const prisma = new PrismaClient();
 
 const main = async () => {
-    await prisma.cart.deleteMany();
+    // await prisma.cart.deleteMany();
+    // await prisma.cartItem.deleteMany();
+    // await prisma.cart.deleteMany();
+    // await prisma.customer.deleteMany();
+    // await prisma.product.deleteMany();
+
     await prisma.cartItem.deleteMany();
     await prisma.cart.deleteMany();
-    await prisma.customer.deleteMany({});
+    await prisma.cart.deleteMany();
+    await prisma.customer.deleteMany();
     await prisma.product.deleteMany();
 
     const tShirt = await prisma.product.create({

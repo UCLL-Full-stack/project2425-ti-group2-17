@@ -109,4 +109,6 @@ export class Cart {
 }
 
 // }: CartPrisma & { Customer: CustomerPrisma; products: (CartItemPrisma & { Product: ProductPrisma })[] }) {
+//     }: CartPrisma & { Customer: CustomerPrisma; products: CartItemPrisma[] }) {
+
 // // private totalAmount: number;

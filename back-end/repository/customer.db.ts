@@ -1,83 +1,125 @@
 import { Customer } from '../model/customer';
 import { Product } from '../model/product';
+import database from './database';
 import productDb from './product.db';
 
 const products: Product[] = productDb.getProducts();
 
-const customers: Customer[] = [
-    new Customer({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: 'password123',
-        wishlist: [products[0]],
-        id: 1,
-    }),
-    new Customer({
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@example.com',
-        password: 'password456',
-        wishlist: [products[1]],
-        id: 2,
-    }),
-    new Customer({
-        firstName: 'Alice',
-        lastName: 'Johnson',
-        email: 'alice.johnson@example.com',
-        password: 'password789',
-        wishlist: [products[2]],
-        id: 3,
-    }),
-    new Customer({
-        firstName: 'Temp',
-        lastName: 'Login',
-        email: 'temp.login@example.com',
-        password: 'loginpassword',
-        wishlist: [],
-        id: 4,
-    }),
-];
-
-const getCustomers = (): Customer[] => customers;
-
-const getCustomerById = ({ id }: { id: number }): Customer | null => {
-    return customers.find((customer) => customer.getId() === id) || null;
-};
-
-const getCustomerByEmail = ({ email }: { email: string }): Customer | null => {
-    return customers.find((customer) => customer.getEmail() === email) || null;
-};
-
-const createCustomer = (customer: Customer): Customer => {
-    customers.push(customer);
-    return customer;
-};
-
-const updateCustomer = (updatedCustomer: Customer): Customer => {
-    const index = customers.findIndex((customer) => customer.getId() === updatedCustomer.getId());
-
-    if (index === -1) {
-        throw new Error('There is no customer with that id.');
+const getCustomers = async (): Promise<Customer[]> => {
+    try {
+        const customersPrisma = await database.customer.findMany({
+            include: { wishlist: true },
+        });
+        return customersPrisma.map((customerPrisma) => Customer.from(customerPrisma));
+    } catch (error) {
+        throw new Error('Databse Error. See server log for details.');
     }
-
-    customers[index] = updatedCustomer;
-    return customers[index];
 };
 
-const deleteCustomer = ({ id }: { id: number }) => {
-    const customerIndex = customers.findIndex((customer) => customer.getId() === id);
+const getCustomerById = async ({ id }: { id: number }): Promise<Customer | null> => {
+    try {
+        const customerPrisma = await database.customer.findUnique({
+            where: { id: id },
+            include: { wishlist: true },
+        });
 
-    customers.splice(customerIndex, 1);
-    return 'Customer has been deleted.';
+        if (!customerPrisma) {
+            return null;
+        }
+        return Customer.from(customerPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
 };
 
-const addProductToWishlist = (customer: Customer, product: Product): Product => {
-    return customer.addProductToWishlist(product);
+const getCustomerByEmail = async ({ email }: { email: string }): Promise<Customer | null> => {
+    try {
+        const customerPrisma = await database.customer.findUnique({
+            where: { email: email },
+            include: { wishlist: true },
+        });
+
+        if (!customerPrisma) {
+            return null;
+        }
+        return Customer.from(customerPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
 };
 
-const removeProductFromWishlist = (customer: Customer, product: Product): string => {
-    return customer.removeProductFromWishlist(product);
+const createCustomer = async (customer: Customer): Promise<Customer> => {
+    try {
+        const customerPrisma = await database.customer.create({
+            data: {
+                firstName: customer.getFirstName(),
+                lastName: customer.getLastName(),
+                email: customer.getEmail(),
+                password: customer.getPassword(),
+            },
+            include: { wishlist: true },
+        });
+        return Customer.from(customerPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
+
+const updateCustomer = async (updatedCustomer: Customer): Promise<Customer> => {
+    try {
+        const customerPrisma = await database.customer.update({
+            where: { id: updatedCustomer.getId() },
+            data: {
+                firstName: updatedCustomer.getFirstName(),
+                lastName: updatedCustomer.getLastName(),
+                email: updatedCustomer.getEmail(),
+                password: updatedCustomer.getPassword(),
+            },
+            include: { wishlist: true },
+        });
+        return Customer.from(customerPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
+
+const deleteCustomer = async ({ id }: { id: number }): Promise<string> => {
+    try {
+        console.log(id);
+        await database.customer.delete({
+            where: { id: id },
+        });
+        return 'Customer has been deleted.';
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database Error. See server log for details.');
+    }
+};
+
+const addProductToWishlist = async (customer: Customer, product: Product): Promise<Product> => {
+    await database.customer.update({
+        where: { id: customer.getId() },
+        data: {
+            wishlist: {
+                connect: { id: product.getId() },
+            },
+        },
+    });
+
+    return product;
+};
+
+const removeProductFromWishlist = async (customer: Customer, product: Product): Promise<string> => {
+    await database.customer.update({
+        where: { id: customer.getId() },
+        data: {
+            wishlist: {
+                disconnect: { id: product.getId() },
+            },
+        },
+    });
+
+    return 'Product has been removed from the wishlist.';
 };
 
 export default {
