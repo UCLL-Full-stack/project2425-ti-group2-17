@@ -1,87 +1,87 @@
-// /**
-//  * @swagger
-//  * components:
-//  *   schemas:
-//  *     Customer:
-//  *       type: object
-//  *       properties:
-//  *         id:
-//  *           type: integer
-//  *         firstName:
-//  *           type: string
-//  *         lastName:
-//  *           type: string
-//  *         email:
-//  *           type: string
-//  *         recentOrders:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/Order'
-//  *         wishlist:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/ProductInput'
-//  *
-//  *     Payment:
-//  *       type: object
-//  *       properties:
-//  *         id:
-//  *           type: integer
-//  *         amount:
-//  *           type: number
-//  *           format: float
-//  *         date:
-//  *           type: string
-//  *           format: date-time
-//  *         paymentStatus:
-//  *           type: string
-//  *           example: "Completed"
-//  *
-//  *     OrderItemInput:
-//  *       type: object
-//  *       properties:
-//  *         order:
-//  *           $ref: '#/components/schemas/Order'
-//  *         product:
-//  *           $ref: '#/components/schemas/ProductInput'
-//  *         quantity:
-//  *           type: integer
-//  *
-//  *     Order:
-//  *       type: object
-//  *       properties:
-//  *         id:
-//  *           type: integer
-//  *         customer:
-//  *           $ref: '#/components/schemas/Customer'
-//  *         items:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/OrderItemInput'
-//  *         date:
-//  *           type: string
-//  *           format: date-time
-//  *         payment:
-//  *           $ref: '#/components/schemas/Payment'
-//  *         totalAmount:
-//  *           type: number
-//  *           format: float
-//  *
-//  *     OrderInput:
-//  *       type: object
-//  *       properties:
-//  *         customer:
-//  *           $ref: '#/components/schemas/Customer'
-//  *         items:
-//  *           type: array
-//  *           items:
-//  *             $ref: '#/components/schemas/OrderItemInput'
-//  *         date:
-//  *           type: string
-//  *           format: date-time
-//  *         payment:
-//  *           $ref: '#/components/schemas/Payment'
-//  */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Customer:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         email:
+ *           type: string
+ *         recentOrders:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Order'
+ *         wishlist:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProductInput'
+ *
+ *     Payment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         amount:
+ *           type: number
+ *           format: float
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         paymentStatus:
+ *           type: string
+ *           example: "Completed"
+ *
+ *     OrderItemInput:
+ *       type: object
+ *       properties:
+ *         order:
+ *           $ref: '#/components/schemas/Order'
+ *         product:
+ *           $ref: '#/components/schemas/ProductInput'
+ *         quantity:
+ *           type: integer
+ *
+ *     Order:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         customer:
+ *           $ref: '#/components/schemas/Customer'
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/OrderItemInput'
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         payment:
+ *           $ref: '#/components/schemas/Payment'
+ *         totalAmount:
+ *           type: number
+ *           format: float
+ *
+ *     OrderInput:
+ *       type: object
+ *       properties:
+ *         customer:
+ *           $ref: '#/components/schemas/Customer'
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/OrderItemInput'
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         payment:
+ *           $ref: '#/components/schemas/Payment'
+ */
 
 // import { Router, Request, Response, NextFunction } from 'express';
 // import orderService from '../service/order.service';

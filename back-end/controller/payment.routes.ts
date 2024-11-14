@@ -1,36 +1,36 @@
-// /**
-//  * @swagger
-//  * components:
-//  *   schemas:
-//  *     Payment:
-//  *       type: object
-//  *       properties:
-//  *         id:
-//  *           type: integer
-//  *           format: int64
-//  *         amount:
-//  *           type: number
-//  *           format: float
-//  *         date:
-//  *           type: string
-//  *           format: date-time
-//  *         paymentStatus:
-//  *           type: string
-//  *           enum: [paid, unpaid]
-//  *
-//  *     PaymentInput:
-//  *       type: object
-//  *       properties:
-//  *         amount:
-//  *           type: number
-//  *           format: float
-//  *         date:
-//  *           type: string
-//  *           format: date-time
-//  *         paymentStatus:
-//  *           type: string
-//  *           enum: [paid, unpaid]
-//  */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Payment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
+ *         amount:
+ *           type: number
+ *           format: float
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         paymentStatus:
+ *           type: string
+ *           enum: [paid, unpaid]
+ *
+ *     PaymentInput:
+ *       type: object
+ *       properties:
+ *         amount:
+ *           type: number
+ *           format: float
+ *         date:
+ *           type: string
+ *           format: date-time
+ *         paymentStatus:
+ *           type: string
+ *           enum: [paid, unpaid]
+ */
 
 // import { Router, Request, Response, NextFunction } from 'express';
 // import paymentService from '../service/payment.service';
