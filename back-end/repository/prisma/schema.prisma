@@ -64,3 +64,12 @@ model OrderItem {
   productId Int
   quantity  Int
 }
+
+model Payment {
+  id            Int     @id @default(autoincrement())
+  amount        Int
+  date          DateTime
+  paymentStatus String
+  order         Order   @relation(fields: [orderId], references: [id])
+  orderId       Int     @unique
+}
