@@ -6,12 +6,20 @@ import { useState, useEffect } from 'react';
 const Header: React.FC = () => {
     const router = useRouter();
     const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
-    const [loggedInUserEmail, setLoggedInUserEmail] = useState<number | null>(null);
+    const [loggedInUserEmail, setLoggedInUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
-        setLoggedInUserId(Number(sessionStorage.getItem('loggedInUserId')));
-        setLoggedInUserEmail(Number(sessionStorage.getItem('loggedInUserEmail')));
-    });
+        const userId = sessionStorage.getItem('loggedInUserId');
+        const userEmail = sessionStorage.getItem('loggedInUserEmail');
+
+        if (userId) {
+            setLoggedInUserId(parseInt(userId));
+        } else {
+            setLoggedInUserId(null);
+        }
+
+        setLoggedInUserEmail(userEmail);
+    }, []);
 
     const handleClick = () => {
         sessionStorage.removeItem('loggedInUserId');
@@ -46,26 +54,23 @@ const Header: React.FC = () => {
                         className="mr-2"
                     />
                 </button>
-                {!loggedInUserId && (
-                    <Link
-                        href="/login"
-                        className="px-4 text-white text-xl hover:bg-gray-600 rounded-lg"
-                    >
+                {!loggedInUserEmail && (
+                    <Link href="/login" className="nav-link px-4 fs-5 text-white">
                         Login
                     </Link>
                 )}
-                {loggedInUserId && (
+                {loggedInUserEmail && (
                     <a
                         href="/login"
-                        className="px-4 text-white text-xl hover:bg-gray-600 rounded-lg"
+                        className="nav-link px-4 fs-5 text-white"
                         onClick={handleClick}
                     >
                         Logout
                     </a>
                 )}
-                {loggedInUserId && (
-                    <div className="text-white ms-5 mt-2 md:mt-0 pt-1 md:pt-0 grow">
-                        Welcome, {loggedInUserId}!
+                {loggedInUserEmail && (
+                    <div className="nav-link px-4 fs-5 text-white">
+                        Welcome, {loggedInUserEmail}!
                     </div>
                 )}
             </nav>

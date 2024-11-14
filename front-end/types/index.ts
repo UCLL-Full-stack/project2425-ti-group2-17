@@ -73,4 +73,20 @@ type ProductInput = {
     colors: string[];
 };
 
-export type { Admin, Customer, Cart, CartItem, Order, OrderItem, Payment, Product, ProductInput };
+type StatusMessage = {
+    message: string;
+    type: 'error' | 'success';
+};
+
+export type {
+    Admin,
+    Customer,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    Payment,
+    Product,
+    ProductInput,
+    StatusMessage,
+};
