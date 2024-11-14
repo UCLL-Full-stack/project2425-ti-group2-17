@@ -2,6 +2,7 @@ import { Customer } from '../model/customer';
 import { Order } from '../model/order';
 import { Product } from '../model/product';
 import { User } from '../model/user';
+import cartDb from '../repository/cart.db';
 // import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
 import productDb from '../repository/product.db';

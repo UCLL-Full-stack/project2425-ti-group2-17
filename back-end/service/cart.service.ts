@@ -12,18 +12,11 @@ import cartDB from '../repository/cart.db';
 
 const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
-// const getCarts = async (): Promise<Cart[]> => {
-//     const carts = await cartDB.getCarts();
-//     console.log('test');
-//     console.log(carts[0]);
-//     return carts;
-// };
-
-// const getCartById = (id: number): Cart => {
-//     const cart = cartDB.getCartById({ id });
-//     if (!cart) throw new Error(`Cart with id ${id} does not exist.`);
-//     return cart;
-// };
+const getCartById = async (id: number): Promise<Cart | null> => {
+    const cart = await cartDB.getCartById({ id });
+    if (!cart) throw new Error(`Cart with id ${id} does not exist.`);
+    return cart;
+};
 
 // const addCartItem = (cartId: number, productId: number, quantity: number): CartItem => {
 //     const existingCart = getCartById(cartId);
@@ -86,7 +79,7 @@ const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
 export default {
     getCarts,
-    //     getCartById,
+    getCartById,
     //     addCartItem,
     //     removeCartItem,
     //     convertCartToOrder,

@@ -65,17 +65,93 @@ const getCarts = async (): Promise<Cart[]> => {
     }
 };
 
-// const getCartById = ({ id }: { id: number }): Cart | null => {
-//     return carts.find((cart) => cart.getId() === id) || null;
-// };
+const getCartById = async ({ id }: { id: number }): Promise<Cart | null> => {
+    try {
+        const cartPrisma = await database.cart.findUnique({
+            where: { id: id },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+
+        if (!cartPrisma) {
+            return null;
+        }
+        return Cart.from(cartPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
 
 // const getCartByCustomerEmail = ({ email }: { email: string }): Cart | null => {
 //     return carts.find((cart) => cart.getCustomer().getEmail() === email) || null;
 // };
 
-// const getCartByCustomerId = ({ id }: { id: number }): Cart | null => {
-//     return carts.find((cart) => cart.getCustomer().getId() === id) || null;
-// };
+const getCartByCustomerEmail = async ({ email }: { email: number }): Promise<Cart | null> => {
+    try {
+        const cartPrisma = await database.cart.findUnique({
+            where: { email: email },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+
+        if (!cartPrisma) {
+            return null;
+        }
+        return Cart.from(cartPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
+
+const getCartByCustomerId = async ({ id }: { id: number }): Promise<Cart | null> => {
+    try {
+        const cartPrisma = await database.cart.findUnique({
+            where: { customerId: id },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+
+        if (!cartPrisma) {
+            return null;
+        }
+        return Cart.from(cartPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
+
+const createCart = async (cart: Cart): Promise<Cart> => {
+    try {
+        const cartPrisma = await database.cart.create({
+            data: {
+                customer: {
+                    connect: { id: cart.getCustomer().getId() },
+                },
+                cartItems: {
+                    create: cart.getProducts().map((product) => ({
+                        product: {
+                            connect: { id: product.getId() },
+                        },
+                        quantity: product.getQuantity(),
+                    })),
+                },
+            },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+        return Cart.from(cartPrisma);
+    } catch (error) {
+        throw new Error('Database Error. See server log for details.');
+    }
+};
 
 // const createCart = (customer: Customer): Cart => {
 //     const cart = new Cart({ customer, products: [] });
@@ -105,10 +181,10 @@ const getCarts = async (): Promise<Cart[]> => {
 
 export default {
     getCarts,
-    //     getCartById,
-    //     createCart,
+    getCartById,
+    createCart,
     //     getCartByCustomerEmail,
-    //     getCartByCustomerId,
+    getCartByCustomerId,
     //     deleteCart,
     //     addCartItem,
     //     removeCartItem,
