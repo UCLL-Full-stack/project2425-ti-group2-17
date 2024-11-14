@@ -1,9 +1,6 @@
 import { Customer } from '../model/customer';
 import { Product } from '../model/product';
 import database from './database';
-import productDb from './product.db';
-
-const products: Product[] = productDb.getProducts();
 
 const getCustomers = async (): Promise<Customer[]> => {
     try {

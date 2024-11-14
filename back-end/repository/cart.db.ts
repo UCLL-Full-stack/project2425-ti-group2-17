@@ -235,7 +235,7 @@ const removeCartItem = async (
 ): Promise<CartItem | string> => {
     try {
         const productSize = cart.getProducts().length;
-        const cartItem = cart.addItem(product, quantity);
+        const cartItem = cart.removeItem(product, quantity);
         const newProductSize = cart.getProducts().length;
         const existingCartItem = await database.cartItem.findFirst({
             where: {
@@ -251,7 +251,7 @@ const removeCartItem = async (
                 where: { id: existingCartItem.id },
             });
             return 'Item removed from cart.';
-        } else {
+        } else if (cartItem instanceof CartItem) {
             await database.cartItem.update({
                 where: { id: existingCartItem.id },
                 data: {
@@ -270,6 +270,8 @@ const removeCartItem = async (
                 throw new Error('CartItem not found.');
             }
             return CartItem.from(cartItemPrisma);
+        } else {
+            throw new Error('CartItem not found.');
         }
     } catch (error) {
         // throw new Error('Database Error. See server log for details.');
