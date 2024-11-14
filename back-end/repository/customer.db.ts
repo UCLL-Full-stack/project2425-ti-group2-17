@@ -110,7 +110,14 @@ const addProductToWishlist = async (customer: Customer, product: Product): Promi
                 },
             },
         });
-        return product;
+        const productPrisma = await database.product.findUnique({
+            where: { id: product.getId() },
+        });
+
+        if (!productPrisma) {
+            throw new Error('Product not found.');
+        }
+        return Product.from(productPrisma);
     } catch (error) {
         // throw new Error('Database Error. See server log for details.');
         throw error;

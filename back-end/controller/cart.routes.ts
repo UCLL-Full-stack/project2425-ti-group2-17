@@ -103,54 +103,54 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
     }
 });
 
-// /**
-//  * @swagger
-//  * /carts/addItems/{cartId}/{productId}/{quantity}:
-//  *   put:
-//  *     summary: Add an item to the cart or increase it's quantity
-//  *     tags: [Carts]
-//  *     parameters:
-//  *       - in: path
-//  *         name: cartId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Id of the cart
-//  *       - in: path
-//  *         name: productId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Id of the product
-//  *       - in: path
-//  *         name: quantity
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Quantity of the product to add to the cart
-//  *     responses:
-//  *       200:
-//  *         description: Cart item successfully added or updated
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/CartItem'
-//  */
+/**
+ * @swagger
+ * /carts/addItems/{cartId}/{productId}/{quantity}:
+ *   put:
+ *     summary: Add an item to the cart or increase it's quantity
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the cart
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Id of the product
+ *       - in: path
+ *         name: quantity
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Quantity of the product to add to the cart
+ *     responses:
+ *       200:
+ *         description: Cart item successfully added or updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CartItem'
+ */
 
-// cartRouter.put(
-//     '/addItems/:cartId/:productId/:quantity',
-//     async (req: Request, res: Response, next: NextFunction) => {
-//         try {
-//             const cartId = Number(req.params.cartId);
-//             const productId = Number(req.params.productId);
-//             const quantity = Number(req.params.quantity);
-//             const result = await cartService.addCartItem(cartId, productId, quantity);
-//             res.status(200).json(result);
-//         } catch (error) {
-//             next(error);
-//         }
-//     }
-// );
+cartRouter.put(
+    '/addItems/:cartId/:productId/:quantity',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const cartId = Number(req.params.cartId);
+            const productId = Number(req.params.productId);
+            const quantity = Number(req.params.quantity);
+            const result = await cartService.addCartItem(cartId, productId, quantity);
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 // /**
 //  * @swagger

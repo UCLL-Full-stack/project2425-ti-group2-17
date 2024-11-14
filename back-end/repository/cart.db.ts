@@ -165,6 +165,121 @@ const deleteCart = async ({ id }: { id: number }): Promise<string> => {
     }
 };
 
+// const addCartItem = async (cart: Cart, product: Product, quantity: number): Promise<CartItem> => {
+//     try {
+//         const cartItem = cart.addItem(product, quantity);
+
+//         await database.cart.update({
+//             where: { id: cart.getId() },
+//             data: {
+//                 customer: {
+//                     connect: { id: cart.getCustomer().getId() },
+//                 },
+//                 cartItems: {
+//                     upsert: {
+//                         where: {
+//                             cartId_productId: {
+//                                 cartId: cart.getId(),
+//                                 productId: product.getId(),
+//                             },
+//                         },
+//                         update: {
+//                             quantity: cartItem.getQuantity(),
+//                         },
+//                         create: {
+//                             product: { connect: { id: product.getId() } },
+//                             quantity: cartItem.getQuantity(),
+//                         },
+//                     },
+//                 },
+//             },
+//             include: {
+//                 customer: true,
+//                 cartItems: { include: { product: true } },
+//             },
+//         });
+
+//         const cartItemPrisma = await database.cartItem.findFirst({
+//             where: {
+//                 cartId: cart.getId(),
+//                 productId: product.getId(),
+//             },
+//             include: { product: true },
+//         });
+
+//         if (!cartItemPrisma) {
+//             throw new Error('CartItem not found.');
+//         }
+
+//         return CartItem.from(cartItemPrisma);
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+const addCartItem = async (cart: Cart, product: Product, quantity: number): Promise<CartItem> => {
+    try {
+        const productSize = cart.getProducts().length;
+        const cartItem = cart.addItem(product, quantity);
+        const newProductSize = cart.getProducts().length;
+        if (productSize !== newProductSize) {
+            await database.cart.update({
+                where: { id: cart.getId() },
+                data: {
+                    customer: {
+                        connect: { id: cart.getCustomer().getId() },
+                    },
+                    cartItems: {
+                        create: {
+                            product: {
+                                connect: { id: product.getId() },
+                            },
+                            quantity: cartItem.getQuantity(),
+                        },
+                    },
+                },
+                include: {
+                    customer: true,
+                    cartItems: { include: { product: true } },
+                },
+            });
+        } else {
+            const existingCartItem = await database.cartItem.findFirst({
+                where: {
+                    cartId: cart.getId(),
+                    productId: product.getId(),
+                },
+            });
+
+            if (!existingCartItem) {
+                throw new Error('CartItem not found.');
+            }
+
+            await database.cartItem.update({
+                where: { id: existingCartItem.id },
+                data: {
+                    quantity: cartItem.getQuantity(),
+                },
+            });
+        }
+        const cartItemPrisma = await database.cartItem.findFirst({
+            where: {
+                cartId: cart.getId(),
+                productId: product.getId(),
+            },
+            include: { product: true },
+        });
+
+        if (!cartItemPrisma) {
+            throw new Error('CartItem not found.');
+        }
+        return CartItem.from(cartItemPrisma);
+    } catch (error) {
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
+    }
+};
+
 // const addCartItem = (cart: Cart, product: Product, quantity: number): CartItem => {
 //     return cart.addItem(product, quantity);
 // };
@@ -185,7 +300,7 @@ export default {
     getCartByCustomerEmail,
     getCartByCustomerId,
     deleteCart,
-    //     addCartItem,
+    addCartItem,
     //     removeCartItem,
     //     emptyCart,
 };
