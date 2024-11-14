@@ -5,9 +5,9 @@ import { CartItem } from '../model/cartItem';
 import cartDB from '../repository/cart.db';
 // import { CartInput, CartItemInput, CustomerInput } from '../types';
 import productDb from '../repository/product.db';
-// import { Payment } from '../model/payment';
-// import { OrderItem } from '../model/orderItem';
-// import { Order } from '../model/order';
+import { Payment } from '../model/payment';
+import { OrderItem } from '../model/orderItem';
+import { Order } from '../model/order';
 // import orderDb from '../repository/order.db';
 
 const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
@@ -42,8 +42,8 @@ const removeCartItem = async (
     return await cartDB.removeCartItem(existingCart!, product, quantity);
 };
 
-// const convertCartToOrder = (cartId: number, paymentStatus: string): Order => {
-//     const cart = getCartById(cartId);
+// const convertCartToOrder = async(cartId: number, paymentStatus: string): Promise<Order> => {
+//     const cart = await getCartById(cartId);
 
 //     if (!cart) throw new Error(`Cart with id ${cartId} does not exist.`);
 
@@ -90,5 +90,5 @@ export default {
     getCartById,
     addCartItem,
     removeCartItem,
-    //     convertCartToOrder,
+    // convertCartToOrder,
 };

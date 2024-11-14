@@ -279,14 +279,26 @@ const removeCartItem = async (
     }
 };
 
-// const removeCartItem = (cart: Cart, product: Product, quantity: number): CartItem | string => {
-//     return cart.removeItem(product, quantity);
-// };
-
-// const emptyCart = (cart: Cart): string => {
-//     cart.emptyCart();
-//     return 'cart successfully emptied.';
-// };
+const emptyCart = async (cart: Cart): Promise<string> => {
+    try {
+        await database.cart.update({
+            where: { id: cart.getId() },
+            data: {
+                cartItems: {
+                    set: [],
+                },
+            },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+        return 'cart successfully emptied.';
+    } catch (error) {
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
+    }
+};
 
 export default {
     getCarts,
@@ -297,5 +309,5 @@ export default {
     deleteCart,
     addCartItem,
     removeCartItem,
-    //     emptyCart,
+    emptyCart,
 };
