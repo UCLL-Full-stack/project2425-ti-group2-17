@@ -15,6 +15,7 @@ model Customer {
   password  String
   cart      Cart?
   wishlist  Product[]
+  orders    Order[]
 }
 
 model Product {
@@ -29,6 +30,7 @@ model Product {
   colors       String[]
   cartItems    CartItem[]
   customers    Customer[]
+  orderItems   OrderItem[]
 }
 
 model CartItem {
@@ -48,12 +50,12 @@ model Cart {
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
-  customer  Customer    @relation(fields: [customerId], references: [id])
+  id         Int         @id @default(autoincrement())
+  customer   Customer    @relation(fields: [customerId], references: [id])
   customerId Int
-  items     OrderItem[]
-  date      DateTime
-  payment   Payment
+  items      OrderItem[]
+  date       DateTime
+  payment    Payment?
 }
 
 model OrderItem {
@@ -66,10 +68,10 @@ model OrderItem {
 }
 
 model Payment {
-  id            Int     @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   amount        Int
   date          DateTime
   paymentStatus String
-  order         Order   @relation(fields: [orderId], references: [id])
-  orderId       Int     @unique
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       Int      @unique
 }

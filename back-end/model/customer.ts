@@ -1,10 +1,15 @@
 import { Order } from './order';
 import { Product } from './product';
 import { User } from './user';
-import { Product as ProductPrisma, Customer as CustomerPrisma } from '@prisma/client';
+import {
+    Order as OrderPrisma,
+    Product as ProductPrisma,
+    Customer as CustomerPrisma,
+} from '@prisma/client';
 
 export class Customer extends User {
     private wishlist: Product[];
+    private orders: Order[];
 
     constructor(customer: {
         firstName: string;
@@ -12,14 +17,20 @@ export class Customer extends User {
         email: string;
         password: string;
         wishlist: Product[];
+        orders?: Order[];
         id?: number;
     }) {
         super(customer);
         this.wishlist = customer.wishlist;
+        this.orders = customer.orders || [];
     }
 
     getWishlist(): Product[] {
         return this.wishlist;
+    }
+
+    getOrders(): Order[] {
+        return this.orders;
     }
 
     addProductToWishlist(product: Product) {
@@ -49,7 +60,8 @@ export class Customer extends User {
         email,
         password,
         wishlist,
-    }: CustomerPrisma & { wishlist: ProductPrisma[] }) {
+        orders,
+    }: CustomerPrisma & { wishlist: ProductPrisma[]; orders: Order[] }) {
         return new Customer({
             id,
             firstName,
@@ -57,6 +69,7 @@ export class Customer extends User {
             email,
             password,
             wishlist: wishlist.map((product: ProductPrisma) => Product.from(product)),
+            orders: orders.map((order: OrderPrisma) => Order.from(order)),
         });
     }
 
@@ -68,6 +81,7 @@ export class Customer extends User {
             email,
             password,
             wishlist: [],
+            orders: [],
         });
     }
 }

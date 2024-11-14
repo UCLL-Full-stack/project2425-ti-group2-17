@@ -73,4 +73,20 @@ export class Order {
 
         this.items.push(orderItem);
     }
+
+    static from({
+        customer,
+        items,
+        date,
+        payment,
+        id,
+    }: {
+        customer: Customer;
+        items: OrderItem[];
+        date: Date;
+        payment: Payment;
+        id?: number;
+    }): Order {
+        return new Order({ customer, items, date, payment, id });
+    }
 }
