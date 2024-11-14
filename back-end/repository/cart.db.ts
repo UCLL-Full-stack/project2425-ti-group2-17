@@ -51,19 +51,19 @@ import database from './database';
 
 // const getCarts = (): Cart[] => carts;
 
-// const getCarts = async (): Promise<Cart[]> => {
-//     try {
-//         const cartsPrisma = await database.cart.findMany({
-//             include: {
-//                 customer: true,
-//                 cartItems: { include: { product: true } },
-//             },
-//         });
-//         return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
-//     } catch (error) {
-//         throw new Error('Databse Error. See server log for details.');
-//     }
-// };
+const getCarts = async (): Promise<Cart[]> => {
+    try {
+        const cartsPrisma = await database.cart.findMany({
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+            },
+        });
+        return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
+    } catch (error) {
+        throw new Error('Databse Error. See server log for details.');
+    }
+};
 
 // const getCartById = ({ id }: { id: number }): Cart | null => {
 //     return carts.find((cart) => cart.getId() === id) || null;
@@ -104,7 +104,7 @@ import database from './database';
 // };
 
 export default {
-    // getCarts,
+    getCarts,
     //     getCartById,
     //     createCart,
     //     getCartByCustomerEmail,

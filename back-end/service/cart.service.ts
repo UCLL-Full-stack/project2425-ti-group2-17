@@ -10,7 +10,14 @@ import cartDB from '../repository/cart.db';
 // import { Order } from '../model/order';
 // import orderDb from '../repository/order.db';
 
-// const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
+const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
+
+// const getCarts = async (): Promise<Cart[]> => {
+//     const carts = await cartDB.getCarts();
+//     console.log('test');
+//     console.log(carts[0]);
+//     return carts;
+// };
 
 // const getCartById = (id: number): Cart => {
 //     const cart = cartDB.getCartById({ id });
@@ -78,7 +85,7 @@ import cartDB from '../repository/cart.db';
 // };
 
 export default {
-    // getCarts,
+    getCarts,
     //     getCartById,
     //     addCartItem,
     //     removeCartItem,

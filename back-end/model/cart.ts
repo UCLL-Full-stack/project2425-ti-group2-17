@@ -109,14 +109,34 @@ export class Cart {
     // static from({
     //     id,
     //     customer,
-    //     products,
-    // }: CartPrisma & { customer: CustomerPrisma; products: CartItemPrisma[] }) {
+    //     cartItems,
+    // }: CartPrisma & { customer: CustomerPrisma; cartItems: CartItemPrisma[] }) {
+
     //     return new Cart({
     //         id,
     //         customer: Customer.fromWithoutWishlist(customer),
-    //         products: products.map((product: CartItemPrisma) => CartItem.from(product)),
+    //         products: cartItems.map((product: CartItemPrisma) => CartItem.from(product)),
+
     //     });
     // }
+
+    static from({
+        id,
+        customer,
+        cartItems,
+    }: CartPrisma & {
+        customer: CustomerPrisma;
+        cartItems: (CartItemPrisma & { product: ProductPrisma })[];
+    }) {
+        return new Cart({
+            id,
+            customer: Customer.fromWithoutWishlist(customer),
+            products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
+                CartItem.from(cartItem)
+            ),
+        });
+    }
+
     //     static from({ id, product, quantity }: CartItemPrisma & { product: ProductPrisma }) {
 
     // static from(cartPrisma: CartPrisma & { products: CartItemPrisma[]; customer: CustomerPrisma }) {

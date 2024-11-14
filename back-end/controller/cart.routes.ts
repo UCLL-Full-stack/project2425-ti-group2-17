@@ -59,14 +59,16 @@ const cartRouter = Router();
  *         description: Internal server error
  */
 
-// cartRouter.get('/', (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const carts = cartService.getCarts();
-//         res.status(200).json(carts);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+cartRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const carts = await cartService.getCarts();
+        console.log('test');
+        console.log(carts[0]);
+        res.status(200).json(carts);
+    } catch (error) {
+        next(error);
+    }
+});
 
 // /**
 //  * @swagger

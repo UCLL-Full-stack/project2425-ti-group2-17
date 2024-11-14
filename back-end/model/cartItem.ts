@@ -58,22 +58,10 @@ export class CartItem {
         return this.product.getPrice() * this.quantity;
     }
 
-    // static from({ id, product, quantity }: CartItemPrisma & { product: ProductPrisma }) {
-    //     return new CartItem({
-    //         id,
-    //         product: Product.from(product),
-    //         quantity,
-    //     });
-    // }
-
-    static fromWithoutProducts({
-        id,
-        product,
-        quantity,
-    }: CartItemPrisma & { product: ProductPrisma }) {
+    static from({ id, product, quantity }: CartItemPrisma & { product: ProductPrisma }) {
         return new CartItem({
             id,
-            product: undefined,
+            product: Product.from(product),
             quantity,
         });
     }

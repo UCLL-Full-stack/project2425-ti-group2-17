@@ -1,6 +1,6 @@
 // npx prisma migrate dev
 // npx prisma generate
-// Execute: npx ts-node util/seed.ts
+// npx ts-node util/seed.ts
 
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
@@ -130,7 +130,7 @@ const main = async () => {
             customer: {
                 connect: { id: johnDoe.id },
             },
-            products: {
+            cartItems: {
                 create: [
                     {
                         product: {
@@ -155,7 +155,7 @@ const main = async () => {
             customer: {
                 connect: { id: janeSmith.id },
             },
-            products: {
+            cartItems: {
                 create: [
                     {
                         product: {
@@ -180,7 +180,7 @@ const main = async () => {
             customer: {
                 connect: { id: aliceJohnson.id },
             },
-            products: {
+            cartItems: {
                 create: [
                     {
                         product: {
@@ -205,7 +205,7 @@ const main = async () => {
             customer: {
                 connect: { id: tempLogin.id },
             },
-            products: {},
+            cartItems: {},
             // totalAmount: ,
         },
     });
