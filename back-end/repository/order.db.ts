@@ -82,10 +82,10 @@ const createOrder = (order: Order): Order => {
     return order;
 };
 
-export default {
-    getOrders,
-    getOrderById,
-    getOrdersByCustomer,
-    deleteOrder,
-    createOrder,
-};
+// export default {
+//     getOrders,
+//     getOrderById,
+//     getOrdersByCustomer,
+//     deleteOrder,
+//     createOrder,
+// };
