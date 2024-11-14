@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use('/customers', customerRouter);
 app.use('/carts', cartRouter);
 // app.use('/orders', orderRouter);
-// app.use('/products', productRouter);
+app.use('/products', productRouter);
 // app.use('/payments', paymentRouter);
 
 app.get('/status', (req, res) => {

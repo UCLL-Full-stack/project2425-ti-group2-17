@@ -100,6 +100,10 @@ const updateProduct = async (updatedProduct: Product): Promise<Product> => {
 
 const deleteProduct = async ({ id }: { id: number }): Promise<string> => {
     try {
+        await database.cartItem.deleteMany({
+            where: { productId: id },
+        });
+
         await database.product.delete({
             where: { id: id },
         });
