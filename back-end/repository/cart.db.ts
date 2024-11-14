@@ -84,14 +84,14 @@ const getCartById = async ({ id }: { id: number }): Promise<Cart | null> => {
     }
 };
 
-// const getCartByCustomerEmail = ({ email }: { email: string }): Cart | null => {
-//     return carts.find((cart) => cart.getCustomer().getEmail() === email) || null;
-// };
-
-const getCartByCustomerEmail = async ({ email }: { email: number }): Promise<Cart | null> => {
+const getCartByCustomerEmail = async ({ email }: { email: string }): Promise<Cart | null> => {
     try {
-        const cartPrisma = await database.cart.findUnique({
-            where: { email: email },
+        const cartPrisma = await database.cart.findFirst({
+            where: {
+                customer: {
+                    email: email,
+                },
+            },
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
@@ -126,20 +126,15 @@ const getCartByCustomerId = async ({ id }: { id: number }): Promise<Cart | null>
     }
 };
 
-const createCart = async (cart: Cart): Promise<Cart> => {
+const createCart = async (customer: Customer): Promise<Cart> => {
     try {
         const cartPrisma = await database.cart.create({
             data: {
                 customer: {
-                    connect: { id: cart.getCustomer().getId() },
+                    connect: { id: customer.getId() },
                 },
                 cartItems: {
-                    create: cart.getProducts().map((product) => ({
-                        product: {
-                            connect: { id: product.getId() },
-                        },
-                        quantity: product.getQuantity(),
-                    })),
+                    create: [],
                 },
             },
             include: {
@@ -147,6 +142,7 @@ const createCart = async (cart: Cart): Promise<Cart> => {
                 cartItems: { include: { product: true } },
             },
         });
+        console.log(cartPrisma);
         return Cart.from(cartPrisma);
     } catch (error) {
         throw new Error('Database Error. See server log for details.');
@@ -183,7 +179,7 @@ export default {
     getCarts,
     getCartById,
     createCart,
-    //     getCartByCustomerEmail,
+    getCartByCustomerEmail,
     getCartByCustomerId,
     //     deleteCart,
     //     addCartItem,

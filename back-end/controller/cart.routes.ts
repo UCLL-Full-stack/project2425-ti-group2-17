@@ -68,40 +68,40 @@ cartRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-// /**
-//  * @swagger
-//  * /carts/{id}:
-//  *   get:
-//  *     summary: Get a cart by ID
-//  *     tags: [Carts]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Numeric ID of the cart to retrieve
-//  *     responses:
-//  *       200:
-//  *         description: Cart details
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Cart'
-//  *       404:
-//  *         description: Cart not found
-//  *       500:
-//  *         description: Internal server error
-//  */
+/**
+ * @swagger
+ * /carts/{id}:
+ *   get:
+ *     summary: Get a cart by ID
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Numeric ID of the cart to retrieve
+ *     responses:
+ *       200:
+ *         description: Cart details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Cart'
+ *       404:
+ *         description: Cart not found
+ *       500:
+ *         description: Internal server error
+ */
 
-// cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const cart = await cartService.getCartById(Number(req.params.id));
-//         res.status(200).json(cart);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const cart = await cartService.getCartById(Number(req.params.id));
+        res.status(200).json(cart);
+    } catch (error) {
+        next(error);
+    }
+});
 
 // /**
 //  * @swagger

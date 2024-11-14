@@ -37,15 +37,27 @@ const createCustomer = async ({
         wishlist: [],
     });
 
-    // const existingCart = await cartDb.getCartByCustomerEmail({
-    //     email: customer.getEmail(),
-    // });
+    const existingCart = await cartDb.getCartByCustomerEmail({
+        email: customer.getEmail(),
+    });
+
+    if (existingCart) throw new Error('This customer already has a cart.');
+
+    const newCustomer = await customerDB.createCustomer(customer);
+
+    await cartDb.createCart(newCustomer);
+
+    return newCustomer;
 
     // if (existingCart) throw new Error('This customer already has a cart.');
 
+    // console.log('test1');
+
     // await cartDb.createCart(customer);
 
-    return await customerDB.createCustomer(customer);
+    // console.log('test2');
+
+    // return await customerDB.createCustomer(customer);
 };
 
 const updateCustomer = async (
