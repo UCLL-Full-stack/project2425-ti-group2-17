@@ -30,13 +30,17 @@ const addCartItem = async (
     return await cartDB.addCartItem(existingCart!, product, quantity);
 };
 
-// const removeCartItem = (cartId: number, productId: number, quantity: number): CartItem | string => {
-//     const existingCart = getCartById(cartId);
-//     const product = productDb.getProductById({ id: productId });
-//     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+const removeCartItem = async (
+    cartId: number,
+    productId: number,
+    quantity: number
+): Promise<CartItem | string> => {
+    const existingCart = await getCartById(cartId);
+    const product = await productDb.getProductById({ id: productId });
+    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
-//     return cartDB.removeCartItem(existingCart, product, quantity);
-// };
+    return await cartDB.removeCartItem(existingCart!, product, quantity);
+};
 
 // const convertCartToOrder = (cartId: number, paymentStatus: string): Order => {
 //     const cart = getCartById(cartId);
@@ -85,6 +89,6 @@ export default {
     getCarts,
     getCartById,
     addCartItem,
-    //     removeCartItem,
+    removeCartItem,
     //     convertCartToOrder,
 };

@@ -152,57 +152,57 @@ cartRouter.put(
     }
 );
 
-// /**
-//  * @swagger
-//  * /carts/removeItems/{cartId}/{productId}/{quantity}:
-//  *   put:
-//  *     summary: Remove an item or decrease its quantity in the cart
-//  *     tags: [Carts]
-//  *     parameters:
-//  *       - in: path
-//  *         name: cartId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: ID of the cart
-//  *       - in: path
-//  *         name: productId
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: ID of the product to remove
-//  *       - in: path
-//  *         name: quantity
-//  *         required: true
-//  *         schema:
-//  *           type: integer
-//  *         description: Quantity of the product to remove from the cart
-//  *     responses:
-//  *       200:
-//  *         description: Cart item successfully removed or quantity decreased
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               oneOf:
-//  *                 - type: string
-//  *                   example: "Item removed from cart."
-//  *                 - $ref: '#/components/schemas/CartItem'
-//  */
+/**
+ * @swagger
+ * /carts/removeItems/{cartId}/{productId}/{quantity}:
+ *   put:
+ *     summary: Remove an item or decrease its quantity in the cart
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the cart
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product to remove
+ *       - in: path
+ *         name: quantity
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Quantity of the product to remove from the cart
+ *     responses:
+ *       200:
+ *         description: Cart item successfully removed or quantity decreased
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: string
+ *                   example: "Item removed from cart."
+ *                 - $ref: '#/components/schemas/CartItem'
+ */
 
-// cartRouter.put(
-//     '/removeItems/:cartId/:productId/:quantity',
-//     async (req: Request, res: Response, next: NextFunction) => {
-//         try {
-//             const cartId = Number(req.params.cartId);
-//             const productId = Number(req.params.productId);
-//             const quantity = Number(req.params.quantity);
-//             const result = await cartService.removeCartItem(cartId, productId, quantity);
-//             res.status(200).json(result);
-//         } catch (error) {
-//             next(error);
-//         }
-//     }
-// );
+cartRouter.put(
+    '/removeItems/:cartId/:productId/:quantity',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const cartId = Number(req.params.cartId);
+            const productId = Number(req.params.productId);
+            const quantity = Number(req.params.quantity);
+            const result = await cartService.removeCartItem(cartId, productId, quantity);
+            res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 // /**
 //  * @swagger
