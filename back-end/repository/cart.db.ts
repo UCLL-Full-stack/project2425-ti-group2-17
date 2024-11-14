@@ -61,7 +61,8 @@ const getCarts = async (): Promise<Cart[]> => {
         });
         return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
     } catch (error) {
-        throw new Error('Databse Error. See server log for details.');
+        // throw new Error('Databse Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -80,7 +81,8 @@ const getCartById = async ({ id }: { id: number }): Promise<Cart | null> => {
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -103,7 +105,8 @@ const getCartByCustomerEmail = async ({ email }: { email: string }): Promise<Car
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -122,7 +125,8 @@ const getCartByCustomerId = async ({ id }: { id: number }): Promise<Cart | null>
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -142,25 +146,24 @@ const createCart = async (customer: Customer): Promise<Cart> => {
                 cartItems: { include: { product: true } },
             },
         });
-        console.log(cartPrisma);
         return Cart.from(cartPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
-// const createCart = (customer: Customer): Cart => {
-//     const cart = new Cart({ customer, products: [] });
-//     carts.push(cart);
-//     return cart;
-// };
-
-// const deleteCart = ({ id }: { id: number }) => {
-//     const cartIndex = carts.findIndex((cart) => cart.getId() === id);
-
-//     carts.splice(cartIndex, 1);
-//     return 'Cart successfully deleted.';
-// };
+const deleteCart = async ({ id }: { id: number }): Promise<string> => {
+    try {
+        await database.cart.delete({
+            where: { id: id },
+        });
+        return 'Cart successfully deleted.';
+    } catch (error) {
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
+    }
+};
 
 // const addCartItem = (cart: Cart, product: Product, quantity: number): CartItem => {
 //     return cart.addItem(product, quantity);
@@ -181,7 +184,7 @@ export default {
     createCart,
     getCartByCustomerEmail,
     getCartByCustomerId,
-    //     deleteCart,
+    deleteCart,
     //     addCartItem,
     //     removeCartItem,
     //     emptyCart,

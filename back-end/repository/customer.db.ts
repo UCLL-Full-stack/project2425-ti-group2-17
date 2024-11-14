@@ -12,7 +12,8 @@ const getCustomers = async (): Promise<Customer[]> => {
         });
         return customersPrisma.map((customerPrisma) => Customer.from(customerPrisma));
     } catch (error) {
-        throw new Error('Databse Error. See server log for details.');
+        // throw new Error('Databse Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -28,7 +29,8 @@ const getCustomerById = async ({ id }: { id: number }): Promise<Customer | null>
         }
         return Customer.from(customerPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -44,7 +46,8 @@ const getCustomerByEmail = async ({ email }: { email: string }): Promise<Custome
         }
         return Customer.from(customerPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -61,7 +64,8 @@ const createCustomer = async (customer: Customer): Promise<Customer> => {
         });
         return Customer.from(customerPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
@@ -79,47 +83,56 @@ const updateCustomer = async (updatedCustomer: Customer): Promise<Customer> => {
         });
         return Customer.from(customerPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
 const deleteCustomer = async ({ id }: { id: number }): Promise<string> => {
     try {
-        console.log(id);
         await database.customer.delete({
             where: { id: id },
         });
         return 'Customer has been deleted.';
     } catch (error) {
-        console.log(error);
-        throw new Error('Database Error. See server log for details.');
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
     }
 };
 
 const addProductToWishlist = async (customer: Customer, product: Product): Promise<Product> => {
-    await database.customer.update({
-        where: { id: customer.getId() },
-        data: {
-            wishlist: {
-                connect: { id: product.getId() },
+    try {
+        await database.customer.update({
+            where: { id: customer.getId() },
+            data: {
+                wishlist: {
+                    connect: { id: product.getId() },
+                },
             },
-        },
-    });
-
-    return product;
+        });
+        return product;
+    } catch (error) {
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
+    }
 };
 
 const removeProductFromWishlist = async (customer: Customer, product: Product): Promise<string> => {
-    await database.customer.update({
-        where: { id: customer.getId() },
-        data: {
-            wishlist: {
-                disconnect: { id: product.getId() },
+    try {
+        await database.customer.update({
+            where: { id: customer.getId() },
+            data: {
+                wishlist: {
+                    disconnect: { id: product.getId() },
+                },
             },
-        },
-    });
+        });
 
-    return 'Product has been removed from the wishlist.';
+        return 'Product has been removed from the wishlist.';
+    } catch (error) {
+        // throw new Error('Database Error. See server log for details.');
+        throw error;
+    }
 };
 
 export default {

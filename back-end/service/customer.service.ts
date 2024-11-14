@@ -48,16 +48,6 @@ const createCustomer = async ({
     await cartDb.createCart(newCustomer);
 
     return newCustomer;
-
-    // if (existingCart) throw new Error('This customer already has a cart.');
-
-    // console.log('test1');
-
-    // await cartDb.createCart(customer);
-
-    // console.log('test2');
-
-    // return await customerDB.createCustomer(customer);
 };
 
 const updateCustomer = async (
@@ -79,13 +69,13 @@ const deleteCustomer = async (customerId: number): Promise<string> => {
 
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
-    // const existingCart = await cartDb.getCartByCustomerId({ id: customerId });
+    const existingCart = await cartDb.getCartByCustomerId({ id: customerId });
 
-    // if (!existingCart) {
-    //     throw new Error('That customer does not have a cart.');
-    // }
+    if (!existingCart) {
+        throw new Error('That customer does not have a cart.');
+    }
 
-    // await cartDb.deleteCart({ id: existingCart.getId()! });
+    await cartDb.deleteCart({ id: existingCart.getId()! });
 
     return await customerDB.deleteCustomer({ id: customerId });
 };
