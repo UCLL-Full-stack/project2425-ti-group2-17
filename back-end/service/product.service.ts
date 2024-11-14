@@ -2,7 +2,7 @@ import { Product } from '../model/product';
 import productDb from '../repository/product.db';
 import { ProductInput } from '../types';
 
-const createProduct = ({
+const createProduct = async ({
     name,
     price,
     stock,
@@ -11,12 +11,12 @@ const createProduct = ({
     images,
     sizes,
     colors,
-}: ProductInput) => {
-    const existingProduct = productDb.getProductByName({ name });
+}: ProductInput): Promise<Product> => {
+    const existingProduct = await productDb.getProductByName({ name });
 
     if (existingProduct) throw new Error('A product with this name already exists.');
 
-    const productId = productDb.getProducts().length + 1;
+    const productId = (await productDb.getProducts()).length + 1;
 
     const product = new Product({
         name,
@@ -33,25 +33,25 @@ const createProduct = ({
     return productDb.createProduct(product);
 };
 
-const getProducts = (): Product[] => productDb.getProducts();
+const getProducts = async (): Promise<Product[]> => await productDb.getProducts();
 
-const getProductById = (id: number): Product => {
-    const product = productDb.getProductById({ id });
+const getProductById = async (id: number): Promise<Product> => {
+    const product = await productDb.getProductById({ id });
 
     if (!product) throw new Error(`Product with id ${id} does not exist.`);
 
     return product;
 };
 
-const getProductsBySearch = (query: string): Product[] => {
+const getProductsBySearch = async (query: string): Promise<Product[]> => {
     if (!query) {
         throw new Error('Search query is required');
     }
-    return productDb.getProductsBySearch(query);
+    return await productDb.getProductsBySearch(query);
 };
 
-const updateProduct = (id: number, productData: Partial<ProductInput>): Product => {
-    const existingProduct = productDb.getProductById({ id });
+const updateProduct = async (id: number, productData: Partial<ProductInput>): Promise<Product> => {
+    const existingProduct = await productDb.getProductById({ id });
 
     if (!existingProduct) throw new Error(`Product with id ${id} does not exist.`);
 
@@ -75,15 +75,15 @@ const updateProduct = (id: number, productData: Partial<ProductInput>): Product 
     if (productData.sizes) existingProduct.setSizes(productData.sizes);
     if (productData.colors) existingProduct.setColors(productData.colors);
 
-    return productDb.updateProduct(existingProduct);
+    return await productDb.updateProduct(existingProduct);
 };
 
-const deleteProduct = (productId: number): string => {
-    const existingProduct = productDb.getProductById({ id: productId });
+const deleteProduct = async (productId: number): Promise<string> => {
+    const existingProduct = await productDb.getProductById({ id: productId });
 
     if (!existingProduct) throw new Error('This product does not exist.');
 
-    return productDb.deleteProduct({ id: productId });
+    return await productDb.deleteProduct({ id: productId });
 };
 
 export default {
