@@ -60,8 +60,7 @@ export class Customer extends User {
         email,
         password,
         wishlist,
-        orders,
-    }: CustomerPrisma & { wishlist: ProductPrisma[]; orders: Order[] }) {
+    }: CustomerPrisma & { wishlist: ProductPrisma[]; orders: OrderPrisma[] }) {
         return new Customer({
             id,
             firstName,
@@ -69,7 +68,7 @@ export class Customer extends User {
             email,
             password,
             wishlist: wishlist.map((product: ProductPrisma) => Product.from(product)),
-            orders: orders.map((order: OrderPrisma) => Order.from(order)),
+            orders: [],
         });
     }
 

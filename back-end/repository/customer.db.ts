@@ -1,11 +1,12 @@
 import { Customer } from '../model/customer';
 import { Product } from '../model/product';
 import database from './database';
+import { Customer as customerPrisma } from '@prisma/client';
 
 const getCustomers = async (): Promise<Customer[]> => {
     try {
         const customersPrisma = await database.customer.findMany({
-            include: { wishlist: true },
+            include: { wishlist: true, orders: true },
         });
         return customersPrisma.map((customerPrisma) => Customer.from(customerPrisma));
     } catch (error) {
@@ -18,7 +19,7 @@ const getCustomerById = async ({ id }: { id: number }): Promise<Customer | null>
     try {
         const customerPrisma = await database.customer.findUnique({
             where: { id: id },
-            include: { wishlist: true },
+            include: { wishlist: true, orders: true },
         });
 
         if (!customerPrisma) {
@@ -35,7 +36,7 @@ const getCustomerByEmail = async ({ email }: { email: string }): Promise<Custome
     try {
         const customerPrisma = await database.customer.findUnique({
             where: { email: email },
-            include: { wishlist: true },
+            include: { wishlist: true, orders: true },
         });
 
         if (!customerPrisma) {
@@ -57,7 +58,7 @@ const createCustomer = async (customer: Customer): Promise<Customer> => {
                 email: customer.getEmail(),
                 password: customer.getPassword(),
             },
-            include: { wishlist: true },
+            include: { wishlist: true, orders: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {
@@ -76,7 +77,7 @@ const updateCustomer = async (updatedCustomer: Customer): Promise<Customer> => {
                 email: updatedCustomer.getEmail(),
                 password: updatedCustomer.getPassword(),
             },
-            include: { wishlist: true },
+            include: { wishlist: true, orders: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {
