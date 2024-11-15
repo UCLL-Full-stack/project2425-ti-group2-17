@@ -10,8 +10,8 @@ const prisma = new PrismaClient();
 
 const main = async () => {
     await prisma.orderItem.deleteMany();
-    await prisma.payment.deleteMany();
     await prisma.order.deleteMany();
+    await prisma.payment.deleteMany();
     await prisma.cartItem.deleteMany();
     await prisma.cart.deleteMany();
     await prisma.customer.deleteMany();
