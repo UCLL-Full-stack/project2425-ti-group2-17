@@ -9,6 +9,9 @@ import { set } from 'date-fns';
 const prisma = new PrismaClient();
 
 const main = async () => {
+    await prisma.orderItem.deleteMany();
+    await prisma.payment.deleteMany();
+    await prisma.order.deleteMany();
     await prisma.cartItem.deleteMany();
     await prisma.cart.deleteMany();
     await prisma.customer.deleteMany();
@@ -207,6 +210,38 @@ const main = async () => {
             },
             cartItems: {},
             // totalAmount: ,
+        },
+    });
+
+    const orderJohn = await prisma.order.create({
+        data: {
+            customer: {
+                connect: { id: johnDoe.id },
+            },
+            items: {
+                create: [
+                    {
+                        product: {
+                            connect: { id: tShirt.id },
+                        },
+                        quantity: 2,
+                    },
+                    {
+                        product: {
+                            connect: { id: runningShoes.id },
+                        },
+                        quantity: 1,
+                    },
+                ],
+            },
+            date: new Date(),
+            payment: {
+                create: {
+                    amount: 0,
+                    date: new Date(),
+                    paymentStatus: 'unpaid',
+                },
+            },
         },
     });
 };

@@ -6,7 +6,7 @@ import { Customer as customerPrisma } from '@prisma/client';
 const getCustomers = async (): Promise<Customer[]> => {
     try {
         const customersPrisma = await database.customer.findMany({
-            include: { wishlist: true, orders: true },
+            include: { wishlist: true },
         });
         return customersPrisma.map((customerPrisma) => Customer.from(customerPrisma));
     } catch (error) {
@@ -19,7 +19,7 @@ const getCustomerById = async ({ id }: { id: number }): Promise<Customer | null>
     try {
         const customerPrisma = await database.customer.findUnique({
             where: { id: id },
-            include: { wishlist: true, orders: true },
+            include: { wishlist: true },
         });
 
         if (!customerPrisma) {
@@ -36,7 +36,7 @@ const getCustomerByEmail = async ({ email }: { email: string }): Promise<Custome
     try {
         const customerPrisma = await database.customer.findUnique({
             where: { email: email },
-            include: { wishlist: true, orders: true },
+            include: { wishlist: true },
         });
 
         if (!customerPrisma) {
@@ -58,7 +58,7 @@ const createCustomer = async (customer: Customer): Promise<Customer> => {
                 email: customer.getEmail(),
                 password: customer.getPassword(),
             },
-            include: { wishlist: true, orders: true },
+            include: { wishlist: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {
@@ -77,7 +77,7 @@ const updateCustomer = async (updatedCustomer: Customer): Promise<Customer> => {
                 email: updatedCustomer.getEmail(),
                 password: updatedCustomer.getPassword(),
             },
-            include: { wishlist: true, orders: true },
+            include: { wishlist: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {

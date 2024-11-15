@@ -69,7 +69,7 @@ export class Order {
     }
 
     addItem(product: Product, quantity: number) {
-        const orderItem = new OrderItem({ orderId: this.id!, product, quantity });
+        const orderItem = new OrderItem({ product, quantity });
 
         this.items.push(orderItem);
     }
