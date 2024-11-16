@@ -3,8 +3,6 @@
 // npx ts-node util/seed.ts
 
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import { set } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -237,7 +235,39 @@ const main = async () => {
             date: new Date(),
             payment: {
                 create: {
-                    amount: 0,
+                    amount: 2 * 19.99 + 1 * 79.99,
+                    date: new Date(),
+                    paymentStatus: 'unpaid',
+                },
+            },
+        },
+    });
+
+    const orderAlice = await prisma.order.create({
+        data: {
+            customer: {
+                connect: { id: aliceJohnson.id },
+            },
+            items: {
+                create: [
+                    {
+                        product: {
+                            connect: { id: denimJeans.id },
+                        },
+                        quantity: 3,
+                    },
+                    {
+                        product: {
+                            connect: { id: runningShoes.id },
+                        },
+                        quantity: 1,
+                    },
+                ],
+            },
+            date: new Date(),
+            payment: {
+                create: {
+                    amount: 3 * 49.99 + 1 * 79.99,
                     date: new Date(),
                     paymentStatus: 'unpaid',
                 },
