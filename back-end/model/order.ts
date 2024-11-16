@@ -23,6 +23,9 @@ export class Order {
         this.items = order.items;
         this.date = order.date;
         this.payment = order.payment;
+
+        const totalAmount = this.getTotalAmount();
+        this.payment.setAmount(totalAmount);
     }
 
     getId(): number | undefined {
