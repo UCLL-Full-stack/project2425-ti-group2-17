@@ -7,34 +7,34 @@ import customerDb from '../repository/customer.db';
 import orderDb from '../repository/order.db';
 import { OrderInput } from '../types';
 
-const getOrders = (): Order[] => {
-    return orderDb.getOrders();
+const getOrders = async (): Promise<Order[]> => {
+    return await orderDb.getOrders();
 };
 
-const getOrderById = (id: number): Order => {
-    const order = orderDb.getOrderById({ id });
+const getOrderById = async (id: number): Promise<Order> => {
+    const order = await orderDb.getOrderById({ id });
 
     if (!order) throw new Error(`Order with id ${id} does not exist.`);
 
     return order;
 };
 
-const deleteOrder = (orderId: number): string => {
-    const existingOrder = orderDb.getOrderById({ id: orderId });
+const deleteOrder = async (orderId: number): Promise<string> => {
+    const existingOrder = await orderDb.getOrderById({ id: orderId });
 
     if (!existingOrder) throw new Error('This order does not exist.');
 
-    return orderDb.deleteOrder({ id: orderId });
+    return await orderDb.deleteOrder({ id: orderId });
 };
 
-const createOrder = (orderInput: OrderInput): Order => {
+const createOrder = async (orderInput: OrderInput): Promise<Order> => {
     const { customer, items, date, payment } = orderInput;
 
     if (!customer) throw new Error('Customer is required to create an order.');
     if (!items || items.length === 0) throw new Error('At least one order item is required.');
     if (!payment) throw new Error('Payment information is required.');
 
-    let existingCustomer = customerDb.getCustomerByEmail({ email: customer.email });
+    let existingCustomer = await customerDb.getCustomerByEmail({ email: customer.email });
     let newCustomer;
     if (existingCustomer) {
         newCustomer = existingCustomer;
@@ -53,7 +53,7 @@ const createOrder = (orderInput: OrderInput): Order => {
         (item) => new OrderItem({ product: new Product(item.product), quantity: item.quantity })
     );
 
-    const orderId = orderDb.getOrders().length + 1;
+    const orderId = (await orderDb.getOrders()).length + 1;
 
     const newOrder = new Order({
         customer: newCustomer,
@@ -63,7 +63,7 @@ const createOrder = (orderInput: OrderInput): Order => {
         id: orderId,
     });
 
-    return orderDb.createOrder(newOrder);
+    return await orderDb.createOrder(newOrder);
 };
 
 export default {
