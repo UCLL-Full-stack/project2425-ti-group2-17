@@ -86,9 +86,15 @@ const getOrdersByCustomer = async ({ id }: { id: number }): Promise<Order[]> => 
 
 const deleteOrder = async ({ id }: { id: number }): Promise<string> => {
     try {
-        await database.order.delete({
-            where: { id },
-        });
+        await database.$transaction([
+            database.orderItem.deleteMany({
+                where: { orderId: id },
+            }),
+
+            database.order.delete({
+                where: { id },
+            }),
+        ]);
         return 'Order has been deleted.';
     } catch (error) {
         throw error;
