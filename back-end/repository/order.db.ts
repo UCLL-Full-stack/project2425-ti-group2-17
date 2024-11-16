@@ -1,91 +1,144 @@
-// import { Customer } from '../model/customer';
-// import { Order } from '../model/order';
-// import { OrderItem } from '../model/orderItem';
-// import { Payment } from '../model/payment';
-// import { Product } from '../model/product';
-// import customerDb from './customer.db';
-// import productDb from './product.db';
+import { Customer } from '../model/customer';
+import { Order } from '../model/order';
+import { OrderItem } from '../model/orderItem';
+import { Payment } from '../model/payment';
+import { Product } from '../model/product';
+import customerDb from './customer.db';
+import database from './database';
+import productDb from './product.db';
 
-// // const customers: Customer[] = await customerDb.getCustomers();
+const getOrders = async (): Promise<Order[]> => {
+    try {
+        const ordersPrisma = await database.order.findMany({
+            include: { customer: true, items: { include: { product: true } }, payment: true },
+        });
+        return ordersPrisma.map((orderPrisma) => {
+            return Order.from({
+                ...orderPrisma,
+                customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+                items: orderPrisma.items.map(
+                    (itemData) =>
+                        new OrderItem({
+                            ...itemData,
+                            product: new Product(itemData.product),
+                        })
+                ),
+                payment: new Payment(orderPrisma.payment),
+            });
+        });
+    } catch (error) {
+        throw error;
+    }
+};
 
-// // const products: Product[] = await productDb.getProducts();
+const getOrderById = async ({ id }: { id: number }): Promise<Order | undefined> => {
+    try {
+        const orderPrisma = await database.order.findUnique({
+            where: { id },
+            include: { customer: true, items: { include: { product: true } }, payment: true },
+        });
 
-// const orderItem1 = new OrderItem({
-//     orderId: 1,
-//     product: products[0],
-//     quantity: 2,
-// });
+        if (!orderPrisma) {
+            return undefined;
+        }
 
-// const orderItem2 = new OrderItem({
-//     orderId: 1,
-//     product: products[1],
-//     quantity: 1,
-// });
+        return Order.from({
+            ...orderPrisma,
+            customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+            items: orderPrisma.items.map(
+                (itemData) =>
+                    new OrderItem({
+                        ...itemData,
+                        product: new Product(itemData.product),
+                    })
+            ),
+            payment: new Payment(orderPrisma.payment),
+        });
+    } catch (error) {
+        throw error;
+    }
+};
 
-// const order1 = new Order({
-//     customer: customers[0],
-//     items: [orderItem1, orderItem2],
-//     date: new Date(),
-//     payment: new Payment({
-//         amount: 0,
-//         date: new Date(),
-//         paymentStatus: 'unpaid',
-//     }),
-//     id: 1,
-// });
+const getOrdersByCustomer = async ({ id }: { id: number }): Promise<Order[]> => {
+    try {
+        const ordersPrisma = await database.order.findMany({
+            where: { customerId: id },
+            include: { customer: true, items: { include: { product: true } }, payment: true },
+        });
+        return ordersPrisma.map((orderPrisma) => {
+            return Order.from({
+                ...orderPrisma,
+                customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+                items: orderPrisma.items.map(
+                    (itemData) =>
+                        new OrderItem({
+                            ...itemData,
+                            product: new Product(itemData.product),
+                        })
+                ),
+                payment: new Payment(orderPrisma.payment),
+            });
+        });
+    } catch (error) {
+        throw error;
+    }
+};
 
-// order1.getPayment().setAmount(order1.getTotalAmount());
-// order1.getPayment().pay();
+const deleteOrder = async ({ id }: { id: number }): Promise<string> => {
+    try {
+        await database.order.delete({
+            where: { id },
+        });
+        return 'Order has been deleted.';
+    } catch (error) {
+        throw error;
+    }
+};
 
-// const orderItem3 = new OrderItem({
-//     orderId: 2,
-//     product: products[0],
-//     quantity: 3,
-// });
+const createOrder = async (order: Order): Promise<Order> => {
+    try {
+        const orderPrisma = await database.order.create({
+            data: {
+                customer: { connect: { id: order.getCustomer().getId() } },
+                items: {
+                    create: order.getItems().map((item) => ({
+                        product: { connect: { id: item.getProduct().getId() } },
+                        quantity: item.getQuantity(),
+                    })),
+                },
+                date: order.getDate(),
+                payment: {
+                    create: {
+                        amount: order.getPayment().getAmount(),
+                        date: order.getPayment().getDate(),
+                        paymentStatus: order.getPayment().getPaymentStatus(),
+                    },
+                },
+            },
+            include: { customer: true, items: { include: { product: true } }, payment: true },
+        });
 
-// const order2 = new Order({
-//     customer: customers[0],
-//     items: [orderItem3],
-//     date: new Date(),
-//     payment: new Payment({
-//         amount: 0,
-//         date: new Date(),
-//         paymentStatus: 'unpaid',
-//     }),
-//     id: 2,
-// });
-
-// order2.getPayment().setAmount(order2.getTotalAmount());
-
-// const orders: Order[] = [order1, order2];
-
-// const getOrders = (): Order[] => orders;
-
-// const getOrderById = ({ id }: { id: number }): Order | undefined => {
-//     const order = orders.find((order) => order.getId() === id);
-//     return order;
-// };
-
-// const getOrdersByCustomer = ({ id }: { id: number }): Order[] => {
-//     return orders.filter((order) => order.getCustomer().getId() === id);
-// };
-
-// const deleteOrder = ({ id }: { id: number }) => {
-//     const orderIndex = orders.findIndex((order) => order.getId() === id);
-
-//     orders.splice(orderIndex, 1);
-//     return 'Order has been deleted.';
-// };
-
-// const createOrder = (order: Order): Order => {
-//     orders.push(order);
-//     return order;
-// };
+        return Order.from({
+            ...orderPrisma,
+            customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+            items: orderPrisma.items.map(
+                (itemData) =>
+                    new OrderItem({
+                        ...itemData,
+                        product: new Product(itemData.product),
+                    })
+            ),
+            payment: new Payment(orderPrisma.payment),
+        });
+    } catch (error) {
+        throw error;
+    }
+};
 
 export default {
-    // //     getOrders,
-    // //     getOrderById,
-    // //     getOrdersByCustomer,
-    // //     deleteOrder,
-    // //     createOrder,
+    getOrders,
+    getOrderById,
+    getOrdersByCustomer,
+    deleteOrder,
+    createOrder,
 };
