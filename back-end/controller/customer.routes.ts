@@ -315,4 +315,47 @@ customerRouter.put(
     }
 );
 
+/**
+ * @swagger
+ * /customers/login/{email}/{password}:
+ *   get:
+ *     summary: Login a customer using email and password
+ *     tags: [Customers]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Email of the customer
+ *       - in: path
+ *         name: password
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Password of the customer
+ *     responses:
+ *       200:
+ *         description: Customer successfully logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ */
+
+customerRouter.get(
+    '/login/:email/:password',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const customer = await customerService.loginCustomer(
+                req.params.email,
+                req.params.password
+            );
+            res.status(200).json(customer);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export { customerRouter };

@@ -104,6 +104,15 @@ const removeProductFromWishlist = async (
     return await customerDB.removeProductFromWishlist(customer!, product);
 };
 
+const loginCustomer = async (email: string, password: string): Promise<Customer | null> => {
+    const customer = await customerDB.getCustomerByEmail({ email });
+
+    if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
+    if (customer.getPassword() !== password) throw new Error('Wrong password');
+
+    return customer;
+};
+
 export default {
     getCustomers,
     getCustomerById,
@@ -112,4 +121,5 @@ export default {
     deleteCustomer,
     addProductToWishlist,
     removeProductFromWishlist,
+    loginCustomer,
 };
