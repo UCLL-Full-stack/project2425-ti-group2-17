@@ -1,3 +1,4 @@
+import CustomerService from '@services/CustomerService';
 import { StatusMessage } from '@types';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
@@ -5,20 +6,27 @@ import { FormEvent, useState } from 'react';
 
 const UserLoginForm: React.FC = () => {
     const router = useRouter();
-    const [name, setName] = useState<string | null>('');
-    const [nameError, setNameError] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>('');
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>('');
+    const [passwordError, setPasswordError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
     const clearErrors = () => {
-        setNameError(null);
+        setEmailError(null);
+        setPasswordError(null);
         setStatusMessages([]);
     };
 
     const validate = (): boolean => {
         let result = true;
 
-        if (!name || name.trim() === '') {
-            setNameError('Name is required.');
+        if (!email || email.trim() === '') {
+            setEmailError('Email is required.');
+            result = false;
+        }
+        if (!password || password.trim() === '') {
+            setPasswordError('Password is required.');
             result = false;
         }
 
@@ -26,19 +34,30 @@ const UserLoginForm: React.FC = () => {
     };
 
     const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault();
-        clearErrors();
-        if (!validate()) {
-            return;
+        try {
+            event.preventDefault();
+            clearErrors();
+            if (!validate()) {
+                return;
+            }
+            const customer = await CustomerService.loginCustomer(email!, password!);
+            setStatusMessages([
+                {
+                    message: 'Login successful. Redirecting to homepage...',
+                    type: 'success',
+                },
+            ]);
+            sessionStorage.setItem('loggedInUserEmail', email!);
+            sessionStorage.setItem('loggedInUserId', customer.id!);
+            setTimeout(() => router.push('/'), 2000);
+        } catch (err: any) {
+            setStatusMessages([
+                {
+                    message: 'Login unsuccessful.',
+                    type: 'error',
+                },
+            ]);
         }
-        setStatusMessages([
-            {
-                message: 'Login successful. Redirecting to homepage...',
-                type: 'success',
-            },
-        ]);
-        sessionStorage.setItem('loggedInUserEmail', name!);
-        setTimeout(() => router.push('/'), 2000);
     };
 
     return (
@@ -62,18 +81,32 @@ const UserLoginForm: React.FC = () => {
                 </div>
             )}
             <form onSubmit={handleSubmit}>
-                <label htmlFor="nameInput" className="block mb-2 text-sm font-medium">
-                    Username:
+                <label htmlFor="emailInput" className="block mb-2 text-sm font-medium">
+                    Email:
                 </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="nameInput"
+                        id="emailInput"
                         type="text"
-                        value={name ?? ''}
-                        onChange={(event) => setName(event.target.value)}
+                        value={email ?? ''}
+                        onChange={(event) => setEmail(event.target.value)}
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
-                    {nameError && <div className="text-red-800">{nameError} </div>}
+                    {emailError && <div className="text-red-800">{emailError} </div>}
+                </div>
+
+                <label htmlFor="passwordInput" className="block mb-2 text-sm font-medium">
+                    Password:
+                </label>
+                <div className="block mb-2 text-sm font-medium">
+                    <input
+                        id="passwordInput"
+                        type="text"
+                        value={password ?? ''}
+                        onChange={(event) => setPassword(event.target.value)}
+                        className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
+                    />
+                    {passwordError && <div className="text-red-800">{passwordError} </div>}
                 </div>
 
                 <button

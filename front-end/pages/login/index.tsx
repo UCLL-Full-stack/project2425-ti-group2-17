@@ -6,7 +6,7 @@ const Login: React.FC = () => {
     return (
         <>
             <Head>
-                <title>User Signup</title>
+                <title>User login</title>
             </Head>
             <Header />
             <main>
