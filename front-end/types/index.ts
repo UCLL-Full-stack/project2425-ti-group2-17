@@ -73,6 +73,13 @@ type ProductInput = {
     colors: string[];
 };
 
+type CustomerInput = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+};
+
 type StatusMessage = {
     message: string;
     type: 'error' | 'success';
@@ -88,5 +95,6 @@ export type {
     Payment,
     Product,
     ProductInput,
+    CustomerInput,
     StatusMessage,
 };
