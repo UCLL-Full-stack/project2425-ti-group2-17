@@ -163,7 +163,7 @@ const Products: React.FC = () => {
 
     useInterval(() => {
         mutate('products', getProducts());
-    }, 2000);
+    }, 1000);
     return (
         <>
             <Head>

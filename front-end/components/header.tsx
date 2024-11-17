@@ -17,7 +17,6 @@ const Header: React.FC = () => {
         } else {
             setLoggedInUserId(null);
         }
-
         setLoggedInUserEmail(userEmail);
     }, []);
 
@@ -40,20 +39,22 @@ const Header: React.FC = () => {
                 <Link href="/products" className="nav-link px-4 fs-5 text-white">
                     Products
                 </Link>
-                <button
-                    onClick={() => {
-                        router.push('/checkout');
-                    }}
-                    className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
-                >
-                    <Image
-                        src="/images/shopping-cart.png"
-                        alt="Add to Cart"
-                        width={30}
-                        height={30}
-                        className="mr-2"
-                    />
-                </button>
+                {loggedInUserEmail && (
+                    <button
+                        onClick={() => {
+                            router.push('/checkout');
+                        }}
+                        className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
+                    >
+                        <Image
+                            src="/images/shopping-cart.png"
+                            alt="Add to Cart"
+                            width={30}
+                            height={30}
+                            className="mr-2"
+                        />
+                    </button>
+                )}
                 {!loggedInUserEmail && (
                     <Link href="/login" className="nav-link px-4 fs-5 text-white">
                         Login
