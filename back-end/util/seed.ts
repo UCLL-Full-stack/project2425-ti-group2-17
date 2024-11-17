@@ -116,16 +116,6 @@ const main = async () => {
         },
     });
 
-    const tempLogin = await prisma.customer.create({
-        data: {
-            firstName: 'Temp',
-            lastName: 'Login',
-            email: 'temp.login@example.com',
-            password: 'loginpassword',
-            wishlist: {},
-        },
-    });
-
     const cartJohn = await prisma.cart.create({
         data: {
             customer: {
@@ -197,16 +187,6 @@ const main = async () => {
                     },
                 ],
             },
-            // totalAmount: ,
-        },
-    });
-
-    const cartTempLogin = await prisma.cart.create({
-        data: {
-            customer: {
-                connect: { id: tempLogin.id },
-            },
-            cartItems: {},
             // totalAmount: ,
         },
     });

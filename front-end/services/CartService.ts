@@ -36,10 +36,29 @@ const getCartById = async (cartId: string) => {
     }
 };
 
-const addItemToCart = async (cartId: string, productId: string, quantity: string) => {
+const getCartByEmail = async (email: string) => {
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/carts/email/${email}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
+const addItemToCart = async (email: string, productId: string, quantity: string) => {
     try {
         const response = await fetch(
-            process.env.NEXT_PUBLIC_API_URL + `/carts/addItems/${cartId}/${productId}/${quantity}`,
+            process.env.NEXT_PUBLIC_API_URL + `/carts/addItems/${email}/${productId}/${quantity}`,
             {
                 method: 'PUT',
                 headers: {
@@ -58,11 +77,11 @@ const addItemToCart = async (cartId: string, productId: string, quantity: string
     }
 };
 
-const removeItemFromCart = async (cartId: string, productId: string, quantity: string) => {
+const removeItemFromCart = async (email: string, productId: string, quantity: string) => {
     try {
         const response = await fetch(
             process.env.NEXT_PUBLIC_API_URL +
-                `/carts/removeItems/${cartId}/${productId}/${quantity}`,
+                `/carts/removeItems/${email}/${productId}/${quantity}`,
             {
                 method: 'PUT',
                 headers: {
@@ -81,11 +100,11 @@ const removeItemFromCart = async (cartId: string, productId: string, quantity: s
     }
 };
 
-const convertCartToOrder = async (cartId: string, paymentStatus: string) => {
+const convertCartToOrder = async (email: string, paymentStatus: string) => {
     try {
         const response = await fetch(
             process.env.NEXT_PUBLIC_API_URL +
-                `/carts/convertToOrder/${cartId}?paymentStatus=${paymentStatus}`,
+                `/carts/convertToOrder/${email}?paymentStatus=${paymentStatus}`,
             {
                 method: 'POST',
                 headers: {
@@ -107,6 +126,7 @@ const convertCartToOrder = async (cartId: string, paymentStatus: string) => {
 const CartService = {
     getAllCarts,
     getCartById,
+    getCartByEmail,
     addItemToCart,
     removeItemFromCart,
     convertCartToOrder,

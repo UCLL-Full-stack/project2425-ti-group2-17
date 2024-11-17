@@ -5,7 +5,7 @@ import styles from '@styles/home.module.css';
 
 type Props = {
     cart: Cart;
-    convertCartToOrder: (id: number, paymentStatus: string) => void;
+    convertCartToOrder: (paymentStatus: string) => void;
     updateQuantity: (id: number, quantity: number) => void;
 };
 
@@ -91,7 +91,7 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                         </p>
                         <button
                             type="button"
-                            onClick={() => convertCartToOrder(4, 'paid')}
+                            onClick={() => convertCartToOrder('paid')}
                             className="w-min bg-black text-white py-2 rounded px-1"
                         >
                             Order

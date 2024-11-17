@@ -5,22 +5,23 @@ import { useState, useEffect } from 'react';
 import ProductService from '@services/ProductService';
 import ProductOverviewTable from '@components/products/ProductOverviewTable';
 import CartService from '@services/CartService';
+import useSWR, { mutate } from 'swr';
+import useInterval from 'use-interval';
 
 const Products: React.FC = () => {
-    const [products, setProducts] = useState<Array<Product>>();
-    const [error, setError] = useState<string | null>(null);
-
-    const getProducts = async () => {
+    const getProducts = async (): Promise<Product[]> => {
         try {
             const response = await ProductService.getAllProducts();
-            const products = await response.json();
-            setProducts(products);
-        } catch (err: any) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Failed to get products.');
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
             }
+            const productData = await response.json();
+            if (productData.length === 0) {
+                throw new Error('No products found');
+            }
+            return productData;
+        } catch (err: any) {
+            throw err;
         }
     };
 
@@ -51,8 +52,7 @@ const Products: React.FC = () => {
         //         .map((item) => item.trim()) || existingProduct.images;
 
         if (!name || !description || !price || !stock || !category || !sizes || !colors) {
-            setError('All fields are required and must be valid.');
-            return;
+            throw new Error('All fields are required and must be valid.');
         }
 
         const newProduct: ProductInput = {
@@ -67,15 +67,11 @@ const Products: React.FC = () => {
         };
 
         try {
-            setError(null);
+            // setError(null);
             await ProductService.createProduct(newProduct);
             getProducts();
         } catch (err: any) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Failed to create product.');
-            }
+            throw new err();
         }
     };
 
@@ -83,7 +79,7 @@ const Products: React.FC = () => {
         const existingProduct = products?.find((product) => product.id === id);
 
         if (!existingProduct) {
-            setError('Product not found');
+            throw new Error('Product not found');
             return;
         }
 
@@ -133,48 +129,41 @@ const Products: React.FC = () => {
         };
 
         try {
-            setError(null);
+            // setError(null);
             await ProductService.updateProduct(id.toString(), updatedProduct);
             getProducts();
         } catch (err: any) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Failed update product.');
-            }
+            throw err.message;
         }
     };
 
     const deleteProduct = async (id: number) => {
         try {
-            setError(null);
+            // setError(null);
             const response = await ProductService.deleteProduct(id.toString());
             getProducts();
         } catch (err: any) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Failed to delete product.');
-            }
+            throw err.message;
         }
     };
 
     const addItemToCart = async (productId: number) => {
         try {
-            await CartService.addItemToCart('4', productId.toString(), '1');
-        } catch (err: any) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Failed to add product to cart.');
+            const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
+            if (loggedInUserEmail == null) {
+                throw new Error('You must be logged in to add an item to your cart.');
             }
-            return 0;
+            await CartService.addItemToCart(loggedInUserEmail, productId.toString(), '1');
+        } catch (err: any) {
+            throw err.message;
         }
     };
 
-    useEffect(() => {
-        getProducts();
-    }, []);
+    const { data: products, isLoading, error } = useSWR('products', getProducts);
+
+    useInterval(() => {
+        mutate('products', getProducts());
+    }, 2000);
     return (
         <>
             <Head>
@@ -183,7 +172,8 @@ const Products: React.FC = () => {
             <Header />
             <main className="d-flex flex-column justify-content-center align-items-center">
                 <h1>Products</h1>
-                {error && <div className="alert alert-danger">{error}</div>}
+                {error && <div className="text-red-800">{error}</div>}
+                {isLoading && <p className="text-green-800">Loading...</p>}
                 <section>
                     {products && (
                         <ProductOverviewTable

@@ -112,6 +112,7 @@ const order2 = new Order({
 
 let mockCartDbGetCarts: jest.Mock;
 let mockCartDbGetCartById: jest.Mock;
+let mockCartDbGetCartByCustomerEmail: jest.Mock;
 let mockCartDbAddCartItem: jest.Mock;
 let mockCartDbRemoveCartItem: jest.Mock;
 let mockProductDbGetProductById: jest.Mock;
@@ -122,6 +123,7 @@ let mockCartDbEmptyCart: jest.Mock;
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
     mockCartDbGetCartById = jest.fn();
+    mockCartDbGetCartByCustomerEmail = jest.fn();
     mockCartDbAddCartItem = jest.fn();
     mockCartDbRemoveCartItem = jest.fn();
     mockProductDbGetProductById = jest.fn();
@@ -161,49 +163,69 @@ test('given carts in the DB, when getting a cart by incorrect id, then an error 
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
 });
 
+test('given carts in the DB, when getting cart by email, then that cart is returned', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(carts[0]);
+
+    const result = await cartService.getCartByEmail('john.doe@example.com');
+
+    expect(result).toEqual(carts[0]);
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
+});
+
+test('given carts in the DB, when getting a cart by incorrect email, then an error is thrown', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
+
+    const getCartByEmail = async () => await cartService.getCartByEmail('wrong@email.com');
+
+    await expect(getCartByEmail).rejects.toThrow('Cart with email wrong@email.com does not exist.');
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({ email: 'wrong@email.com' });
+});
+
 test('given valid cart and product, when adding an item to cart, then the item is added', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product2);
     cartDb.addCartItem = mockCartDbAddCartItem.mockReturnValue(
         new CartItem({ product: product2, quantity: 1 })
     );
 
-    const result = await cartService.addCartItem(1, 2, 1);
+    const result = await cartService.addCartItem('john.doe@example.com', 2, 1);
 
     expect(result).toEqual(new CartItem({ product: product2, quantity: 1 }));
     expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product2, 1);
 });
 
 test('given valid cart with existing product, when adding quantity to existing product, then quantity is updated', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
     cartDb.addCartItem = mockCartDbAddCartItem.mockReturnValue(
         new CartItem({ product: product1, quantity: 3 })
     );
 
-    const result = await cartService.addCartItem(1, 1, 1);
+    const result = await cartService.addCartItem('john.doe@example.com', 1, 1);
 
     expect(result.getQuantity()).toEqual(3);
     expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product1, 1);
 });
 
 test('given non-existent product, when adding item to cart, then an error is thrown', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-    const addCartItem = async () => await cartService.addCartItem(1, 3, 1);
+    const addCartItem = async () => await cartService.addCartItem('john.doe@example.com', 3, 1);
 
     await expect(addCartItem).rejects.toThrow('Product with id 3 does not exist.');
 });
 
 test('given product in cart, when decreasing quantity, then quantity is decreased', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
     cartDb.removeCartItem = mockCartDbRemoveCartItem.mockReturnValue(
         new CartItem({ product: product1, quantity: 1 })
     );
 
-    const result = await cartService.removeCartItem(1, 1, 1);
+    const result = await cartService.removeCartItem('john.doe@example.com', 1, 1);
 
     expect(result).toBeInstanceOf(CartItem);
     expect((result as CartItem).getQuantity()).toEqual(1);
@@ -212,33 +234,35 @@ test('given product in cart, when decreasing quantity, then quantity is decrease
 });
 
 test('given product in cart, when removing entire quantity, then item is removed from cart', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
     cartDb.removeCartItem = mockCartDbRemoveCartItem.mockReturnValue('Item removed from cart.');
 
-    const result = await cartService.removeCartItem(1, 1, 2);
+    const result = await cartService.removeCartItem('john.doe@example.com', 1, 2);
 
     expect(result).toEqual('Item removed from cart.');
     expect(mockCartDbRemoveCartItem).toHaveBeenCalledWith(cartJohn, product1, 2);
 });
 
 test('given non-existent product, when removing item from cart, then an error is thrown', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-    const removeCartItem = async () => await cartService.removeCartItem(1, 3, 1);
+    const removeCartItem = async () =>
+        await cartService.removeCartItem('john.doe@example.com', 3, 1);
 
     await expect(removeCartItem).rejects.toThrow('Product with id 3 does not exist.');
 });
 
 test('given quantity greater than in cart, when removing item from cart, then an error is thrown', async () => {
-    cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
     cartDb.removeCartItem = mockCartDbRemoveCartItem.mockImplementation(() => {
         throw new Error('There are not that many products in the cart to remove.');
     });
 
-    const removeCartItem = async () => await cartService.removeCartItem(1, 1, 5);
+    const removeCartItem = async () =>
+        await cartService.removeCartItem('john.doe@example.com', 1, 5);
 
     await expect(removeCartItem).rejects.toThrow(
         'There are not that many products in the cart to remove.'

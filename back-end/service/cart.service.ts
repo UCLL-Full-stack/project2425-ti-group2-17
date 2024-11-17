@@ -18,12 +18,18 @@ const getCartById = async (id: number): Promise<Cart | null> => {
     return cart;
 };
 
+const getCartByEmail = async (email: string): Promise<Cart | null> => {
+    const cart = await cartDB.getCartByCustomerEmail({ email });
+    if (!cart) throw new Error(`Cart with email ${email} does not exist.`);
+    return cart;
+};
+
 const addCartItem = async (
-    cartId: number,
+    email: string,
     productId: number,
     quantity: number
 ): Promise<CartItem> => {
-    const existingCart = await getCartById(cartId);
+    const existingCart = await getCartByEmail(email);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
@@ -31,11 +37,11 @@ const addCartItem = async (
 };
 
 const removeCartItem = async (
-    cartId: number,
+    email: string,
     productId: number,
     quantity: number
 ): Promise<CartItem | string> => {
-    const existingCart = await getCartById(cartId);
+    const existingCart = await getCartByEmail(email);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
@@ -91,4 +97,5 @@ export default {
     addCartItem,
     removeCartItem,
     // convertCartToOrder,
+    getCartByEmail,
 };

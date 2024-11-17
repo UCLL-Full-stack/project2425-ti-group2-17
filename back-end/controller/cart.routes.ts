@@ -105,23 +105,59 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
 
 /**
  * @swagger
- * /carts/addItems/{cartId}/{productId}/{quantity}:
- *   put:
- *     summary: Add an item to the cart or increase it's quantity
+ * /carts/email/{email}:
+ *   get:
+ *     summary: Get a cart by email
  *     tags: [Carts]
  *     parameters:
  *       - in: path
- *         name: cartId
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Id of the cart
+ *           type: string
+ *         description: Email belonging to the user whose cart must be retrieved
+ *     responses:
+ *       200:
+ *         description: Cart details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Cart'
+ *       404:
+ *         description: Cart not found
+ *       500:
+ *         description: Internal server error
+ */
+
+cartRouter.get('/email/:email', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log(req.params.email);
+        const cart = await cartService.getCartByEmail(req.params.email);
+        res.status(200).json(cart);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /carts/addItems/{email}/{productId}/{quantity}:
+ *   put:
+ *     summary: Add an item to the cart or increase its quantity
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Email of the customer
  *       - in: path
  *         name: productId
  *         required: true
  *         schema:
  *           type: integer
- *         description: Id of the product
+ *         description: ID of the product
  *       - in: path
  *         name: quantity
  *         required: true
@@ -138,13 +174,15 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
  */
 
 cartRouter.put(
-    '/addItems/:cartId/:productId/:quantity',
+    '/addItems/:email/:productId/:quantity',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const cartId = Number(req.params.cartId);
-            const productId = Number(req.params.productId);
-            const quantity = Number(req.params.quantity);
-            const result = await cartService.addCartItem(cartId, productId, quantity);
+            const { email, productId, quantity } = req.params;
+            const result = await cartService.addCartItem(
+                email,
+                Number(productId),
+                Number(quantity)
+            );
             res.status(200).json(result);
         } catch (error) {
             next(error);
@@ -154,17 +192,17 @@ cartRouter.put(
 
 /**
  * @swagger
- * /carts/removeItems/{cartId}/{productId}/{quantity}:
+ * /carts/removeItems/{email}/{productId}/{quantity}:
  *   put:
  *     summary: Remove an item or decrease its quantity in the cart
  *     tags: [Carts]
  *     parameters:
  *       - in: path
- *         name: cartId
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: ID of the cart
+ *           type: string
+ *         description: Email of the customer
  *       - in: path
  *         name: productId
  *         required: true
@@ -190,13 +228,15 @@ cartRouter.put(
  */
 
 cartRouter.put(
-    '/removeItems/:cartId/:productId/:quantity',
+    '/removeItems/:email/:productId/:quantity',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const cartId = Number(req.params.cartId);
-            const productId = Number(req.params.productId);
-            const quantity = Number(req.params.quantity);
-            const result = await cartService.removeCartItem(cartId, productId, quantity);
+            const { email, productId, quantity } = req.params;
+            const result = await cartService.removeCartItem(
+                email,
+                Number(productId),
+                Number(quantity)
+            );
             res.status(200).json(result);
         } catch (error) {
             next(error);
@@ -206,17 +246,17 @@ cartRouter.put(
 
 // /**
 //  * @swagger
-//  * /carts/convertToOrder/{cartId}:
+//  * /carts/convertToOrder/{email}:
 //  *   post:
 //  *     summary: Convert a cart to an order
 //  *     tags: [Carts]
 //  *     parameters:
 //  *       - in: path
-//  *         name: cartId
+//  *         name: email
 //  *         required: true
 //  *         schema:
-//  *           type: integer
-//  *         description: Numeric ID of the cart to convert
+//  *           type: string
+//  *         description: Email of the customer
 //  *       - in: query
 //  *         name: paymentStatus
 //  *         required: true
@@ -240,12 +280,12 @@ cartRouter.put(
 //  */
 
 // cartRouter.post(
-//     '/convertToOrder/:cartId',
+//     '/convertToOrder/:email',
 //     async (req: Request, res: Response, next: NextFunction) => {
 //         try {
-//             const cartId = Number(req.params.cartId);
+//             const { email } = req.params;
 //             const { paymentStatus } = req.query as { paymentStatus: string };
-//             const order = await cartService.convertCartToOrder(cartId, paymentStatus);
+//             const order = await cartService.convertCartToOrderByEmail(email, paymentStatus);
 //             res.status(200).json(order);
 //         } catch (error) {
 //             next(error);
