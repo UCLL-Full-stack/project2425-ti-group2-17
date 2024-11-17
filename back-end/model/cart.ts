@@ -12,14 +12,14 @@ export class Cart {
     private id?: number;
     private customer: Customer;
     private products: CartItem[];
-    // private totalAmount: number;
+    private totalAmount: number;
 
     constructor(cart: { customer: Customer; products: CartItem[]; id?: number }) {
         this.validate(cart);
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;
-        // this.totalAmount = this.calculateTotalAmount();
+        this.totalAmount = this.calculateTotalAmount();
     }
 
     getId(): number | undefined {
@@ -35,6 +35,10 @@ export class Cart {
     }
 
     getTotalAmount() {
+        return this.totalAmount;
+    }
+
+    calculateTotalAmount() {
         return this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
     }
 
@@ -54,12 +58,12 @@ export class Cart {
         if (existingProductIndex !== -1) {
             const existingQuantity = this.products[existingProductIndex].getQuantity();
             this.products[existingProductIndex].increaseQuantity(existingQuantity + quantity);
-            // this.calculateTotalAmount();
+            this.totalAmount = this.calculateTotalAmount();
             return this.products[existingProductIndex];
         } else {
             const cartItem = new CartItem({ product, quantity });
             this.products.push(cartItem);
-            // this.calculateTotalAmount();
+            this.totalAmount = this.calculateTotalAmount();
             return cartItem;
         }
     }
@@ -79,10 +83,10 @@ export class Cart {
 
         if (this.products[existingProductIndex].getQuantity() === 0) {
             this.products.splice(existingProductIndex, 1);
-            // this.calculateTotalAmount();
+            this.totalAmount = this.calculateTotalAmount();
             return 'Item removed from cart.';
         } else {
-            // this.calculateTotalAmount();
+            this.totalAmount = this.calculateTotalAmount();
             return this.products[existingProductIndex];
         }
     }
@@ -103,12 +107,14 @@ export class Cart {
         customer: CustomerPrisma;
         cartItems: (CartItemPrisma & { product: ProductPrisma })[];
     }) {
-        return new Cart({
+        const cart = new Cart({
             id,
             customer: Customer.fromWithoutWishlist(customer),
             products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
                 CartItem.from(cartItem)
             ),
         });
+        cart.totalAmount = cart.calculateTotalAmount();
+        return cart;
     }
 }
