@@ -131,7 +131,6 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
 
 cartRouter.get('/email/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.params.email);
         const cart = await cartService.getCartByEmail(req.params.email);
         res.status(200).json(cart);
     } catch (error) {
