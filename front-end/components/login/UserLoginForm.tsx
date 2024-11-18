@@ -82,29 +82,22 @@ const UserLoginForm: React.FC = () => {
                 </div>
             )}
             <form onSubmit={handleSubmit}>
-                <label htmlFor="emailInput" className="block mb-2 text-sm font-medium">
-                    Email:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="emailInput"
                         type="text"
                         value={email ?? ''}
                         onChange={(event) => setEmail(event.target.value)}
+                        placeholder="Email:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {emailError && <div className="text-red-800">{emailError} </div>}
                 </div>
-
-                <label htmlFor="passwordInput" className="block mb-2 text-sm font-medium">
-                    Password:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="passwordInput"
                         type="text"
                         value={password ?? ''}
                         onChange={(event) => setPassword(event.target.value)}
+                        placeholder="Password:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {passwordError && <div className="text-red-800">{passwordError} </div>}

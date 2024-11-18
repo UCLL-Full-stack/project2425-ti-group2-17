@@ -29,6 +29,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                     Create product
                 </button>
             </div>
+
             {products && products.length > 0 ? (
                 <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
                     {products.map((product) => {

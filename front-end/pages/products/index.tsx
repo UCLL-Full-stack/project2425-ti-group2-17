@@ -17,6 +17,7 @@ const Products: React.FC = () => {
     const [maxPrice, setmaxPrice] = useState<number>(1000);
 
     const filterProducts = (productData: Product[]): Product[] => {
+        console.log(selectedSizes);
         return productData.filter(
             (product) =>
                 (selectedSizes.length === 0 ||
@@ -182,6 +183,17 @@ const Products: React.FC = () => {
         }
     };
 
+    const handleSizeChange = (inputSize: string) => {
+        if (selectedSizes.includes(inputSize)) {
+            setSelectedSizes(selectedSizes.filter((size) => size !== inputSize));
+        } else {
+            setSelectedSizes([...selectedSizes, inputSize]);
+        }
+        // setSelectedSizes((currentSizes) =>
+        //     currentSizes.includes(size) ? currentSizes.filter((s) => s !== size) : [...currentSizes, size]
+        // );
+    };
+
     const { data: products, isLoading, error } = useSWR('products', getProducts);
 
     useInterval(() => {
@@ -197,6 +209,30 @@ const Products: React.FC = () => {
                 <h1>Products</h1>
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
+                <div className="block mb-2 text-sm font-medium">
+                    <input
+                        type="text"
+                        value={searchQuery ?? ''}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        placeholder="What are you looking for?"
+                        className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
+                    />
+                </div>
+
+                <div className="flex flex-col mb-2 text-sm font-medium">
+                    {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                        <label key={size} className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                value={size}
+                                checked={selectedSizes.includes(size)}
+                                onChange={() => handleSizeChange(size)}
+                                className="border border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span>{size}</span>
+                        </label>
+                    ))}
+                </div>
                 <section>
                     {products && (
                         <ProductOverviewTable

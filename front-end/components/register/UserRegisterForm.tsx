@@ -114,73 +114,51 @@ const UserRegisterForm: React.FC = () => {
                 </div>
             )}
             <form onSubmit={handleSubmit}>
-                <label htmlFor="firstNameInput" className="block mb-2 text-sm font-medium">
-                    First name:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="firstNameInput"
                         type="text"
                         value={firstName ?? ''}
                         onChange={(event) => setFirstName(event.target.value)}
+                        placeholder="First name:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {firstNameError && <div className="text-red-800">{firstNameError} </div>}
                 </div>
-
-                <label htmlFor="lastNameInput" className="block mb-2 text-sm font-medium">
-                    Last name:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="lastNameInput"
                         type="text"
                         value={lastName ?? ''}
                         onChange={(event) => setLastName(event.target.value)}
+                        placeholder="Last name"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {lastNameError && <div className="text-red-800">{lastNameError} </div>}
                 </div>
-
-                <label htmlFor="emailInput" className="block mb-2 text-sm font-medium">
-                    Email:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="emailInput"
                         type="text"
                         value={email ?? ''}
                         onChange={(event) => setEmail(event.target.value)}
+                        placeholder="Email:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {emailError && <div className="text-red-800">{emailError} </div>}
                 </div>
-
-                <label htmlFor="passwordInput" className="block mb-2 text-sm font-medium">
-                    Password:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="passwordInput"
                         type="text"
                         value={password ?? ''}
                         onChange={(event) => setPassword(event.target.value)}
+                        placeholder="Password:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                 </div>
-
-                <label
-                    htmlFor="ConfirmationPasswordInput"
-                    className="block mb-2 text-sm font-medium"
-                >
-                    Confirm your password:
-                </label>
                 <div className="block mb-2 text-sm font-medium">
                     <input
-                        id="ConfirmationPasswordInput"
                         type="text"
                         value={confirmationPassword ?? ''}
                         onChange={(event) => setConfirmationPassword(event.target.value)}
+                        placeholder="Confirm your password:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                     {passwordError && <div className="text-red-800">{passwordError} </div>}
