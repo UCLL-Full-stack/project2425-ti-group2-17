@@ -17,7 +17,15 @@ const Products: React.FC = () => {
     const [maxPrice, setmaxPrice] = useState<number>(1000);
 
     const filterProducts = (productData: Product[]): Product[] => {
-        console.log(selectedSizes);
+        if (minPrice < 0) {
+            setminPrice(0);
+        }
+        if (maxPrice < 0) {
+            setmaxPrice(1000);
+        } else if (maxPrice < minPrice) {
+            setmaxPrice(minPrice);
+        }
+        // console.log(selectedSizes);
         return productData.filter(
             (product) =>
                 (selectedSizes.length === 0 ||
@@ -189,9 +197,6 @@ const Products: React.FC = () => {
         } else {
             setSelectedSizes([...selectedSizes, inputSize]);
         }
-        // setSelectedSizes((currentSizes) =>
-        //     currentSizes.includes(size) ? currentSizes.filter((s) => s !== size) : [...currentSizes, size]
-        // );
     };
 
     const { data: products, isLoading, error } = useSWR('products', getProducts);
