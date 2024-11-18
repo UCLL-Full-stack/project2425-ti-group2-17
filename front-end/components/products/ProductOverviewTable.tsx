@@ -67,7 +67,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                                     <div className="mt-4">
                                         <div className="text-left">
                                             <strong>Categories:</strong>{' '}
-                                            {product.category.join(', ')}
+                                            {product.categories.join(', ')}
                                             <div className="text-left">
                                                 <strong>Sizes:</strong> {product.sizes.join(', ')}
                                             </div>

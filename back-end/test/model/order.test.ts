@@ -16,7 +16,7 @@ const productTestData = {
     name: 'T-Shirt',
     price: 30.0,
     stock: 100,
-    category: ['Clothing', 'Men', 'Tops'],
+    categories: ['Clothing', 'Men', 'Tops'],
     description: 'A comfortable cotton t-shirt',
     images: ['image1.jpg', 'image2.jpg'],
     sizes: ['S', 'M', 'L', 'XL'],

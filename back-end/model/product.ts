@@ -5,7 +5,7 @@ export class Product {
     private name: string;
     private price: number;
     private stock: number;
-    private category: string[];
+    private categories: string[];
     private description: string;
     private images: string[];
     private sizes: string[];
@@ -15,7 +15,7 @@ export class Product {
         name: string;
         price: number;
         stock: number;
-        category: string[];
+        categories: string[];
         description: string;
         images: string[];
         sizes: string[];
@@ -27,7 +27,7 @@ export class Product {
         this.name = product.name;
         this.price = product.price;
         this.stock = product.stock;
-        this.category = product.category;
+        this.categories = product.categories;
         this.description = product.description;
         this.images = product.images;
         this.sizes = product.sizes;
@@ -50,8 +50,8 @@ export class Product {
         return this.stock;
     }
 
-    getCategory(): string[] {
-        return this.category;
+    getCategories(): string[] {
+        return this.categories;
     }
 
     getDescription(): string {
@@ -82,8 +82,8 @@ export class Product {
         this.stock = stock;
     }
 
-    setCategory(category: string[]): void {
-        this.category = category;
+    setCategories(categories: string[]): void {
+        this.categories = categories;
     }
 
     setDescription(description: string): void {
@@ -106,7 +106,7 @@ export class Product {
         name: string;
         price: number;
         stock: number;
-        category: string[];
+        categories: string[];
         description: string;
         images: string[];
         sizes: string[];
@@ -125,8 +125,8 @@ export class Product {
             throw new Error('Stock must be positive.');
         }
 
-        if (product.category.length === 0) {
-            throw new Error('Product must belong to at least one category.');
+        if (product.categories.length === 0) {
+            throw new Error('Product must belong to at least one categories.');
         }
 
         if (!product.description.trim()) throw new Error('The product description is required.');
@@ -176,7 +176,7 @@ export class Product {
         name,
         price,
         stock,
-        category,
+        categories,
         description,
         images,
         sizes,
@@ -187,7 +187,7 @@ export class Product {
             name,
             price,
             stock,
-            category,
+            categories,
             description,
             images,
             sizes,

@@ -8,7 +8,7 @@ const createProduct = async (product: Product): Promise<Product> => {
                 name: product.getName(),
                 price: product.getPrice(),
                 stock: product.getStock(),
-                category: { set: product.getCategory() },
+                categories: { set: product.getCategories() },
                 description: product.getDescription(),
                 images: { set: product.getImages() },
                 sizes: { set: product.getSizes() },
@@ -66,7 +66,7 @@ const getProductsBySearch = async (query: string): Promise<Product[]> => {
             where: {
                 OR: [
                     { name: { contains: query } },
-                    { category: { hasSome: [query] } },
+                    { categories: { hasSome: [query] } },
                     { description: { contains: query } },
                 ],
             },
@@ -85,7 +85,7 @@ const updateProduct = async (updatedProduct: Product): Promise<Product> => {
                 name: updatedProduct.getName(),
                 price: updatedProduct.getPrice(),
                 stock: updatedProduct.getStock(),
-                category: { set: updatedProduct.getCategory() },
+                categories: { set: updatedProduct.getCategories() },
                 description: updatedProduct.getDescription(),
                 images: { set: updatedProduct.getImages() },
                 sizes: { set: updatedProduct.getSizes() },

@@ -9,6 +9,29 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 
 const Products: React.FC = () => {
+    const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+    const [selectedColors, setSelectedColors] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [minPrice, setminPrice] = useState<number>(0);
+    const [maxPrice, setmaxPrice] = useState<number>(1000);
+
+    const filterProducts = (productData: Product[]): Product[] => {
+        return productData.filter(
+            (product) =>
+                (selectedSizes.length === 0 ||
+                    product.sizes.some((size) => selectedSizes.includes(size))) &&
+                (selectedColors.length === 0 ||
+                    product.colors.some((color) => selectedColors.includes(color))) &&
+                (selectedCategories.length === 0 ||
+                    product.categories.some((category) => selectedCategories.includes(category))) &&
+                (searchQuery === '' ||
+                    product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+                product.price >= minPrice &&
+                product.price <= maxPrice
+        );
+    };
+
     const getProducts = async (): Promise<Product[]> => {
         try {
             const response = await ProductService.getAllProducts();
@@ -19,7 +42,7 @@ const Products: React.FC = () => {
             if (productData.length === 0) {
                 throw new Error('No products found');
             }
-            return productData;
+            return filterProducts(productData);
         } catch (err: any) {
             throw err;
         }
@@ -95,9 +118,9 @@ const Products: React.FC = () => {
             existingProduct.description;
         const category =
             window
-                .prompt('Enter new categories:', existingProduct.category.join(', '))
+                .prompt('Enter new categories:', existingProduct.categories.join(', '))
                 ?.split(',')
-                .map((item) => item.trim()) || existingProduct.category;
+                .map((item) => item.trim()) || existingProduct.categories;
         const sizes =
             window
                 .prompt('Enter new sizes:', existingProduct.sizes.join(', '))

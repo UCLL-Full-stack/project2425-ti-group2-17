@@ -3,6 +3,8 @@
 // npx ts-node util/seed.ts
 
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { set } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +22,7 @@ const main = async () => {
             name: 'Basic T-Shirt',
             price: 19.99,
             stock: 100,
-            category: ['Clothing', 'Tops'],
+            categories: ['Clothing', 'Tops'],
             description: 'A comfortable, everyday t-shirt available in multiple colors.',
             images: ['https://example.com/images/tshirt1.jpg'],
             sizes: ['S', 'M', 'L', 'XL'],
@@ -33,7 +35,7 @@ const main = async () => {
             name: 'Running Shoes',
             price: 79.99,
             stock: 50,
-            category: ['Footwear', 'Sports'],
+            categories: ['Footwear', 'Sports'],
             description: 'Lightweight and comfortable shoes designed for running.',
             images: ['https://example.com/images/shoes1.jpg'],
             sizes: ['M', 'L', 'XL'],
@@ -46,7 +48,7 @@ const main = async () => {
             name: 'Casual Hoodie',
             price: 39.99,
             stock: 75,
-            category: ['Clothing', 'Outerwear'],
+            categories: ['Clothing', 'Outerwear'],
             description: 'A cozy hoodie perfect for casual wear.',
             images: ['https://example.com/images/hoodie1.jpg'],
             sizes: ['S', 'M', 'L', 'XL'],
@@ -59,7 +61,7 @@ const main = async () => {
             name: 'Classic Watch',
             price: 99.99,
             stock: 30,
-            category: ['Accessories', 'Watches'],
+            categories: ['Accessories', 'Watches'],
             description: 'A classic watch with a sleek design.',
             images: ['https://example.com/images/watch1.jpg'],
             sizes: ['M'],
@@ -72,7 +74,7 @@ const main = async () => {
             name: 'Denim Jeans',
             price: 49.99,
             stock: 60,
-            category: ['Clothing', 'Bottoms'],
+            categories: ['Clothing', 'Bottoms'],
             description: 'Classic denim jeans with a comfortable fit.',
             images: ['https://example.com/images/jeans1.jpg'],
             sizes: ['S', 'M', 'L', 'XL'],

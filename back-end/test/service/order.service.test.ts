@@ -23,7 +23,7 @@ const orders: Order[] = [
                     name: 'Classic T-Shirt',
                     price: 19.99,
                     stock: 200,
-                    category: ['Clothing', 'Men'],
+                    categories: ['Clothing', 'Men'],
                     description: 'Comfortable cotton T-Shirt.',
                     images: ['tshirt_front.jpg', 'tshirt_back.jpg'],
                     sizes: ['S', 'M', 'L', 'XL'],

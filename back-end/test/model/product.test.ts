@@ -4,7 +4,7 @@ const validProductTestData = {
     name: 'T-Shirt',
     price: 30.0,
     stock: 100,
-    category: ['Clothing', 'Men', 'Tops'],
+    categories: ['Clothing', 'Men', 'Tops'],
     description: 'A comfortable cotton t-shirt',
     images: ['image1.jpg', 'image2.jpg'],
     sizes: ['S', 'M', 'L', 'XL'],
@@ -17,7 +17,7 @@ beforeEach(() => {
     product = new Product(validProductTestData);
 });
 
-const { name, price, stock, category, description, images, sizes, colors } = validProductTestData;
+const { name, price, stock, categories, description, images, sizes, colors } = validProductTestData;
 
 const createProduct = (overrides = {}) => new Product({ ...validProductTestData, ...overrides });
 
@@ -25,7 +25,7 @@ test('given: valid values for product, when: product is created, then: product i
     expect(product.getName()).toEqual('T-Shirt');
     expect(product.getPrice()).toEqual(30.0);
     expect(product.getStock()).toEqual(100);
-    expect(product.getCategory()).toEqual(['Clothing', 'Men', 'Tops']);
+    expect(product.getCategories()).toEqual(['Clothing', 'Men', 'Tops']);
     expect(product.getDescription()).toEqual('A comfortable cotton t-shirt');
     expect(product.getImages()).toEqual(['image1.jpg', 'image2.jpg']);
     expect(product.getSizes()).toEqual(['S', 'M', 'L', 'XL']);
@@ -50,9 +50,9 @@ test('given: negative stock for product, when: product is created, then: an erro
     expect(() => createProduct({ stock: -1 })).toThrow('Stock must be positive.');
 });
 
-test('given: no category for product, when: product is created, then: an error is thrown.', () => {
-    expect(() => createProduct({ category: [] })).toThrow(
-        'Product must belong to at least one category.'
+test('given: no categories for product, when: product is created, then: an error is thrown.', () => {
+    expect(() => createProduct({ categories: [] })).toThrow(
+        'Product must belong to at least one categories.'
     );
 });
 

@@ -40,18 +40,21 @@ const UserLoginForm: React.FC = () => {
             if (!validate()) {
                 return;
             }
-            await CustomerService.loginCustomer(email!, password!);
+            const Customer = await CustomerService.loginCustomer(email!, password!);
             setStatusMessages([
                 {
-                    message: 'Signup successful. Redirecting to homepage...',
+                    message: 'Login successful. Redirecting to homepage...',
                     type: 'success',
                 },
             ]);
-            setTimeout(() => router.push('/login'), 2000);
+            sessionStorage.setItem('loggedInUserEmail', email!);
+            sessionStorage.setItem('loggedInUserId', Customer.id!);
+            setTimeout(() => router.push('/'), 2000);
         } catch (err: any) {
+            console.log();
             setStatusMessages([
                 {
-                    message: 'Signup unsuccessful.',
+                    message: 'Login unsuccessful.',
                     type: 'error',
                 },
             ]);

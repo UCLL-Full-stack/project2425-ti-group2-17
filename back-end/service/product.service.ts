@@ -6,7 +6,7 @@ const createProduct = async ({
     name,
     price,
     stock,
-    category,
+    categories,
     description,
     images,
     sizes,
@@ -22,7 +22,7 @@ const createProduct = async ({
         name,
         price,
         stock,
-        category,
+        categories,
         description,
         images,
         sizes,
@@ -59,7 +59,7 @@ const updateProduct = async (id: number, productData: Partial<ProductInput>): Pr
         name: productData.name || existingProduct.getName(),
         price: productData.price || existingProduct.getPrice(),
         stock: productData.stock || existingProduct.getStock(),
-        category: productData.category || existingProduct.getCategory(),
+        categories: productData.categories || existingProduct.getCategories(),
         description: productData.description || existingProduct.getDescription(),
         images: productData.images || existingProduct.getImages(),
         sizes: productData.sizes || existingProduct.getSizes(),
@@ -69,7 +69,7 @@ const updateProduct = async (id: number, productData: Partial<ProductInput>): Pr
     if (productData.name) existingProduct.setName(productData.name);
     if (productData.price) existingProduct.setPrice(productData.price);
     if (productData.stock) existingProduct.setStock(productData.stock);
-    if (productData.category) existingProduct.setCategory(productData.category);
+    if (productData.categories) existingProduct.setCategories(productData.categories);
     if (productData.description) existingProduct.setDescription(productData.description);
     if (productData.images) existingProduct.setImages(productData.images);
     if (productData.sizes) existingProduct.setSizes(productData.sizes);

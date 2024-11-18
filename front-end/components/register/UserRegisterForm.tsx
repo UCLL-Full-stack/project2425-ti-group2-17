@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { CustomerInput } from '@types';
 
-const UserLoginForm: React.FC = () => {
+const UserRegisterForm: React.FC = () => {
     const router = useRouter();
     const [firstName, setFirstName] = useState<string | null>('');
     const [firstNameError, setFirstNameError] = useState<string | null>(null);
@@ -78,17 +78,15 @@ const UserLoginForm: React.FC = () => {
             const customer = await CustomerService.createCustomer(customerInput);
             setStatusMessages([
                 {
-                    message: 'Login successful. Redirecting to homepage...',
+                    message: 'Signup successful. Redirecting to loginpage...',
                     type: 'success',
                 },
             ]);
-            sessionStorage.setItem('loggedInUserEmail', email!);
-            sessionStorage.setItem('loggedInUserId', customer.id!);
-            setTimeout(() => router.push('/'), 2000);
+            setTimeout(() => router.push('/login'), 2000);
         } catch (err: any) {
             setStatusMessages([
                 {
-                    message: 'Login unsuccessful.',
+                    message: 'Signup unsuccessful.',
                     type: 'error',
                 },
             ]);
@@ -206,4 +204,4 @@ const UserLoginForm: React.FC = () => {
     );
 };
 
-export default UserLoginForm;
+export default UserRegisterForm;

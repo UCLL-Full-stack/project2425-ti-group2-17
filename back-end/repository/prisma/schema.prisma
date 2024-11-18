@@ -23,7 +23,7 @@ model Product {
   name         String      @unique
   price        Int
   stock        Int
-  category     String[]
+  categories   String[]
   description  String
   images       String[]
   sizes        String[]
