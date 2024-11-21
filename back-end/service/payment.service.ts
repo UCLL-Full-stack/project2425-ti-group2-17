@@ -3,8 +3,8 @@ import orderDb from '../repository/order.db';
 import paymentDb from '../repository/payment.db';
 import { PaymentInput } from '../types';
 
-const makePayment = (orderId: number, paymentInput: PaymentInput): Payment => {
-    const order = orderDb.getOrderById({ id: orderId });
+const makePayment = async (orderId: number, paymentInput: PaymentInput): Promise<Payment> => {
+    const order = await orderDb.getOrderById({ id: orderId });
 
     if (!order) {
         throw new Error(`Order with id ${orderId} does not exist.`);
@@ -21,18 +21,18 @@ const makePayment = (orderId: number, paymentInput: PaymentInput): Payment => {
         );
     }
 
-    const paymentId = paymentDb.getPayments().length + 1;
+    const paymentId = (await paymentDb.getPayments()).length + 1;
     const payment = new Payment({ ...paymentInput, id: paymentId });
-    paymentDb.addPayment(payment);
+    await paymentDb.addPayment(payment);
     order.getPayment().pay();
 
     return payment;
 };
 
-const getPayments = (): Payment[] => paymentDb.getPayments();
+const getPayments = async (): Promise<Payment[]> => await paymentDb.getPayments();
 
-const getPaymentById = (id: number): Payment => {
-    const payment = paymentDb.getPaymentById({ id });
+const getPaymentById = async (id: number): Promise<Payment> => {
+    const payment = await paymentDb.getPaymentById({ id });
 
     if (!payment) throw new Error(`Payment with id ${id} does not exist.`);
 

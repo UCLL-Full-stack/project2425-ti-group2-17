@@ -1,3 +1,5 @@
+import { Payment as PaymentPrisma } from '@prisma/client';
+
 export class Payment {
     private id?: number;
     private amount: number;
@@ -60,5 +62,14 @@ export class Payment {
         this.date = new Date();
 
         this.paymentStatus = 'paid';
+    }
+
+    static from({ id, amount, date, paymentStatus }: PaymentPrisma) {
+        return new Payment({
+            id,
+            amount,
+            date,
+            paymentStatus,
+        });
     }
 }
