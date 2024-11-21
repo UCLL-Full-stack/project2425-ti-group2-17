@@ -14,17 +14,14 @@ const makePayment = async (orderId: number, paymentInput: PaymentInput): Promise
         throw new Error(`Order with id ${orderId} is already paid.`);
     }
 
-    const orderTotalAmount = order.getTotalAmount();
+    const orderTotalAmount = order.calculateTotalAmount();
     if (paymentInput.amount !== orderTotalAmount) {
         throw new Error(
             `Payment amount ${paymentInput.amount} does not match order total amount ${orderTotalAmount}.`
         );
     }
 
-    const paymentId = (await paymentDb.getPayments()).length + 1;
-    const payment = new Payment({ ...paymentInput, id: paymentId });
-    await paymentDb.addPayment(payment);
-    order.getPayment().pay();
+    const payment = await paymentDb.addPayment({ orderId, amount: paymentInput.amount });
 
     return payment;
 };

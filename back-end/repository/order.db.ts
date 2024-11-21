@@ -113,8 +113,8 @@ const createOrder = async (order: Order): Promise<Order> => {
                 date: order.getDate(),
                 payment: {
                     create: {
-                        amount: order.getPayment().getAmount(),
-                        date: order.getPayment().getDate(),
+                        amount: order.calculateTotalAmount(),
+                        date: order.getDate(),
                         paymentStatus: order.getPayment().getPaymentStatus(),
                     },
                 },

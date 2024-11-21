@@ -1,48 +1,83 @@
 import { Payment } from '../model/payment';
 import database from './database';
 
-// const payments: Payment[] = [
-//     new Payment({
-//         amount: 150.0,
-//         date: new Date('2023-05-15'),
-//         paymentStatus: 'paid',
-//         id: 1,
-//     }),
-//     new Payment({
-//         amount: 200.0,
-//         date: new Date('2023-07-20'),
-//         paymentStatus: 'unpaid',
-//         id: 2,
-//     }),
-//     new Payment({
-//         amount: 75.5,
-//         date: new Date('2023-08-10'),
-//         paymentStatus: 'paid',
-//         id: 3,
-//     }),
-//     new Payment({
-//         amount: 320.0,
-//         date: new Date('2023-09-25'),
-//         paymentStatus: 'unpaid',
-//         id: 4,
-//     }),
-//     new Payment({
-//         amount: 100.0,
-//         date: new Date('2023-10-05'),
-//         paymentStatus: 'paid',
-//         id: 5,
-//     }),
-// ];
+// const addPayment = async (payment: Payment): Promise<Payment> => {
+//     try {
+//         const paymentPrisma = await database.$transaction(async (prisma) => {
+//             // Create payment
+//             const newPayment = await prisma.payment.create({
+//                 data: {
+//                     amount: payment.getAmount(),
+//                     date: payment.getDate(),
+//                     paymentStatus: payment.getPaymentStatus(),
+//                 },
+//             });
 
-const addPayment = async (payment: Payment): Promise<Payment> => {
+//             // Find and update associated order
+//             const order = await prisma.order.findUnique({
+//                 where: { paymentId: newPayment.id },
+//             });
+
+//             if (order) {
+//                 await prisma.order.update({
+//                     where: { id: order.id },
+//                     data: {
+//                         payment: {
+//                             update: {
+//                                 paymentStatus: payment.getPaymentStatus(),
+//                             },
+//                         },
+//                     },
+//                 });
+//             }
+
+//             return newPayment;
+//         });
+
+//         return Payment.from(paymentPrisma);
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+const addPayment = async ({
+    orderId,
+    amount,
+}: {
+    orderId: number;
+    amount: number;
+}): Promise<Payment> => {
     try {
-        const paymentPrisma = await database.payment.create({
-            data: {
-                amount: payment.getAmount(),
-                date: payment.getDate(),
-                paymentStatus: payment.getPaymentStatus(),
-            },
+        const paymentPrisma = await database.$transaction(async (prisma) => {
+            const order = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: { payment: true },
+            });
+
+            if (!order) {
+                throw new Error(`Order with id ${orderId} not found.`);
+            }
+
+            if (!order.payment) {
+                throw new Error(`No payment associated with order id ${orderId}.`);
+            }
+
+            if (order.payment.paymentStatus === 'unpaid') {
+                const updatedPayment = await prisma.payment.update({
+                    where: { id: order.payment.id },
+                    data: {
+                        amount: amount,
+                        date: new Date(),
+                        paymentStatus: 'paid',
+                    },
+                });
+
+                return updatedPayment;
+            } else {
+                throw new Error('Payment has already been made.');
+            }
         });
+
         return Payment.from(paymentPrisma);
     } catch (error) {
         throw error;
