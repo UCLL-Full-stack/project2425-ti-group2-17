@@ -243,53 +243,53 @@ cartRouter.put(
     }
 );
 
-// /**
-//  * @swagger
-//  * /carts/convertToOrder/{email}:
-//  *   post:
-//  *     summary: Convert a cart to an order
-//  *     tags: [Carts]
-//  *     parameters:
-//  *       - in: path
-//  *         name: email
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *         description: Email of the customer
-//  *       - in: query
-//  *         name: paymentStatus
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *           enum: [paid, unpaid]
-//  *         description: Payment status of the order
-//  *     responses:
-//  *       200:
-//  *         description: Order successfully created
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               $ref: '#/components/schemas/Order'
-//  *       400:
-//  *         description: Invalid request data
-//  *       404:
-//  *         description: Cart not found
-//  *       500:
-//  *         description: Internal server error
-//  */
+/**
+ * @swagger
+ * /carts/convertToOrder/{email}:
+ *   post:
+ *     summary: Convert a cart to an order
+ *     tags: [Carts]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Email of the customer
+ *       - in: query
+ *         name: paymentStatus
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [paid, unpaid]
+ *         description: Payment status of the order
+ *     responses:
+ *       200:
+ *         description: Order successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Invalid request data
+ *       404:
+ *         description: Cart not found
+ *       500:
+ *         description: Internal server error
+ */
 
-// cartRouter.post(
-//     '/convertToOrder/:email',
-//     async (req: Request, res: Response, next: NextFunction) => {
-//         try {
-//             const { email } = req.params;
-//             const { paymentStatus } = req.query as { paymentStatus: string };
-//             const order = await cartService.convertCartToOrderByEmail(email, paymentStatus);
-//             res.status(200).json(order);
-//         } catch (error) {
-//             next(error);
-//         }
-//     }
-// );
+cartRouter.post(
+    '/convertToOrder/:email',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { email } = req.params;
+            const { paymentStatus } = req.query as { paymentStatus: string };
+            const order = await cartService.convertCartToOrder(email, paymentStatus);
+            res.status(200).json(order);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 export { cartRouter };

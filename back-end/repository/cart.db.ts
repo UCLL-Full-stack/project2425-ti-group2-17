@@ -234,21 +234,23 @@ const removeCartItem = async (
 
 const emptyCart = async (cart: Cart): Promise<string> => {
     try {
+        await database.cartItem.deleteMany({
+            where: {
+                cartId: cart.getId(),
+            },
+        });
+
         await database.cart.update({
             where: { id: cart.getId() },
-            data: {
-                cartItems: {
-                    set: [],
-                },
-            },
+            data: {},
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
             },
         });
+
         return 'cart successfully emptied.';
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
         throw error;
     }
 };
