@@ -1,3 +1,4 @@
+import { Role } from '../types';
 import { Product } from './product';
 import { User } from './user';
 import { Product as ProductPrisma, Customer as CustomerPrisma } from '@prisma/client';
@@ -11,6 +12,7 @@ export class Customer extends User {
         email: string;
         password: string;
         wishlist: Product[];
+        role: Role;
         id?: number;
     }) {
         super(customer);
@@ -47,6 +49,7 @@ export class Customer extends User {
         lastName,
         email,
         password,
+        role,
         wishlist,
     }: CustomerPrisma & { wishlist: ProductPrisma[] }) {
         return new Customer({
@@ -55,17 +58,19 @@ export class Customer extends User {
             lastName,
             email,
             password,
+            role: role as Role,
             wishlist: wishlist.map((product: ProductPrisma) => Product.from(product)),
         });
     }
 
-    static fromWithoutWishlist({ id, firstName, lastName, email, password }: CustomerPrisma) {
+    static fromWithoutWishlist({ id, firstName, lastName, email, password, role }: CustomerPrisma) {
         return new Customer({
             id,
             firstName,
             lastName,
             email,
             password,
+            role: role as Role,
             wishlist: [],
         });
     }

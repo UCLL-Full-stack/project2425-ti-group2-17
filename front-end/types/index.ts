@@ -66,7 +66,7 @@ type ProductInput = {
     name: string;
     price: number;
     stock: number;
-    category: string[];
+    categories: string[];
     description: string;
     images: string[];
     sizes: string[];

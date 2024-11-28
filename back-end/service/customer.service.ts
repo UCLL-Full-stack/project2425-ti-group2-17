@@ -6,15 +6,17 @@ import cartDb from '../repository/cart.db';
 // import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
 import productDb from '../repository/product.db';
-import { CustomerInput } from '../types';
+import { AuthenticationResponse, CustomerInput } from '../types';
 // import cartService from './cart.service';
+import bcrypt from 'bcrypt';
+import { generateJwtToken } from '../util/jwt';
 
 const getCustomers = async (): Promise<Customer[]> => await customerDB.getCustomers();
 
-const getCustomerById = async (id: number): Promise<Customer | null> => {
-    const customer = await customerDB.getCustomerById({ id });
+const getCustomerByEmail = async (email: string): Promise<Customer | null> => {
+    const customer = await customerDB.getCustomerByEmail({ email });
 
-    if (!customer) throw new Error(`Customer with id ${id} does not exist.`);
+    if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
 
     return customer;
 };
@@ -29,11 +31,14 @@ const createCustomer = async ({
 
     if (existingCustomer) throw new Error('A customer with this email already exists.');
 
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     const customer = new Customer({
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
+        role: 'customer',
         wishlist: [],
     });
 
@@ -51,25 +56,25 @@ const createCustomer = async ({
 };
 
 const updateCustomer = async (
-    id: number,
+    currentEmail: string,
     { firstName, lastName, email, password }: CustomerInput
 ): Promise<Customer> => {
-    const existingCustomer = await customerDB.getCustomerById({ id });
+    const existingCustomer = await customerDB.getCustomerByEmail({ email: currentEmail });
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
-    const newUserData = { firstName, lastName, email, password };
+    const newUserData = { firstName, lastName, email, password, role: existingCustomer.getRole() };
 
     existingCustomer.updateUser(newUserData);
 
     return await customerDB.updateCustomer(existingCustomer);
 };
 
-const deleteCustomer = async (customerId: number): Promise<string> => {
-    const existingCustomer = await customerDB.getCustomerById({ id: customerId });
+const deleteCustomer = async (email: string): Promise<string> => {
+    const existingCustomer = await customerDB.getCustomerByEmail({ email });
 
     if (!existingCustomer) throw new Error('This customer does not exist.');
 
-    const existingCart = await cartDb.getCartByCustomerId({ id: customerId });
+    const existingCart = await cartDb.getCartByCustomerEmail({ email });
 
     if (!existingCart) {
         throw new Error('That customer does not have a cart.');
@@ -77,11 +82,11 @@ const deleteCustomer = async (customerId: number): Promise<string> => {
 
     await cartDb.deleteCart({ id: existingCart.getId()! });
 
-    return await customerDB.deleteCustomer({ id: customerId });
+    return await customerDB.deleteCustomer({ email });
 };
 
-const addProductToWishlist = async (customerId: number, productId: number): Promise<Product> => {
-    const customer = await getCustomerById(customerId);
+const addProductToWishlist = async (email: string, productId: number): Promise<Product> => {
+    const customer = await getCustomerByEmail(email);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
@@ -91,11 +96,8 @@ const addProductToWishlist = async (customerId: number, productId: number): Prom
     return await customerDB.addProductToWishlist(customer!, product);
 };
 
-const removeProductFromWishlist = async (
-    customerId: number,
-    productId: number
-): Promise<string> => {
-    const customer = await getCustomerById(customerId);
+const removeProductFromWishlist = async (email: string, productId: number): Promise<string> => {
+    const customer = await getCustomerByEmail(email);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
     if (!customer!.getWishlist().some((item) => item.getId() === productId)) {
@@ -104,22 +106,41 @@ const removeProductFromWishlist = async (
     return await customerDB.removeProductFromWishlist(customer!, product);
 };
 
-const loginCustomer = async (email: string, password: string): Promise<Customer | null> => {
-    const customer = await customerDB.getCustomerByEmail({ email });
+// const loginCustomer = async (email: string, password: string): Promise<Customer | null> => {
+//     const customer = await customerDB.getCustomerByEmail({ email });
 
-    if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
-    if (customer.getPassword() !== password) throw new Error('Wrong password');
+//     if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
+//     if (customer.getPassword() !== password) throw new Error('Wrong password');
 
-    return customer;
+//     return customer;
+// };
+
+const authenticate = async ({
+    email,
+    password,
+}: CustomerInput): Promise<AuthenticationResponse> => {
+    const customer = await getCustomerByEmail(email);
+
+    const isValidPassword = await bcrypt.compare(password, customer!.getPassword());
+
+    if (!isValidPassword) {
+        throw new Error('Incorrect password.');
+    }
+    return {
+        token: generateJwtToken({ email, role: customer!.getRole() }),
+        email: email,
+        fullname: `${customer!.getFirstName()} ${customer!.getLastName()}`,
+        role: customer!.getRole(),
+    };
 };
 
 export default {
     getCustomers,
-    getCustomerById,
+    getCustomerByEmail,
     createCustomer,
     updateCustomer,
     deleteCustomer,
     addProductToWishlist,
     removeProductFromWishlist,
-    loginCustomer,
+    authenticate,
 };

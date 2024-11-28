@@ -1,15 +1,19 @@
+import { Role } from '../types';
+
 export abstract class User {
     private id?: number;
     private firstName: string;
     private lastName: string;
     private email: string;
     private password: string;
+    private role: Role;
 
     constructor(user: {
         firstName: string;
         lastName: string;
         email: string;
         password: string;
+        role: Role;
         id?: number;
     }) {
         this.validate(user);
@@ -18,6 +22,7 @@ export abstract class User {
         this.lastName = user.lastName;
         this.email = user.email;
         this.password = user.password;
+        this.role = user.role;
     }
 
     getId(): number | undefined {
@@ -40,7 +45,17 @@ export abstract class User {
         return this.password;
     }
 
-    validate(user: { firstName: string; lastName: string; email: string; password: string }) {
+    getRole(): Role {
+        return this.role;
+    }
+
+    validate(user: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        password: string;
+        role: Role;
+    }) {
         if (!user.firstName.trim()) throw new Error('The first name is required.');
 
         if (user.firstName.length < 2 || user.firstName.length > 50)
@@ -61,13 +76,23 @@ export abstract class User {
 
         if (user.password.length < 8)
             throw new Error('The password must be at least 8 characters long.');
+        if (!user.role) {
+            throw new Error('Role is required');
+        }
     }
 
-    updateUser(user: { firstName: string; lastName: string; email: string; password: string }) {
+    updateUser(user: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        password: string;
+        role: Role;
+    }) {
         this.validate(user);
         this.firstName = user.firstName;
         this.lastName = user.lastName;
         this.email = user.email;
         this.password = user.password;
+        this.role = user.role;
     }
 }

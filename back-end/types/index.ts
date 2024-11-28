@@ -1,3 +1,5 @@
+type Role = 'admin' | 'salesman' | 'customer';
+
 type AdminInput = {
     id?: number;
     firstName: string;
@@ -62,7 +64,15 @@ type ProductInput = {
     colors: string[];
 };
 
+type AuthenticationResponse = {
+    token: string;
+    email: string;
+    fullname: string;
+    role: string;
+};
+
 export {
+    Role,
     AdminInput,
     CustomerInput,
     CartInput,
@@ -71,4 +81,5 @@ export {
     OrderItemInput,
     PaymentInput,
     ProductInput,
+    AuthenticationResponse,
 };

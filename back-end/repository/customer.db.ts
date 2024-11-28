@@ -10,8 +10,8 @@ const getCustomers = async (): Promise<Customer[]> => {
         });
         return customersPrisma.map((customerPrisma) => Customer.from(customerPrisma));
     } catch (error) {
-        // throw new Error('Databse Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -27,8 +27,8 @@ const getCustomerById = async ({ id }: { id: number }): Promise<Customer | null>
         }
         return Customer.from(customerPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -44,8 +44,8 @@ const getCustomerByEmail = async ({ email }: { email: string }): Promise<Custome
         }
         return Customer.from(customerPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -57,13 +57,14 @@ const createCustomer = async (customer: Customer): Promise<Customer> => {
                 lastName: customer.getLastName(),
                 email: customer.getEmail(),
                 password: customer.getPassword(),
+                role: customer.getRole(),
             },
             include: { wishlist: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -76,25 +77,26 @@ const updateCustomer = async (updatedCustomer: Customer): Promise<Customer> => {
                 lastName: updatedCustomer.getLastName(),
                 email: updatedCustomer.getEmail(),
                 password: updatedCustomer.getPassword(),
+                role: updatedCustomer.getRole(),
             },
             include: { wishlist: true },
         });
         return Customer.from(customerPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
-const deleteCustomer = async ({ id }: { id: number }): Promise<string> => {
+const deleteCustomer = async ({ email }: { email: string }): Promise<string> => {
     try {
         await database.customer.delete({
-            where: { id: id },
+            where: { email: email },
         });
         return 'Customer has been deleted.';
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -117,8 +119,8 @@ const addProductToWishlist = async (customer: Customer, product: Product): Promi
         }
         return Product.from(productPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -135,8 +137,8 @@ const removeProductFromWishlist = async (customer: Customer, product: Product): 
 
         return 'Product has been removed from the wishlist.';
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 

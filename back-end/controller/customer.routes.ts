@@ -1,7 +1,36 @@
 /**
  * @swagger
  * components:
+ *  securitySchemes:
+ *   bearerAuth:
+ *    type: http
+ *    scheme: bearer
+ *    bearerFormat: JWT
  *   schemas:
+ *     AuthenticationResponse:
+ *          type: object
+ *          properties:
+ *            message:
+ *              type: string
+ *              description: Authentication response.
+ *            token:
+ *              type: string
+ *              description: JWT access token.
+ *            email:
+ *              type: string
+ *              description: User email.
+ *            fullname:
+ *             type: string
+ *             description: Full name.
+ *     AuthenticationRequest:
+ *          type: object
+ *          properties:
+ *            email:
+ *              type: string
+ *              description: User email.
+ *            password:
+ *              type: string
+ *              description: User password.
  *     Customer:
  *       type: object
  *       properties:
@@ -24,7 +53,6 @@
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Product'
- *
  *     CustomerInput:
  *       type: object
  *       properties:
@@ -76,17 +104,17 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
 
 /**
  * @swagger
- * /customers/{id}:
+ * /customers/{email}:
  *   get:
- *     summary: Get a customer by ID
+ *     summary: Get a customer by email
  *     tags: [Customers]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Numeric ID of the customer to retrieve
+ *           type: string
+ *         description: Email of the customer to retrieve
  *     responses:
  *       200:
  *         description: Customer details
@@ -100,9 +128,9 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  *         description: Internal server error
  */
 
-customerRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await customerService.getCustomerById(Number(req.params.id));
+        const customer = await customerService.getCustomerByEmail(req.params.email);
         res.status(200).json(customer);
     } catch (error) {
         next(error);
@@ -146,17 +174,17 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
 
 /**
  * @swagger
- * /customers/{id}:
+ * /customers/{email}:
  *   put:
- *     summary: Update a customer by ID
+ *     summary: Update a customer by email
  *     tags: [Customers]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Numeric ID of the customer to update
+ *           type: string
+ *         description: email of the customer to update
  *     requestBody:
  *       required: true
  *       content:
@@ -178,10 +206,10 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
  *         description: Internal server error
  */
 
-customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.put('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customer = <CustomerInput>req.body;
-        const result = await customerService.updateCustomer(Number(req.params.id), customer);
+        const result = await customerService.updateCustomer(req.params.email, customer);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -190,17 +218,17 @@ customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunctio
 
 /**
  * @swagger
- * /customers/{id}:
+ * /customers/{email}:
  *   delete:
- *     summary: Delete a customer by ID
+ *     summary: Delete a customer by email
  *     tags: [Customers]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Numeric ID of the customer to delete
+ *           type: string
+ *         description: email of the customer to delete
  *     responses:
  *       200:
  *         description: Customer successfully deleted
@@ -218,9 +246,9 @@ customerRouter.put('/:id', async (req: Request, res: Response, next: NextFunctio
  *         description: Internal server error
  */
 
-customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.delete('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await customerService.deleteCustomer(Number(req.params.id));
+        const result = await customerService.deleteCustomer(req.params.email);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -229,17 +257,17 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
 
 /**
  * @swagger
- * /customers/addWishlist/{customerId}/{productId}:
+ * /customers/addWishlist/{email}/{productId}:
  *   put:
  *     summary: Add a product to a customer's wishlist
  *     tags: [Customers]
  *     parameters:
  *       - in: path
- *         name: customerId
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Id of the customer
+ *           type: string
+ *         description: Email of the customer
  *       - in: path
  *         name: productId
  *         required: true
@@ -256,12 +284,12 @@ customerRouter.delete('/:id', async (req: Request, res: Response, next: NextFunc
  */
 
 customerRouter.put(
-    '/addWishlist/:customerId/:productId',
+    '/addWishlist/:email/:productId',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const customerId = Number(req.params.customerId);
+            const email = req.params.email;
             const productId = Number(req.params.productId);
-            const result = await customerService.addProductToWishlist(customerId, productId);
+            const result = await customerService.addProductToWishlist(email, productId);
             res.status(200).json(result);
         } catch (error) {
             next(error);
@@ -271,17 +299,17 @@ customerRouter.put(
 
 /**
  * @swagger
- * /customers/removeWishlist/{customerId}/{productId}:
+ * /customers/removeWishlist/{email}/{productId}:
  *   put:
  *     summary: Remove a product from a customer's wishlist
  *     tags: [Customers]
  *     parameters:
  *       - in: path
- *         name: customerId
+ *         name: email
  *         required: true
  *         schema:
- *           type: integer
- *         description: Id of the customer
+ *           type: string
+ *         description: email of the customer
  *       - in: path
  *         name: productId
  *         required: true
@@ -302,12 +330,12 @@ customerRouter.put(
  */
 
 customerRouter.put(
-    '/removeWishlist/:customerId/:productId',
+    '/removeWishlist/:email/:productId',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const customerId = Number(req.params.customerId);
+            const email = req.params.email;
             const productId = Number(req.params.productId);
-            const result = await customerService.removeProductFromWishlist(customerId, productId);
+            const result = await customerService.removeProductFromWishlist(email, productId);
             res.status(200).json(result);
         } catch (error) {
             next(error);
@@ -317,45 +345,31 @@ customerRouter.put(
 
 /**
  * @swagger
- * /customers/login/{email}/{password}:
- *   get:
- *     summary: Login a customer using email and password
- *     tags: [Customers]
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *         description: Email of the customer
- *       - in: path
- *         name: password
- *         required: true
- *         schema:
- *           type: string
- *         description: Password of the customer
- *     responses:
- *       200:
- *         description: Customer successfully logged in
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Customer'
+ * /users/login:
+ *   post:
+ *      summary: Login using email and password. Returns an object with JWT token and user name when succesful.
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/AuthenticationRequest'
+ *      responses:
+ *         200:
+ *            description: The created user object
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  $ref: '#/components/schemas/AuthenticationResponse'
  */
-
-customerRouter.get(
-    '/login/:email/:password',
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const customer = await customerService.loginCustomer(
-                req.params.email,
-                req.params.password
-            );
-            res.status(200).json(customer);
-        } catch (error) {
-            next(error);
-        }
+customerRouter.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customerInput = <CustomerInput>req.body;
+        const response = await customerService.authenticate(customerInput);
+        res.status(200).json({ message: 'Authentication succesful', ...response });
+    } catch (error) {
+        next(error);
     }
-);
+});
 
 export { customerRouter };

@@ -102,6 +102,7 @@ const main = async () => {
             lastName: 'Doe',
             email: 'john.doe@example.com',
             password: 'password123',
+            role: 'customer',
             wishlist: {
                 connect: [{ id: tShirt.id }],
             },
@@ -114,9 +115,32 @@ const main = async () => {
             lastName: 'Smith',
             email: 'jane.smith@example.com',
             password: 'password456',
+            role: 'customer',
             wishlist: {
                 connect: [{ id: runningShoes.id }],
             },
+        },
+    });
+
+    const admin = await prisma.customer.create({
+        data: {
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@example.com',
+            password: 'admin123',
+            role: 'admin',
+            wishlist: {},
+        },
+    });
+
+    const salesman = await prisma.customer.create({
+        data: {
+            firstName: 'Salesman',
+            lastName: 'User',
+            email: 'salesman@example.com',
+            password: 'salesman123',
+            role: 'salesman',
+            wishlist: {},
         },
     });
 
@@ -126,6 +150,7 @@ const main = async () => {
             lastName: 'Johnson',
             email: 'alice.johnson@example.com',
             password: 'password789',
+            role: 'customer',
             wishlist: {
                 connect: [{ id: casualHoodie.id }],
             },
@@ -204,6 +229,24 @@ const main = async () => {
                 ],
             },
             // totalAmount: ,
+        },
+    });
+
+    const cartAdmin = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: admin.id },
+            },
+            cartItems: {},
+        },
+    });
+
+    const cartSalesman = await prisma.cart.create({
+        data: {
+            customer: {
+                connect: { id: salesman.id },
+            },
+            cartItems: {},
         },
     });
 

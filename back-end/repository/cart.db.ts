@@ -14,8 +14,8 @@ const getCarts = async (): Promise<Cart[]> => {
         });
         return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
     } catch (error) {
-        // throw new Error('Databse Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -34,8 +34,8 @@ const getCartById = async ({ id }: { id: number }): Promise<Cart | null> => {
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -58,8 +58,8 @@ const getCartByCustomerEmail = async ({ email }: { email: string }): Promise<Car
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -78,8 +78,8 @@ const getCartByCustomerId = async ({ id }: { id: number }): Promise<Cart | null>
         }
         return Cart.from(cartPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -101,8 +101,8 @@ const createCart = async (customer: Customer): Promise<Cart> => {
         });
         return Cart.from(cartPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -113,8 +113,8 @@ const deleteCart = async ({ id }: { id: number }): Promise<string> => {
         });
         return 'Cart successfully deleted.';
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -176,8 +176,8 @@ const addCartItem = async (cart: Cart, product: Product, quantity: number): Prom
         }
         return CartItem.from(cartItemPrisma);
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -227,8 +227,8 @@ const removeCartItem = async (
             throw new Error('CartItem not found.');
         }
     } catch (error) {
-        // throw new Error('Database Error. See server log for details.');
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -251,7 +251,8 @@ const emptyCart = async (cart: Cart): Promise<string> => {
 
         return 'cart successfully emptied.';
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
