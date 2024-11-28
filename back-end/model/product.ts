@@ -172,7 +172,6 @@ export class Product {
     }
 
     static from({
-        id,
         name,
         price,
         stock,
@@ -183,7 +182,6 @@ export class Product {
         colors,
     }: ProductPrisma) {
         return new Product({
-            id,
             name,
             price,
             stock,

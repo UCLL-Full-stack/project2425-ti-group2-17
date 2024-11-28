@@ -25,53 +25,50 @@ afterEach(() => {
     jest.clearAllMocks();
 });
 
-test('given a valid order and payment input, when making a payment, then it successfully creates the payment', () => {
+test('given a valid order and payment input, when making a payment, then it successfully creates the payment', async () => {
     const order = {
         getPayment: jest.fn().mockReturnValue({
             getPaymentStatus: jest.fn().mockReturnValue('unpaid'),
-            pay: jest.fn(),
         }),
-        getTotalAmount: jest.fn().mockReturnValue(100),
+        calculateTotalAmount: jest.fn().mockResolvedValue(100),
     };
     const paymentInput: PaymentInput = {
         amount: 100,
         date: new Date(),
         paymentStatus: 'paid',
     };
-    const paymentId = 1;
-    const payment = new Payment({ ...paymentInput, id: paymentId });
+    const payment = new Payment({ ...paymentInput, id: 1 });
 
-    mockOrderDbGetOrderById.mockReturnValue(order);
-    mockPaymentDbGetPayments.mockReturnValue([]);
-    mockPaymentDbAddPayment.mockReturnValue(payment);
+    mockOrderDbGetOrderById.mockResolvedValue(order);
+    mockPaymentDbAddPayment.mockResolvedValue(payment);
 
-    const result = paymentService.makePayment(1, paymentInput);
+    const result = await paymentService.makePayment(1, paymentInput);
 
     expect(result).toEqual(payment);
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
-    expect(mockPaymentDbAddPayment).toHaveBeenCalledWith(payment);
+    expect(mockPaymentDbAddPayment).toHaveBeenCalledWith({ orderId: 1, amount: 100 });
 });
 
-test('given a non-existent order, when making a payment, then an error is thrown', () => {
+test('given a non-existent order, when making a payment, then an error is thrown', async () => {
     const paymentInput: PaymentInput = {
         amount: 100,
         date: new Date(),
         paymentStatus: 'paid',
     };
 
-    mockOrderDbGetOrderById.mockReturnValue(null);
+    mockOrderDbGetOrderById.mockResolvedValue(null);
 
-    expect(() => paymentService.makePayment(1, paymentInput)).toThrow(
+    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
         'Order with id 1 does not exist.'
     );
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given an already paid order, when making a payment, then an error is thrown', () => {
+test('given an already paid order, when making a payment, then an error is thrown', async () => {
     const order = {
-        getPayment: jest
-            .fn()
-            .mockReturnValue({ getPaymentStatus: jest.fn().mockReturnValue('paid') }),
+        getPayment: jest.fn().mockReturnValue({
+            getPaymentStatus: jest.fn().mockReturnValue('paid'),
+        }),
     };
     const paymentInput: PaymentInput = {
         amount: 100,
@@ -79,20 +76,20 @@ test('given an already paid order, when making a payment, then an error is throw
         paymentStatus: 'paid',
     };
 
-    mockOrderDbGetOrderById.mockReturnValue(order);
+    mockOrderDbGetOrderById.mockResolvedValue(order);
 
-    expect(() => paymentService.makePayment(1, paymentInput)).toThrow(
+    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
         'Order with id 1 is already paid.'
     );
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given a mismatched payment amount, when making a payment, then an error is thrown', () => {
+test('given a mismatched payment amount, when making a payment, then an error is thrown', async () => {
     const order = {
-        getPayment: jest
-            .fn()
-            .mockReturnValue({ getPaymentStatus: jest.fn().mockReturnValue('unpaid') }),
-        getTotalAmount: jest.fn().mockReturnValue(100),
+        getPayment: jest.fn().mockReturnValue({
+            getPaymentStatus: jest.fn().mockReturnValue('unpaid'),
+        }),
+        calculateTotalAmount: jest.fn().mockResolvedValue(100),
     };
     const paymentInput: PaymentInput = {
         amount: 50,
@@ -100,42 +97,44 @@ test('given a mismatched payment amount, when making a payment, then an error is
         paymentStatus: 'paid',
     };
 
-    mockOrderDbGetOrderById.mockReturnValue(order);
+    mockOrderDbGetOrderById.mockResolvedValue(order);
 
-    expect(() => paymentService.makePayment(1, paymentInput)).toThrow(
+    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
         'Payment amount 50 does not match order total amount 100.'
     );
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given valid payments in DB, when getting all payments, then all payments are returned', () => {
+test('given valid payments in DB, when getting all payments, then all payments are returned', async () => {
     const payments = [
         new Payment({ amount: 100, date: new Date(), paymentStatus: 'paid', id: 1 }),
         new Payment({ amount: 200, date: new Date(), paymentStatus: 'paid', id: 2 }),
     ];
 
-    mockPaymentDbGetPayments.mockReturnValue(payments);
+    mockPaymentDbGetPayments.mockResolvedValue(payments);
 
-    const result = paymentService.getPayments();
+    const result = await paymentService.getPayments();
 
     expect(result).toEqual(payments);
     expect(mockPaymentDbGetPayments).toHaveBeenCalled();
 });
 
-test('given a valid payment id, when getting payment by id, then the payment is returned', () => {
+test('given a valid payment id, when getting payment by id, then the payment is returned', async () => {
     const payment = new Payment({ amount: 100, date: new Date(), paymentStatus: 'paid', id: 1 });
 
-    mockPaymentDbGetPaymentById.mockReturnValue(payment);
+    mockPaymentDbGetPaymentById.mockResolvedValue(payment);
 
-    const result = paymentService.getPaymentById(1);
+    const result = await paymentService.getPaymentById(1);
 
     expect(result).toEqual(payment);
     expect(mockPaymentDbGetPaymentById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given a non-existent payment id, when getting payment by id, then an error is thrown', () => {
-    mockPaymentDbGetPaymentById.mockReturnValue(null);
+test('given a non-existent payment id, when getting payment by id, then an error is thrown', async () => {
+    mockPaymentDbGetPaymentById.mockResolvedValue(null);
 
-    expect(() => paymentService.getPaymentById(1)).toThrow('Payment with id 1 does not exist.');
+    await expect(paymentService.getPaymentById(1)).rejects.toThrow(
+        'Payment with id 1 does not exist.'
+    );
     expect(mockPaymentDbGetPaymentById).toHaveBeenCalledWith({ id: 1 });
 });

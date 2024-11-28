@@ -55,39 +55,41 @@ afterEach(() => {
     jest.clearAllMocks();
 });
 
-test('given orders in the DB, when getting all orders, then all orders are returned', () => {
+test('given orders in the DB, when getting all orders, then all orders are returned', async () => {
     orderDb.getOrders = mockOrderDbGetOrders.mockReturnValue(orders);
 
-    const result = orderService.getOrders();
+    const result = await orderService.getOrders();
 
     expect(result).toEqual(orders);
     expect(mockOrderDbGetOrders).toHaveBeenCalled();
 });
 
-test('given orders in the DB, when getting customer by id, then customer with id is returned', () => {
+test('given orders in the DB, when getting customer by id, then customer with id is returned', async () => {
     orderDb.getOrderById = mockOrderDbGetOrderById.mockReturnValue(orders[0]);
 
-    const result = orderService.getOrderById(1);
+    const result = await orderService.getOrderById(1);
 
     expect(result).toEqual(orders[0]);
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given order exists in the DB, when deleting order by id, then order is deleted', () => {
+test('given order exists in the DB, when deleting order by id, then order is deleted', async () => {
     orderDb.getOrderById = mockOrderDbGetOrderById.mockReturnValue(orders[0]);
     orderDb.deleteOrder = mockOrderDbDeleteOrder.mockReturnValue('Order deleted successfully');
 
-    const result = orderService.deleteOrder(1);
+    const result = await orderService.deleteOrder(1);
 
     expect(result).toBe('Order deleted successfully');
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
     expect(mockOrderDbDeleteOrder).toHaveBeenCalledWith({ id: 1 });
 });
 
-test('given order does not exist in the DB, when deleting order by id, then error is thrown', () => {
+test('given order does not exist in the DB, when deleting order by id, then error is thrown', async () => {
     orderDb.getOrderById = mockOrderDbGetOrderById.mockReturnValue(null);
 
-    expect(() => orderService.deleteOrder(1)).toThrow('This order does not exist.');
+    const deleteOrder = async () => await orderService.deleteOrder(1);
+
+    await expect(deleteOrder()).rejects.toThrow('This order does not exist.');
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
     expect(mockOrderDbDeleteOrder).not.toHaveBeenCalled();
 });

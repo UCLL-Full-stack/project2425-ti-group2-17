@@ -24,9 +24,11 @@ export class Order {
         this.items = order.items;
         this.date = order.date;
         this.payment = order.payment;
-
         this.totalAmount = this.calculateTotalAmount();
-        this.payment.setAmount(this.totalAmount);
+
+        if (this.items.length > 0) {
+            this.payment.setAmount(this.totalAmount);
+        }
     }
 
     getId(): number | undefined {

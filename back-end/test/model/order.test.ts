@@ -90,10 +90,10 @@ test('given: order with multiple items, when: getTotalAmount is called, then: co
     order.addItem(product2, 1);
 
     const expectedTotalAmount = product.getPrice() * 2 + product2.getPrice();
-    expect(order.getTotalAmount()).toBe(expectedTotalAmount);
+    expect(order.calculateTotalAmount()).toBe(expectedTotalAmount);
 });
 
 test('given: order with no items, when: getTotalAmount is called, then: total amount is zero', () => {
     const emptyOrder = new Order({ customer, items: [], date: paymentTestData.date, payment });
-    expect(emptyOrder.getTotalAmount()).toBe(0);
+    expect(emptyOrder.calculateTotalAmount()).toBe(0);
 });

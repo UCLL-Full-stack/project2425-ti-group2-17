@@ -14,7 +14,7 @@ const makePayment = async (orderId: number, paymentInput: PaymentInput): Promise
         throw new Error(`Order with id ${orderId} is already paid.`);
     }
 
-    const orderTotalAmount = order.calculateTotalAmount();
+    const orderTotalAmount = await order.calculateTotalAmount();
     if (paymentInput.amount !== orderTotalAmount) {
         throw new Error(
             `Payment amount ${paymentInput.amount} does not match order total amount ${orderTotalAmount}.`
