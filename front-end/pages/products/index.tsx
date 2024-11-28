@@ -7,6 +7,7 @@ import ProductOverviewTable from '@components/products/ProductOverviewTable';
 import CartService from '@services/CartService';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
+import ProductCreator from '@components/products/ProductCreator';
 
 const Products: React.FC = () => {
     const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -15,6 +16,15 @@ const Products: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [minPrice, setminPrice] = useState<number>(0);
     const [maxPrice, setmaxPrice] = useState<number>(1000);
+
+    const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+    const openCreateProduct = () => setIsCreateProductOpen(true);
+    const closeCreateProduct = () => setIsCreateProductOpen(false);
+
+    const handleSaveProduct = async (newProductId: number) => {
+        setSelectedProduct(newProductId);
+        setIsModalOpen(true);
+    };
 
     const filterProducts = (productData: Product[]): Product[] => {
         if (minPrice < 0) {
@@ -33,7 +43,9 @@ const Products: React.FC = () => {
                 (selectedColors.length === 0 ||
                     product.colors.some((color) => selectedColors.includes(color))) &&
                 (selectedCategories.length === 0 ||
-                    product.categories.some((category) => selectedCategories.includes(category))) &&
+                    product.categories.some((categories) =>
+                        selectedCategories.includes(categories)
+                    )) &&
                 (searchQuery === '' ||
                     product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
                 product.price >= minPrice &&
@@ -62,7 +74,7 @@ const Products: React.FC = () => {
         const price = Number(window.prompt('Enter new price:'));
         const stock = Number(window.prompt('Enter new stock:'));
         const description = window.prompt('Enter new description:');
-        const category = window
+        const categories = window
             .prompt('Enter new categories with commas and a space in between:')
             ?.split(',')
             .map((item) => item.trim());
@@ -83,7 +95,7 @@ const Products: React.FC = () => {
         //         ?.split(',')
         //         .map((item) => item.trim()) || existingProduct.images;
 
-        if (!name || !description || !price || !stock || !category || !sizes || !colors) {
+        if (!name || !description || !price || !stock || !categories || !sizes || !colors) {
             throw new Error('All fields are required and must be valid.');
         }
 
@@ -91,7 +103,7 @@ const Products: React.FC = () => {
             name,
             price,
             stock,
-            category,
+            categories,
             description,
             images: ['temp'],
             sizes,
@@ -125,7 +137,7 @@ const Products: React.FC = () => {
         const description =
             window.prompt('Enter new description:', existingProduct.description) ||
             existingProduct.description;
-        const category =
+        const categories =
             window
                 .prompt('Enter new categories:', existingProduct.categories.join(', '))
                 ?.split(',')
@@ -153,7 +165,7 @@ const Products: React.FC = () => {
             name,
             price,
             stock,
-            category,
+            categories,
             description,
             images: existingProduct.images,
             sizes,
@@ -248,6 +260,11 @@ const Products: React.FC = () => {
                             addItemToCart={addItemToCart}
                         />
                     )}
+                    <ProductCreator
+                        isOpen={isCreateProductOpen}
+                        onClose={closeCreateProduct}
+                        onSave={handleSaveProduct}
+                    />
                 </section>
             </main>
         </>
