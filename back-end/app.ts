@@ -9,6 +9,7 @@ import { cartRouter } from './controller/cart.routes';
 import { orderRouter } from './controller/order.routes';
 import { productRouter } from './controller/product.routes';
 import { paymentRouter } from './controller/payment.routes';
+import { expressjwt } from 'express-jwt';
 
 const app = express();
 dotenv.config();
@@ -17,6 +18,15 @@ const port = process.env.APP_PORT || 3000;
 app.use(cors());
 // app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(bodyParser.json());
+
+app.use(
+    expressjwt({
+        secret: process.env.JWT_SECRET!,
+        algorithms: ['HS256'],
+    }).unless({
+        path: ['/api-docs', /^\/api-docs\/.*/, '/users/login', '/users/signup', '/status'],
+    })
+);
 
 app.use('/customers', customerRouter);
 app.use('/carts', cartRouter);

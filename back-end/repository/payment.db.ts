@@ -80,7 +80,8 @@ const addPayment = async ({
 
         return Payment.from(paymentPrisma);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -89,7 +90,8 @@ const getPayments = async (): Promise<Payment[]> => {
         const paymentsPrisma = await database.payment.findMany();
         return paymentsPrisma.map(Payment.from);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -104,7 +106,8 @@ const getPaymentById = async ({ id }: { id: number }): Promise<Payment | null> =
         }
         return Payment.from(paymentPrisma);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 

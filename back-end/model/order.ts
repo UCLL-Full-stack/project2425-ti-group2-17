@@ -2,6 +2,13 @@ import { Customer } from './customer';
 import { OrderItem } from './orderItem';
 import { Payment } from './payment';
 import { Product } from './product';
+import {
+    Customer as CustomerPrisma,
+    Product as ProductPrisma,
+    OrderItem as OrderItemPrisma,
+    Order as OrderPrisma,
+    Payment as PaymentPrisma,
+} from '@prisma/client';
 
 export class Order {
     private id?: number;
@@ -86,13 +93,21 @@ export class Order {
         date,
         payment,
         id,
-    }: {
-        customer: Customer;
-        items: OrderItem[];
-        date: Date;
-        payment: Payment;
-        id?: number;
-    }): Order {
-        return new Order({ customer, items, date, payment, id });
+    }: OrderPrisma & {
+        customer: CustomerPrisma;
+        items: (OrderItemPrisma & { product: ProductPrisma })[];
+        Payment: PaymentPrisma;
+    }) {
+        const order = new Order({
+            id,
+            customer: Customer.fromWithoutWishlist(customer),
+            items: items.map((item: OrderItemPrisma & { product: ProductPrisma }) =>
+                OrderItem.from(item)
+            ),
+            date,
+            payment: Payment.from(payment),
+        });
+        order.totalAmount = order.calculateTotalAmount();
+        return order;
     }
 }

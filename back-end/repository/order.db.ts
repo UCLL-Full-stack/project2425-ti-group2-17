@@ -10,22 +10,24 @@ const getOrders = async (): Promise<Order[]> => {
         const ordersPrisma = await database.order.findMany({
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
-        return ordersPrisma.map((orderPrisma) => {
-            return Order.from({
-                ...orderPrisma,
-                customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-                items: orderPrisma.items.map(
-                    (itemData) =>
-                        new OrderItem({
-                            ...itemData,
-                            product: new Product(itemData.product),
-                        })
-                ),
-                payment: new Payment(orderPrisma.payment),
-            });
-        });
+        // return ordersPrisma.map((orderPrisma) => {
+        //     return Order.from({
+        //         ...orderPrisma,
+        //         customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+        //         items: orderPrisma.items.map(
+        //             (itemData) =>
+        //                 new OrderItem({
+        //                     ...itemData,
+        //                     product: new Product(itemData.product),
+        //                 })
+        //         ),
+        //         payment: new Payment(orderPrisma.payment),
+        //     });
+        // });
+        return ordersPrisma.map((orderPrisma) => Order.from(orderPrisma));
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -53,7 +55,8 @@ const getOrderById = async ({ id }: { id: number }): Promise<Order | undefined> 
             payment: new Payment(orderPrisma.payment),
         });
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -78,7 +81,8 @@ const getOrdersByCustomer = async ({ id }: { id: number }): Promise<Order[]> => 
             });
         });
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -95,7 +99,8 @@ const deleteOrder = async ({ id }: { id: number }): Promise<string> => {
         ]);
         return 'Order has been deleted.';
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -135,7 +140,8 @@ const createOrder = async (order: Order): Promise<Order> => {
             payment: new Payment(orderPrisma.payment),
         });
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 

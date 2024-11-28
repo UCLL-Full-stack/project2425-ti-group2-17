@@ -17,7 +17,8 @@ const createProduct = async (product: Product): Promise<Product> => {
         });
         return Product.from(productPrisma);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -26,7 +27,8 @@ const getProducts = async (): Promise<Product[]> => {
         const productsPrisma = await database.product.findMany();
         return productsPrisma.map(Product.from);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -41,7 +43,8 @@ const getProductById = async ({ id }: { id: number }): Promise<Product | null> =
         }
         return Product.from(productPrisma);
     } catch (error) {
-        throw new Error('Database Error. See server log for details.');
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -56,7 +59,8 @@ const getProductByName = async ({ name }: { name: string }): Promise<Product | n
         }
         return Product.from(productPrisma);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -73,7 +77,8 @@ const getProductsBySearch = async (query: string): Promise<Product[]> => {
         });
         return productsPrisma.map(Product.from);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -94,7 +99,8 @@ const updateProduct = async (updatedProduct: Product): Promise<Product> => {
         });
         return Product.from(productPrisma);
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
@@ -109,7 +115,8 @@ const deleteProduct = async ({ id }: { id: number }): Promise<string> => {
         });
         return 'Product has been deleted.';
     } catch (error) {
-        throw error;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
 };
 
