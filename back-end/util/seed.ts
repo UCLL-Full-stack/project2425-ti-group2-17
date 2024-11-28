@@ -3,10 +3,24 @@
 // npx ts-node util/seed.ts
 
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
-import { set } from 'date-fns';
 
 const prisma = new PrismaClient();
+
+const calculateTotalAmount = async (
+    items: { productId: number; quantity: number }[],
+    prisma: PrismaClient
+) => {
+    let totalAmount = 0;
+    for (const item of items) {
+        const product = await prisma.product.findUnique({
+            where: { id: item.productId },
+        });
+        if (product) {
+            totalAmount += product.price * item.quantity;
+        }
+    }
+    return totalAmount;
+};
 
 const main = async () => {
     await prisma.orderItem.deleteMany();
@@ -193,31 +207,94 @@ const main = async () => {
         },
     });
 
+    // const orderJohn = await prisma.order.create({
+    //     data: {
+    //         customer: {
+    //             connect: { id: johnDoe.id },
+    //         },
+    //         items: {
+    //             create: [
+    //                 {
+    //                     product: {
+    //                         connect: { id: tShirt.id },
+    //                     },
+    //                     quantity: 2,
+    //                 },
+    //                 {
+    //                     product: {
+    //                         connect: { id: runningShoes.id },
+    //                     },
+    //                     quantity: 1,
+    //                 },
+    //             ],
+    //         },
+    //         date: new Date(),
+    //         payment: {
+    //             create: {
+    //                 amount: 2 * 19.99 + 1 * 79.99,
+    //                 date: new Date(),
+    //                 paymentStatus: 'unpaid',
+    //             },
+    //         },
+    //     },
+    // });
+
+    // const orderAlice = await prisma.order.create({
+    //     data: {
+    //         customer: {
+    //             connect: { id: aliceJohnson.id },
+    //         },
+    //         items: {
+    //             create: [
+    //                 {
+    //                     product: {
+    //                         connect: { id: denimJeans.id },
+    //                     },
+    //                     quantity: 3,
+    //                 },
+    //                 {
+    //                     product: {
+    //                         connect: { id: runningShoes.id },
+    //                     },
+    //                     quantity: 1,
+    //                 },
+    //             ],
+    //         },
+    //         date: new Date(),
+    //         payment: {
+    //             create: {
+    //                 amount: 3 * 49.99 + 1 * 79.99,
+    //                 date: new Date(),
+    //                 paymentStatus: 'unpaid',
+    //             },
+    //         },
+    //     },
+    // });
+    const johnOrderItems = [
+        { productId: tShirt.id, quantity: 2 },
+        { productId: runningShoes.id, quantity: 1 },
+    ];
+
+    // Calculate total for John's order
+    const johnTotalAmount = await calculateTotalAmount(johnOrderItems, prisma);
+
     const orderJohn = await prisma.order.create({
         data: {
             customer: {
                 connect: { id: johnDoe.id },
             },
             items: {
-                create: [
-                    {
-                        product: {
-                            connect: { id: tShirt.id },
-                        },
-                        quantity: 2,
+                create: johnOrderItems.map((item) => ({
+                    product: {
+                        connect: { id: item.productId },
                     },
-                    {
-                        product: {
-                            connect: { id: runningShoes.id },
-                        },
-                        quantity: 1,
-                    },
-                ],
+                    quantity: item.quantity,
+                })),
             },
             date: new Date(),
             payment: {
                 create: {
-                    amount: 2 * 19.99 + 1 * 79.99,
+                    amount: johnTotalAmount,
                     date: new Date(),
                     paymentStatus: 'unpaid',
                 },
@@ -225,31 +302,32 @@ const main = async () => {
         },
     });
 
+    // Order items for Alice
+    const aliceOrderItems = [
+        { productId: denimJeans.id, quantity: 3 },
+        { productId: runningShoes.id, quantity: 1 },
+    ];
+
+    // Calculate total for Alice's order
+    const aliceTotalAmount = await calculateTotalAmount(aliceOrderItems, prisma);
+
     const orderAlice = await prisma.order.create({
         data: {
             customer: {
                 connect: { id: aliceJohnson.id },
             },
             items: {
-                create: [
-                    {
-                        product: {
-                            connect: { id: denimJeans.id },
-                        },
-                        quantity: 3,
+                create: aliceOrderItems.map((item) => ({
+                    product: {
+                        connect: { id: item.productId },
                     },
-                    {
-                        product: {
-                            connect: { id: runningShoes.id },
-                        },
-                        quantity: 1,
-                    },
-                ],
+                    quantity: item.quantity,
+                })),
             },
             date: new Date(),
             payment: {
                 create: {
-                    amount: 3 * 49.99 + 1 * 79.99,
+                    amount: aliceTotalAmount,
                     date: new Date(),
                     paymentStatus: 'unpaid',
                 },

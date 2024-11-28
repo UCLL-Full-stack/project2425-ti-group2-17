@@ -1,14 +1,11 @@
 import { Cart } from '../model/cart';
-// import { Product } from '../model/product';
 import { CartItem } from '../model/cartItem';
-// import { Customer } from '../model/customer';
 import cartDB from '../repository/cart.db';
-// import { CartInput, CartItemInput, CustomerInput } from '../types';
 import productDb from '../repository/product.db';
 import { Payment } from '../model/payment';
 import { OrderItem } from '../model/orderItem';
 import { Order } from '../model/order';
-// import orderDb from '../repository/order.db';
+import orderDb from '../repository/order.db';
 
 const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
@@ -48,54 +45,52 @@ const removeCartItem = async (
     return await cartDB.removeCartItem(existingCart!, product, quantity);
 };
 
-// const convertCartToOrder = async(cartId: number, paymentStatus: string): Promise<Order> => {
-//     const cart = await getCartById(cartId);
+const convertCartToOrder = async (email: string, paymentStatus: string): Promise<Order> => {
+    const cart = await getCartByEmail(email);
 
-//     if (!cart) throw new Error(`Cart with id ${cartId} does not exist.`);
+    if (!cart) throw new Error(`Cart with user email ${email} does not exist.`);
 
-//     if (!paymentStatus) {
-//         throw new Error('Payment status is required.');
-//     }
-//     if (paymentStatus !== 'paid' && paymentStatus !== 'unpaid') {
-//         throw new Error('Payment status must be paid or unpaid.');
-//     }
+    if (!paymentStatus) {
+        throw new Error('Payment status is required.');
+    }
 
-//     const customer = cart.getCustomer();
-//     const items = cart.getProducts().map(
-//         (cartItem) =>
-//             new OrderItem({
-//                 product: cartItem.getProduct(),
-//                 quantity: cartItem.getQuantity(),
-//             })
-//     );
+    if (paymentStatus !== 'paid' && paymentStatus !== 'unpaid') {
+        throw new Error('Payment status must be paid or unpaid.');
+    }
 
-//     const payment = new Payment({
-//         amount: items.reduce((total, item) => total + item.getTotalPrice(), 0),
-//         date: new Date(),
-//         paymentStatus: paymentStatus,
-//     });
+    const customer = cart.getCustomer();
+    const items = cart.getProducts().map(
+        (cartItem) =>
+            new OrderItem({
+                product: cartItem.getProduct(),
+                quantity: cartItem.getQuantity(),
+            })
+    );
 
-//     const orderId = orderDb.getOrders().length + 1;
+    const payment = new Payment({
+        amount: items.reduce((total, item) => total + item.getTotalPrice(), 0),
+        date: new Date(),
+        paymentStatus: paymentStatus,
+    });
 
-//     const order = new Order({
-//         customer,
-//         items,
-//         date: new Date(),
-//         payment,
-//         id: orderId,
-//     });
+    const order = new Order({
+        customer,
+        items,
+        date: new Date(),
+        payment,
+    });
 
-//     orderDb.createOrder(order);
-//     cartDB.emptyCart(cart);
+    await orderDb.createOrder(order);
+    await cartDB.emptyCart(cart);
 
-//     return order;
-// };
+    return order;
+};
 
 export default {
     getCarts,
     getCartById,
     addCartItem,
     removeCartItem,
-    // convertCartToOrder,
+    convertCartToOrder,
     getCartByEmail,
 };

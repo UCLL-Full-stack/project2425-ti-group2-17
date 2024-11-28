@@ -8,7 +8,7 @@ import { customerRouter } from './controller/customer.routes';
 import { cartRouter } from './controller/cart.routes';
 import { orderRouter } from './controller/order.routes';
 import { productRouter } from './controller/product.routes';
-// import { paymentRouter } from './controller/payment.routes';
+import { paymentRouter } from './controller/payment.routes';
 
 const app = express();
 dotenv.config();
@@ -22,7 +22,7 @@ app.use('/customers', customerRouter);
 app.use('/carts', cartRouter);
 app.use('/orders', orderRouter);
 app.use('/products', productRouter);
-// app.use('/payments', paymentRouter);
+app.use('/payments', paymentRouter);
 
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });

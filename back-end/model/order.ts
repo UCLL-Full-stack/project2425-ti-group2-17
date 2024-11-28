@@ -9,6 +9,7 @@ export class Order {
     private items: OrderItem[];
     private date: Date;
     private payment: Payment;
+    private totalAmount: number;
 
     constructor(order: {
         customer: Customer;
@@ -24,8 +25,8 @@ export class Order {
         this.date = order.date;
         this.payment = order.payment;
 
-        const totalAmount = this.getTotalAmount();
-        this.payment.setAmount(totalAmount);
+        this.totalAmount = this.calculateTotalAmount();
+        this.payment.setAmount(this.totalAmount);
     }
 
     getId(): number | undefined {
@@ -48,7 +49,7 @@ export class Order {
         return this.payment;
     }
 
-    getTotalAmount(): number {
+    calculateTotalAmount(): number {
         return this.items.reduce((total, item) => total + item.getTotalPrice(), 0);
     }
 
@@ -73,8 +74,10 @@ export class Order {
 
     addItem(product: Product, quantity: number) {
         const orderItem = new OrderItem({ product, quantity });
-
         this.items.push(orderItem);
+
+        this.totalAmount = this.calculateTotalAmount();
+        this.payment.setAmount(this.totalAmount);
     }
 
     static from({

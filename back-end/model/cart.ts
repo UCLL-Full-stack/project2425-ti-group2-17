@@ -94,11 +94,6 @@ export class Cart {
         this.products = [];
     }
 
-    // calculateTotalAmount() {
-    //     this.totalAmount = this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
-    //     return this.totalAmount;
-    // }
-
     static from({
         id,
         customer,

@@ -3,9 +3,7 @@ import { Order } from '../model/order';
 import { OrderItem } from '../model/orderItem';
 import { Payment } from '../model/payment';
 import { Product } from '../model/product';
-import customerDb from './customer.db';
 import database from './database';
-import productDb from './product.db';
 
 const getOrders = async (): Promise<Order[]> => {
     try {
@@ -115,8 +113,8 @@ const createOrder = async (order: Order): Promise<Order> => {
                 date: order.getDate(),
                 payment: {
                     create: {
-                        amount: order.getPayment().getAmount(),
-                        date: order.getPayment().getDate(),
+                        amount: order.calculateTotalAmount(),
+                        date: order.getDate(),
                         paymentStatus: order.getPayment().getPaymentStatus(),
                     },
                 },
