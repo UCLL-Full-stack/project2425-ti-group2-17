@@ -22,8 +22,8 @@ const Products: React.FC = () => {
     const closeCreateProduct = () => setIsCreateProductOpen(false);
 
     const handleSaveProduct = async (newProductId: number) => {
-        setSelectedProduct(newProductId);
-        setIsModalOpen(true);
+        // setSelectedProduct(newProductId);
+        // setIsModalOpen(true);
     };
 
     const filterProducts = (productData: Product[]): Product[] => {
