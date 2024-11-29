@@ -89,27 +89,27 @@ export class Order {
         this.payment.setAmount(this.totalAmount);
     }
 
-//     static from({
-//         customer,
-//         items,
-//         date,
-//         payment,
-//         id,
-//     }: OrderPrisma & {
-//         customer: CustomerPrisma;
-//         items: (OrderItemPrisma & { product: ProductPrisma })[];
-//         Payment: PaymentPrisma;
-//     }) {
-//         const order = new Order({
-//             id,
-//             customer: Customer.fromWithoutWishlist(customer),
-//             items: items.map((item: OrderItemPrisma & { product: ProductPrisma }) =>
-//                 OrderItem.from(item)
-//             ),
-//             date,
-//             payment: Payment.from(payment),
-//         });
-//         order.totalAmount = order.calculateTotalAmount();
-//         return order;
-//     }
+    static from({
+        customer,
+        items,
+        date,
+        payment,
+        id,
+    }: OrderPrisma & {
+        customer: CustomerPrisma;
+        items: (OrderItemPrisma & { product: ProductPrisma })[];
+        payment: PaymentPrisma;
+    }) {
+        const order = new Order({
+            id,
+            customer: Customer.fromWithoutWishlist(customer),
+            items: items.map((item: OrderItemPrisma & { product: ProductPrisma }) =>
+                OrderItem.from(item)
+            ),
+            date,
+            payment: Payment.from(payment),
+        });
+        order.totalAmount = order.calculateTotalAmount();
+        return order;
+    }
 }
