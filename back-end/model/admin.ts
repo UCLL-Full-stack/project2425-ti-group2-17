@@ -1,3 +1,4 @@
+import { Role } from '../types';
 import { User } from './user';
 
 export class Admin extends User {
@@ -6,6 +7,7 @@ export class Admin extends User {
         lastName: string;
         email: string;
         password: string;
+        role: Role;
         id?: number;
     }) {
         super(admin);

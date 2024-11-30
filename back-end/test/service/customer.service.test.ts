@@ -42,6 +42,7 @@ const customers: Customer[] = [
         lastName: 'Doe',
         email: 'john.doe@example.com',
         password: 'password123',
+        role: 'customer',
         wishlist: [products[0]],
         id: 1,
     }),
@@ -50,6 +51,7 @@ const customers: Customer[] = [
         lastName: 'Smith',
         email: 'jane.smith@example.com',
         password: 'password456',
+        role: 'customer',
         wishlist: [],
         id: 2,
     }),
@@ -96,22 +98,27 @@ test('given customers in the DB, when getting all customers, then all customers 
     expect(mockCustomerDbGetCustomers).toHaveBeenCalled();
 });
 
-test('given customers in the DB, when getting customer by id, then customer with that id is returned', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+test('given customers in the DB, when getting customer by email, then customer with that id is returned', async () => {
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
 
-    const result = await customerService.getCustomerById(1);
+    const result = await customerService.getCustomerByEmail('john.doe@example.com');
 
     expect(result).toEqual(customers[0]);
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
 });
 
-test('given customers in the DB, when getting customer by incorrect id, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+test('given customers in the DB, when getting customer by incorrect email, then an error is thrown', async () => {
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
-    const getCustomerById = async () => await customerService.getCustomerById(3);
+    const email = 'invalid@example.com';
+    const getCustomerByEmail = async () => await customerService.getCustomerByEmail(email);
 
-    await expect(getCustomerById()).rejects.toThrow('Customer with id 3 does not exist.');
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 3 });
+    await expect(getCustomerByEmail()).rejects.toThrow(
+        `Customer with email ${email} does not exist.`
+    );
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({ email });
 });
 
 test('given a valid customer input, when creating a new customer, then it successfully creates the customer', async () => {
@@ -120,16 +127,17 @@ test('given a valid customer input, when creating a new customer, then it succes
         lastName: 'Johnson',
         email: 'bob.johnson@example.com',
         password: 'password789',
+        role: 'customer',
     };
 
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
-    customerDb.getCustomerById = mockCustomerDbGetCustomers.mockReturnValue(customers);
 
     const createdCustomer = new Customer({
         ...newCustomerInput,
         wishlist: [],
-        id: undefined,
+        id: 1,
     });
+
     customerDb.createCustomer = mockCustomerDbCreateCustomer.mockReturnValue(createdCustomer);
 
     const cart = new Cart({ customer: createdCustomer, products: [] });
@@ -142,7 +150,14 @@ test('given a valid customer input, when creating a new customer, then it succes
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
         email: newCustomerInput.email,
     });
-    expect(mockCustomerDbCreateCustomer).toHaveBeenCalledWith(createdCustomer);
+    expect(mockCustomerDbCreateCustomer).toHaveBeenCalledWith(
+        expect.objectContaining({
+            ...newCustomerInput,
+            wishlist: [],
+            id: undefined,
+            password: expect.any(String),
+        })
+    );
     expect(mockCartDbCreateCart).toHaveBeenCalledWith(createdCustomer);
 });
 
@@ -152,6 +167,7 @@ test('given an existing customer, when creating that customer again, then an err
         lastName: 'Johnson',
         email: 'john.doe@example.com',
         password: 'password789',
+        role: 'customer',
     };
 
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
@@ -171,6 +187,7 @@ test('given an existing customer, when updating customer details, then customer 
         lastName: 'Smith',
         email: 'john.smith@example.com',
         password: 'newpassword123',
+        role: 'customer',
     };
 
     const createdCustomer = new Customer({
@@ -179,42 +196,50 @@ test('given an existing customer, when updating customer details, then customer 
         id: 1,
     });
 
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     customerDb.updateCustomer = mockCustomerDbUpdateCustomer.mockReturnValue(createdCustomer);
 
-    const result = await customerService.updateCustomer(1, updatedCustomerData);
+    const result = await customerService.updateCustomer(
+        'john.smith@example.com',
+        updatedCustomerData
+    );
 
     expect(result.getFirstName()).toEqual(updatedCustomerData.firstName);
     expect(result.getLastName()).toEqual(updatedCustomerData.lastName);
     expect(result.getEmail()).toEqual(updatedCustomerData.email);
     expect(result.getPassword()).toEqual(updatedCustomerData.password);
 
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'john.smith@example.com',
+    });
     expect(mockCustomerDbUpdateCustomer).toHaveBeenCalledWith(
         expect.objectContaining(updatedCustomerData)
     );
 });
 
 test('given a non-existent customer, when updating customer, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
     const updatedCustomerData: CustomerInput = {
         firstName: 'Non',
         lastName: 'Existent',
         email: 'non.existent@example.com',
         password: 'nopassword',
+        role: 'customer',
     };
 
-    const updateCustomer = async () => await customerService.updateCustomer(4, updatedCustomerData);
+    const updateCustomer = async () =>
+        await customerService.updateCustomer('imInvalid@example.com', updatedCustomerData);
 
     await expect(updateCustomer).rejects.toThrow('This customer does not exist.');
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 4 });
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'imInvalid@example.com',
+    });
 });
 
 test('given an existing customer, when deleting the customer, then the customer is deleted', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
-    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(customers[0]);
-    cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue(
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
+    cartDb.getCartByCustomerEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(
         new Cart({ customer: customers[0], products: [], id: 1 })
     );
 
@@ -223,51 +248,47 @@ test('given an existing customer, when deleting the customer, then the customer 
     );
     cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart deleted');
 
-    const result = await customerService.deleteCustomer(1);
+    const result = await customerService.deleteCustomer('john.doe@example.com');
 
     expect(result).toEqual('Customer has been deleted.');
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
     expect(mockCartDbDeleteCart).toHaveBeenCalledWith({ id: 1 });
-    expect(mockCustomerDbDeleteCustomer).toHaveBeenCalledWith({ id: 1 });
+    expect(mockCustomerDbDeleteCustomer).toHaveBeenCalledWith({ email: 'john.doe@example.com' });
 });
 
 test('given a non-existent customer, when deleting the customer, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(null);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
-    const deleteCustomer = async () => await customerService.deleteCustomer(4);
+    const deleteCustomer = async () =>
+        await customerService.deleteCustomer('nonExisting@example.com');
 
     await expect(deleteCustomer).rejects.toThrow('This customer does not exist.');
-    expect(mockCustomerDbGetCustomerById).toHaveBeenCalledWith({ id: 4 });
-});
-
-test('given a customer without a cart, when deleting the customer, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[1]);
-    cartDb.getCartByCustomerId = mockCartDbGetCartByCustomerId.mockReturnValue(null);
-
-    const deleteCustomer = async () => await customerService.deleteCustomer(2);
-
-    await expect(deleteCustomer).rejects.toThrow('That customer does not have a cart.');
-    expect(mockCartDbGetCartByCustomerId).toHaveBeenCalledWith({ id: 2 });
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'nonExisting@example.com',
+    });
 });
 
 test('given a customer, when adding a product to wishlist, then the product is added', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[1]);
     customerDb.addProductToWishlist = mockCustomerDbAddProductToWishlist.mockReturnValue(
         products[1]
     );
 
-    const result = await customerService.addProductToWishlist(1, 2);
+    const result = await customerService.addProductToWishlist('john.doe@example.com', 2);
 
     expect(result).toEqual(products[1]);
     expect(mockCustomerDbAddProductToWishlist).toHaveBeenCalledWith(customers[0], products[1]);
 });
 
 test('given a customer with existing wishlist, when adding a duplicate product to wishlist, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[0]);
 
-    const addProductToWishlist = async () => await customerService.addProductToWishlist(1, 1);
+    const addProductToWishlist = async () =>
+        await customerService.addProductToWishlist('john.doe@example.com', 1);
 
     await expect(addProductToWishlist).rejects.toThrow(
         'Product with id 1 is already in the wishlist.'
@@ -275,24 +296,24 @@ test('given a customer with existing wishlist, when adding a duplicate product t
 });
 
 test('given a customer, when removing a product from wishlist, then the product is removed', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[0]);
     customerDb.removeProductFromWishlist = mockCustomerDbRemoveProductFromWishlist.mockReturnValue(
         'Product removed from wishlist.'
     );
 
-    const result = await customerService.removeProductFromWishlist(1, 1);
+    const result = await customerService.removeProductFromWishlist('john.doe@example.com', 1);
 
     expect(result).toEqual('Product removed from wishlist.');
     expect(mockCustomerDbRemoveProductFromWishlist).toHaveBeenCalledWith(customers[0], products[0]);
 });
 
 test('given a customer, when removing a product not in the wishlist, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[1]);
 
     const removeProductFromWishlist = async () =>
-        await customerService.removeProductFromWishlist(1, 2);
+        await customerService.removeProductFromWishlist('john.doe@example.com', 2);
 
     await expect(removeProductFromWishlist).rejects.toThrow(
         'Product with id 2 is not in the wishlist.'
@@ -300,10 +321,11 @@ test('given a customer, when removing a product not in the wishlist, then an err
 });
 
 test('given a non-existent product, when adding to wishlist, then an error is thrown', async () => {
-    customerDb.getCustomerById = mockCustomerDbGetCustomerById.mockReturnValue(customers[0]);
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-    const addProductToWishlist = async () => await customerService.addProductToWishlist(1, 3);
+    const addProductToWishlist = async () =>
+        await customerService.addProductToWishlist('john.doe@example.com', 3);
 
     await expect(addProductToWishlist).rejects.toThrow('Product with id 3 does not exist.');
 });

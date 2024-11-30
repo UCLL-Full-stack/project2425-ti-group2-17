@@ -1,10 +1,12 @@
 import { Admin } from '../../model/admin';
+import { Role } from '../../types';
 
 const adminTestData = {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@gmail.com',
     password: 'password123',
+    role: 'admin' as Role,
 };
 
 let admin: Admin;
@@ -13,7 +15,7 @@ beforeEach(() => {
     admin = new Admin(adminTestData);
 });
 
-const { firstName, lastName, email, password } = adminTestData;
+const { firstName, lastName, email, password, role } = adminTestData;
 
 const createAdmin = (overrides = {}) => new Admin({ ...adminTestData, ...overrides });
 
@@ -68,6 +70,7 @@ test('given: valid values for update, when: updating the admin, then: admin is u
         lastName: 'Smith',
         email: 'jane.smith@gmail.com',
         password: 'newpassword456',
+        role: 'admin' as Role,
     };
 
     admin.updateUser(updatedData);

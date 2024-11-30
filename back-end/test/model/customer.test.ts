@@ -1,11 +1,13 @@
 import { Customer } from '../../model/customer';
 import { Product } from '../../model/product';
+import { Role } from '../../types';
 
 const customerTestData = {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@gmail.com',
     password: 'password',
+    role: 'customer' as Role,
 };
 
 let customer: Customer;
@@ -71,6 +73,7 @@ test('given: valid values for update, when: updating the admin, then: admin is u
         lastName: 'Smith',
         email: 'jane.smith@gmail.com',
         password: 'newpassword456',
+        role: 'customer' as Role,
     };
 
     customer.updateUser(updatedData);

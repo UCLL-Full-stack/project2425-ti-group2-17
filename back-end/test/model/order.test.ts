@@ -3,12 +3,14 @@ import { Customer } from '../../model/customer';
 import { Product } from '../../model/product';
 import { Payment } from '../../model/payment';
 import { Order } from '../../model/order';
+import { Role } from '../../types';
 
 const customerTestData = {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@example.com',
     password: 'securepassword123',
+    role: 'customer' as Role,
     wishlist: [],
 };
 

@@ -6,6 +6,7 @@ type AdminInput = {
     lastName: string;
     email: string;
     password: string;
+    role: Role;
 };
 
 type CustomerInput = {
@@ -14,6 +15,7 @@ type CustomerInput = {
     lastName: string;
     email: string;
     password: string;
+    role: Role;
     recentOrders?: OrderInput[];
     wishlist?: ProductInput[];
 };
