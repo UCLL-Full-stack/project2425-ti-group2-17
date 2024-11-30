@@ -42,18 +42,20 @@ const getOrderById = async ({ id }: { id: number }): Promise<Order | undefined> 
             return undefined;
         }
 
-        return Order.from({
-            ...orderPrisma,
-            customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-            items: orderPrisma.items.map(
-                (itemData) =>
-                    new OrderItem({
-                        ...itemData,
-                        product: new Product(itemData.product),
-                    })
-            ),
-            payment: new Payment(orderPrisma.payment),
-        });
+        // return Order.from({
+        //     ...orderPrisma,
+        //     customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+        //     items: orderPrisma.items.map(
+        //         (itemData) =>
+        //             new OrderItem({
+        //                 ...itemData,
+        //                 product: new Product(itemData.product),
+        //             })
+        //     ),
+        //     payment: new Payment(orderPrisma.payment),
+        // });
+
+        return Order.from(orderPrisma);
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
@@ -66,20 +68,22 @@ const getOrdersByCustomer = async ({ id }: { id: number }): Promise<Order[]> => 
             where: { customerId: id },
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
-        return ordersPrisma.map((orderPrisma) => {
-            return Order.from({
-                ...orderPrisma,
-                customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-                items: orderPrisma.items.map(
-                    (itemData) =>
-                        new OrderItem({
-                            ...itemData,
-                            product: new Product(itemData.product),
-                        })
-                ),
-                payment: new Payment(orderPrisma.payment),
-            });
-        });
+        // return ordersPrisma.map((orderPrisma) => {
+        //     return Order.from({
+        //         ...orderPrisma,
+        //         customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+        //         items: orderPrisma.items.map(
+        //             (itemData) =>
+        //                 new OrderItem({
+        //                     ...itemData,
+        //                     product: new Product(itemData.product),
+        //                 })
+        //         ),
+        //         payment: new Payment(orderPrisma.payment),
+        //     });
+        // });
+
+        return ordersPrisma.map((order) => Order.from(order));
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
@@ -127,18 +131,20 @@ const createOrder = async (order: Order): Promise<Order> => {
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
 
-        return Order.from({
-            ...orderPrisma,
-            customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-            items: orderPrisma.items.map(
-                (itemData) =>
-                    new OrderItem({
-                        ...itemData,
-                        product: new Product(itemData.product),
-                    })
-            ),
-            payment: new Payment(orderPrisma.payment),
-        });
+        // return Order.from({
+        //     ...orderPrisma,
+        //     customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
+        //     items: orderPrisma.items.map(
+        //         (itemData) =>
+        //             new OrderItem({
+        //                 ...itemData,
+        //                 product: new Product(itemData.product),
+        //             })
+        //     ),
+        //     payment: new Payment(orderPrisma.payment),
+        // });
+
+        return Order.from(orderPrisma);
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
