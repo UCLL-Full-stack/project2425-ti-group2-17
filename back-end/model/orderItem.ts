@@ -1,6 +1,7 @@
 import { CartItem } from './cartItem';
 import { Order } from './order';
 import { Product } from './product';
+import { OrderItem as OrderItemPrisma, Product as ProductPrisma } from '@prisma/client';
 
 export class OrderItem {
     private id?: number;
@@ -39,5 +40,13 @@ export class OrderItem {
         if (orderItem.quantity <= 0) {
             throw new Error('Quantity must be greater than zero.');
         }
+    }
+
+    static from({ id, product, quantity }: OrderItemPrisma & { product: ProductPrisma }) {
+        return new OrderItem({
+            id,
+            product: Product.from(product),
+            quantity,
+        });
     }
 }
