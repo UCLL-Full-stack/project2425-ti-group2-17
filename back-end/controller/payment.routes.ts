@@ -42,6 +42,8 @@ const paymentRouter = Router();
  * @swagger
  * /payments:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Create a new payment for an order
  *     tags: [Payments]
  *     requestBody:
@@ -82,6 +84,8 @@ paymentRouter.put('/', async (req: Request, res: Response, next: NextFunction) =
  * @swagger
  * /payments:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Retrieve a list of all payments
  *     tags: [Payments]
  *     responses:
@@ -110,6 +114,8 @@ paymentRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
  * @swagger
  * /payments/{id}:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get payment details by ID
  *     tags: [Payments]
  *     parameters:

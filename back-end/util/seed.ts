@@ -3,6 +3,7 @@
 // npx ts-node util/seed.ts
 
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -101,7 +102,7 @@ const main = async () => {
             firstName: 'John',
             lastName: 'Doe',
             email: 'john.doe@example.com',
-            password: 'password123',
+            password: await bcrypt.hash('password123', 12),
             role: 'customer',
             wishlist: {
                 connect: [{ id: tShirt.id }],
@@ -114,10 +115,23 @@ const main = async () => {
             firstName: 'Jane',
             lastName: 'Smith',
             email: 'jane.smith@example.com',
-            password: 'password456',
+            password: await bcrypt.hash('password456', 12),
             role: 'customer',
             wishlist: {
                 connect: [{ id: runningShoes.id }],
+            },
+        },
+    });
+
+    const aliceJohnson = await prisma.customer.create({
+        data: {
+            firstName: 'Alice',
+            lastName: 'Johnson',
+            email: 'alice.johnson@example.com',
+            password: await bcrypt.hash('password789', 12),
+            role: 'customer',
+            wishlist: {
+                connect: [{ id: casualHoodie.id }],
             },
         },
     });
@@ -127,7 +141,7 @@ const main = async () => {
             firstName: 'Admin',
             lastName: 'User',
             email: 'admin@example.com',
-            password: 'admin123',
+            password: await bcrypt.hash('admin123', 12),
             role: 'admin',
             wishlist: {},
         },
@@ -138,22 +152,9 @@ const main = async () => {
             firstName: 'Salesman',
             lastName: 'User',
             email: 'salesman@example.com',
-            password: 'salesman123',
+            password: await bcrypt.hash('salesman123', 12),
             role: 'salesman',
             wishlist: {},
-        },
-    });
-
-    const aliceJohnson = await prisma.customer.create({
-        data: {
-            firstName: 'Alice',
-            lastName: 'Johnson',
-            email: 'alice.johnson@example.com',
-            password: 'password789',
-            role: 'customer',
-            wishlist: {
-                connect: [{ id: casualHoodie.id }],
-            },
         },
     });
 

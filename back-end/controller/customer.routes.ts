@@ -1,36 +1,40 @@
 /**
  * @swagger
  * components:
- *  securitySchemes:
- *   bearerAuth:
- *    type: http
- *    scheme: bearer
- *    bearerFormat: JWT
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     AuthenticationResponse:
- *          type: object
- *          properties:
- *            message:
- *              type: string
- *              description: Authentication response.
- *            token:
- *              type: string
- *              description: JWT access token.
- *            email:
- *              type: string
- *              description: User email.
- *            fullname:
- *             type: string
- *             description: Full name.
+ *       type: object
+ *       properties:
+ *         token:
+ *           type: string
+ *           description: JWT access token.
+ *         email:
+ *           type: string
+ *           description: User email.
+ *         fullname:
+ *           type: string
+ *           description: Full name.
+ *         role:
+ *           type: string
+ *           description: User role.
+ *           enum:
+ *             - customer
+ *             - salesman
+ *             - admin
  *     AuthenticationRequest:
- *          type: object
- *          properties:
- *            email:
- *              type: string
- *              description: User email.
- *            password:
- *              type: string
- *              description: User password.
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: User email.
+ *         password:
+ *           type: string
+ *           description: User password.
  *     Customer:
  *       type: object
  *       properties:
@@ -45,10 +49,6 @@
  *           type: string
  *         password:
  *           type: string
- *         recentOrders:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Order'
  *         wishlist:
  *           type: array
  *           items:
@@ -78,6 +78,8 @@ const customerRouter = Router();
  * @swagger
  * /customers:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get all customers
  *     tags: [Customers]
  *     responses:
@@ -106,6 +108,8 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  * @swagger
  * /customers/{email}:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get a customer by email
  *     tags: [Customers]
  *     parameters:
@@ -162,7 +166,7 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
  *         description: Internal server error
  */
 
-customerRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customer = <CustomerInput>req.body;
         const result = await customerService.createCustomer(customer);
@@ -176,6 +180,8 @@ customerRouter.post('/', async (req: Request, res: Response, next: NextFunction)
  * @swagger
  * /customers/{email}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Update a customer by email
  *     tags: [Customers]
  *     parameters:
@@ -220,6 +226,8 @@ customerRouter.put('/:email', async (req: Request, res: Response, next: NextFunc
  * @swagger
  * /customers/{email}:
  *   delete:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Delete a customer by email
  *     tags: [Customers]
  *     parameters:
@@ -259,6 +267,8 @@ customerRouter.delete('/:email', async (req: Request, res: Response, next: NextF
  * @swagger
  * /customers/addWishlist/{email}/{productId}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Add a product to a customer's wishlist
  *     tags: [Customers]
  *     parameters:
@@ -301,6 +311,8 @@ customerRouter.put(
  * @swagger
  * /customers/removeWishlist/{email}/{productId}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Remove a product from a customer's wishlist
  *     tags: [Customers]
  *     parameters:
@@ -345,9 +357,10 @@ customerRouter.put(
 
 /**
  * @swagger
- * /users/login:
+ * /customers/login:
  *   post:
  *      summary: Login using email and password. Returns an object with JWT token and user name when succesful.
+ *      tags: [Customers]
  *      requestBody:
  *        required: true
  *        content:
@@ -356,7 +369,7 @@ customerRouter.put(
  *              $ref: '#/components/schemas/AuthenticationRequest'
  *      responses:
  *         200:
- *            description: The created user object
+ *            description: The information of the user object
  *            content:
  *              application/json:
  *                schema:
@@ -366,7 +379,7 @@ customerRouter.post('/login', async (req: Request, res: Response, next: NextFunc
     try {
         const customerInput = <CustomerInput>req.body;
         const response = await customerService.authenticate(customerInput);
-        res.status(200).json({ message: 'Authentication succesful', ...response });
+        res.status(200).json(response);
     } catch (error) {
         next(error);
     }

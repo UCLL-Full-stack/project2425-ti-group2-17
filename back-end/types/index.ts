@@ -16,7 +16,6 @@ type CustomerInput = {
     email: string;
     password: string;
     role: Role;
-    recentOrders?: OrderInput[];
     wishlist?: ProductInput[];
 };
 

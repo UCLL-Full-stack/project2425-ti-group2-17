@@ -76,6 +76,8 @@ const productRouter = Router();
  * @swagger
  * /products:
  *   post:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Create a new product
  *     tags: [Products]
  *     requestBody:
@@ -111,6 +113,8 @@ productRouter.post('/', async (req: Request, res: Response, next: NextFunction) 
  * @swagger
  * /products:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Retrieve a list of products
  *     tags: [Products]
  *     responses:
@@ -139,6 +143,8 @@ productRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
  * @swagger
  * /products/search:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Search for products by a query string
  *     tags: [Products]
  *     parameters:
@@ -177,6 +183,8 @@ productRouter.get('/search', async (req: Request, res: Response, next: NextFunct
  * @swagger
  * /products/{id}:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get product by ID
  *     tags: [Products]
  *     parameters:
@@ -212,6 +220,8 @@ productRouter.get('/:id', async (req: Request, res: Response, next: NextFunction
  * @swagger
  * /products/{id}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Update a product by ID
  *     tags: [Products]
  *     parameters:
@@ -257,6 +267,8 @@ productRouter.put('/:id', async (req: Request, res: Response, next: NextFunction
  * @swagger
  * /products/{id}:
  *   delete:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Delete a product by ID
  *     tags: [Products]
  *     parameters:

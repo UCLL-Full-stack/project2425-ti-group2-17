@@ -130,20 +130,6 @@ const createOrder = async (order: Order): Promise<Order> => {
             },
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
-
-        // return Order.from({
-        //     ...orderPrisma,
-        //     customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-        //     items: orderPrisma.items.map(
-        //         (itemData) =>
-        //             new OrderItem({
-        //                 ...itemData,
-        //                 product: new Product(itemData.product),
-        //             })
-        //     ),
-        //     payment: new Payment(orderPrisma.payment),
-        // });
-
         return Order.from(orderPrisma);
     } catch (error) {
         console.error(error);

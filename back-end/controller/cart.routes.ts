@@ -44,6 +44,8 @@ const cartRouter = Router();
  * @swagger
  * /carts:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Retrieve a list of carts
  *     tags: [Carts]
  *     responses:
@@ -72,6 +74,8 @@ cartRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
  * @swagger
  * /carts/{id}:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get a cart by ID
  *     tags: [Carts]
  *     parameters:
@@ -107,6 +111,8 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
  * @swagger
  * /carts/email/{email}:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get a cart by email
  *     tags: [Carts]
  *     parameters:
@@ -142,6 +148,8 @@ cartRouter.get('/email/:email', async (req: Request, res: Response, next: NextFu
  * @swagger
  * /carts/addItems/{email}/{productId}/{quantity}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Add an item to the cart or increase its quantity
  *     tags: [Carts]
  *     parameters:
@@ -193,6 +201,8 @@ cartRouter.put(
  * @swagger
  * /carts/removeItems/{email}/{productId}/{quantity}:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Remove an item or decrease its quantity in the cart
  *     tags: [Carts]
  *     parameters:
@@ -247,6 +257,8 @@ cartRouter.put(
  * @swagger
  * /carts/convertToOrder/{email}:
  *   post:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Convert a cart to an order
  *     tags: [Carts]
  *     parameters:
