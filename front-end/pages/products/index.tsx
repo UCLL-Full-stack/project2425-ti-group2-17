@@ -36,7 +36,6 @@ const Products: React.FC = () => {
         } else if (maxPrice < minPrice) {
             setmaxPrice(minPrice);
         }
-        // console.log(selectedSizes);
         return productData.filter(
             (product) =>
                 (selectedSizes.length === 0 ||
@@ -213,15 +212,13 @@ const Products: React.FC = () => {
     const { data: products, isLoading, error } = useSWR('products', getProducts);
 
     useEffect(() => {
-        const storedUser = sessionStorage.getItem('loggedInUser');
-        if (storedUser) {
-            setLoggedInUser(JSON.parse(storedUser));
-        }
+        setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
     }, []);
 
     useInterval(() => {
         mutate('products', getProducts());
     }, 1000);
+
     return (
         <>
             <Head>

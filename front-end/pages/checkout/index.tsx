@@ -12,7 +12,23 @@ const Checkout: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [internalError, setInternalError] = useState<string | null>(null);
 
+    // const getLoggedInUser = async () => {
+    //     const storedUser = sessionStorage.getItem('loggedInUser');
+    //     if (storedUser) {
+    //         setLoggedInUser(JSON.parse(storedUser));
+    //     }
+    //     console.log('test');
+    //     console.log(loggedInUser);
+    //     console.log('test2');
+    //     console.log(storedUser!);
+    //     console.log('test3');
+    //     console.log(JSON.parse(storedUser!));
+    // };
+
     const getCartByEmail = async () => {
+        // if (!loggedInUser) {
+        //     await getLoggedInUser();
+        // }
         const response = await CartService.getCartByEmail(loggedInUser?.email!);
         if (!response.ok) {
             if (response.status === 401) {
@@ -67,10 +83,7 @@ const Checkout: React.FC = () => {
     };
 
     useEffect(() => {
-        const storedUser = sessionStorage.getItem('loggedInUser');
-        if (storedUser) {
-            setLoggedInUser(JSON.parse(storedUser));
-        }
+        setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
     }, []);
 
     const { data: cart, isLoading, error } = useSWR('cart', getCartByEmail);
@@ -89,7 +102,7 @@ const Checkout: React.FC = () => {
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <section className="flex w-full justify-center">
-                    {cart && (
+                    {cart && loggedInUser && (
                         <CartOverviewTable
                             cart={cart}
                             convertCartToOrder={convertCartToOrder}
