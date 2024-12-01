@@ -119,13 +119,18 @@ const authenticate = async ({
     email,
     password,
 }: CustomerInput): Promise<AuthenticationResponse> => {
-    const customer = await getCustomerByEmail(email);
+    const customer = await customerDB.getCustomerByEmail({ email });
 
-    const isValidPassword = await bcrypt.compare(password, customer!.getPassword());
+    if (!customer) {
+        throw new Error('That email and password combination is incorrect.');
+    }
+
+    const isValidPassword = await bcrypt.compare(password, customer.getPassword());
 
     if (!isValidPassword) {
-        throw new Error('Incorrect password.');
+        throw new Error('That email and password combination is incorrect.');
     }
+
     return {
         token: generateJwtToken({ email, role: customer!.getRole() }),
         email: email,
