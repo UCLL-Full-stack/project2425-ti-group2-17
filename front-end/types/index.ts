@@ -7,13 +7,12 @@ type Admin = {
 };
 
 type Customer = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    recentOrders: Order[];
-    wishlist: Product[];
+    id?: number;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+    wishlist?: Product[];
 };
 
 type Cart = {
@@ -62,39 +61,9 @@ type Product = {
     colors: string[];
 };
 
-type ProductInput = {
-    name: string;
-    price: number;
-    stock: number;
-    categories: string[];
-    description: string;
-    images: string[];
-    sizes: string[];
-    colors: string[];
-};
-
-type CustomerInput = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-};
-
 type StatusMessage = {
     message: string;
     type: 'error' | 'success';
 };
 
-export type {
-    Admin,
-    Customer,
-    Cart,
-    CartItem,
-    Order,
-    OrderItem,
-    Payment,
-    Product,
-    ProductInput,
-    CustomerInput,
-    StatusMessage,
-};
+export type { Admin, Customer, Cart, CartItem, Order, OrderItem, Payment, Product, StatusMessage };
