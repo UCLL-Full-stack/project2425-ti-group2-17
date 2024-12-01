@@ -1,5 +1,5 @@
 type Admin = {
-    id: number;
+    id?: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -10,26 +10,27 @@ type Customer = {
     id?: number;
     firstName?: string;
     lastName?: string;
+    fullname?: string;
     email?: string;
     password?: string;
     wishlist?: Product[];
 };
 
 type Cart = {
-    id: number;
+    id?: number;
     customer: Customer;
     products: CartItem[];
     totalAmount: number;
 };
 
 type CartItem = {
-    id: number;
+    id?: number;
     product: Product;
     quantity: number;
 };
 
 type Order = {
-    id: number;
+    id?: number;
     customer: Customer;
     items: OrderItem[];
     date: Date;
@@ -43,14 +44,14 @@ type OrderItem = {
 };
 
 type Payment = {
-    id: number;
+    id?: number;
     amount: number;
     date: Date;
     paymentStatus: string;
 };
 
 type Product = {
-    id: number;
+    id?: number;
     name: string;
     price: number;
     stock: number;

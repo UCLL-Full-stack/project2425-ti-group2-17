@@ -1,5 +1,5 @@
 import Header from '@components/header';
-import { Product, ProductInput } from '@types';
+import { Customer, Product } from '@types';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import ProductService from '@services/ProductService';
@@ -10,6 +10,7 @@ import useInterval from 'use-interval';
 import ProductCreator from '@components/products/ProductCreator';
 
 const Products: React.FC = () => {
+    const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
     const [selectedColors, setSelectedColors] = useState<string[]>([]);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -53,153 +54,151 @@ const Products: React.FC = () => {
         );
     };
 
-    const getProducts = async (): Promise<Product[]> => {
-        try {
-            const response = await ProductService.getAllProducts();
-            if (!response.ok) {
-                throw new Error('Failed to fetch products');
+    const getProducts = async () => {
+        //     const getProducts = async (): Promise<Product[]> => {
+        const response = await ProductService.getAllProducts();
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to view this page.');
+            } else {
+                return new Error(response.statusText);
             }
-            const productData = await response.json();
-            if (productData.length === 0) {
-                throw new Error('No products found');
-            }
-            return filterProducts(productData);
-        } catch (err: any) {
-            throw err;
+        } else {
+            const products = await response.json();
+            return products;
         }
     };
 
     const createProduct = async () => {
-        const name = window.prompt('Enter new name:');
-        const price = Number(window.prompt('Enter new price:'));
-        const stock = Number(window.prompt('Enter new stock:'));
-        const description = window.prompt('Enter new description:');
-        const categories = window
-            .prompt('Enter new categories with commas and a space in between:')
-            ?.split(',')
-            .map((item) => item.trim());
-        const sizes = window
-            .prompt('Enter new sizes with commas and a space in between:')
-            ?.split(',')
-            .map((item) => item.trim());
-        const colors = window
-            .prompt('Enter new colors with commas and a space in between:')
-            ?.split(',')
-            .map((item) => item.trim());
-        // const images =
-        //     window
-        //         .prompt(
-        //             'Enter new images:',
-        //             existingProduct.images.join(', ')
-        //         )
-        //         ?.split(',')
-        //         .map((item) => item.trim()) || existingProduct.images;
-
-        if (!name || !description || !price || !stock || !categories || !sizes || !colors) {
-            throw new Error('All fields are required and must be valid.');
-        }
-
-        const newProduct: ProductInput = {
-            name,
-            price,
-            stock,
-            categories,
-            description,
-            images: ['temp'],
-            sizes,
-            colors,
-        };
-
-        try {
-            // setError(null);
-            await ProductService.createProduct(newProduct);
-            getProducts();
-        } catch (err: any) {
-            throw new err();
-        }
+        // const name = window.prompt('Enter new name:');
+        // const price = Number(window.prompt('Enter new price:'));
+        // const stock = Number(window.prompt('Enter new stock:'));
+        // const description = window.prompt('Enter new description:');
+        // const categories = window
+        //     .prompt('Enter new categories with commas and a space in between:')
+        //     ?.split(',')
+        //     .map((item) => item.trim());
+        // const sizes = window
+        //     .prompt('Enter new sizes with commas and a space in between:')
+        //     ?.split(',')
+        //     .map((item) => item.trim());
+        // const colors = window
+        //     .prompt('Enter new colors with commas and a space in between:')
+        //     ?.split(',')
+        //     .map((item) => item.trim());
+        // // const images =
+        // //     window
+        // //         .prompt(
+        // //             'Enter new images:',
+        // //             existingProduct.images.join(', ')
+        // //         )
+        // //         ?.split(',')
+        // //         .map((item) => item.trim()) || existingProduct.images;
+        // if (!name || !description || !price || !stock || !categories || !sizes || !colors) {
+        //     throw new Error('All fields are required and must be valid.');
+        // }
+        // const newProduct: ProductInput = {
+        //     name,
+        //     price,
+        //     stock,
+        //     categories,
+        //     description,
+        //     images: ['temp'],
+        //     sizes,
+        //     colors,
+        // };
+        // try {
+        //     // setError(null);
+        //     await ProductService.createProduct(newProduct);
+        //     getProducts();
+        // } catch (err: any) {
+        //     throw new err();
+        // }
     };
 
     const updateProduct = async (id: number) => {
-        const existingProduct = products?.find((product) => product.id === id);
-
-        if (!existingProduct) {
-            throw new Error('Product not found');
-            return;
-        }
-
-        const name = window.prompt('Enter new name:', existingProduct.name) || existingProduct.name;
-        const price =
-            Number(window.prompt('Enter new price:', existingProduct.price.toString())) ||
-            existingProduct.price;
-        const stock =
-            Number(window.prompt('Enter new stock:', existingProduct.stock.toString())) ||
-            existingProduct.stock;
-        const description =
-            window.prompt('Enter new description:', existingProduct.description) ||
-            existingProduct.description;
-        const categories =
-            window
-                .prompt('Enter new categories:', existingProduct.categories.join(', '))
-                ?.split(',')
-                .map((item) => item.trim()) || existingProduct.categories;
-        const sizes =
-            window
-                .prompt('Enter new sizes:', existingProduct.sizes.join(', '))
-                ?.split(',')
-                .map((item) => item.trim()) || existingProduct.sizes;
-        const colors =
-            window
-                .prompt('Enter new colors:', existingProduct.colors.join(', '))
-                ?.split(',')
-                .map((item) => item.trim()) || existingProduct.colors;
-        // const images =
+        // const existingProduct = products?.find((product) => product.id === id);
+        // if (!existingProduct) {
+        //     throw new Error('Product not found');
+        //     return;
+        // }
+        // const name = window.prompt('Enter new name:', existingProduct.name) || existingProduct.name;
+        // const price =
+        //     Number(window.prompt('Enter new price:', existingProduct.price.toString())) ||
+        //     existingProduct.price;
+        // const stock =
+        //     Number(window.prompt('Enter new stock:', existingProduct.stock.toString())) ||
+        //     existingProduct.stock;
+        // const description =
+        //     window.prompt('Enter new description:', existingProduct.description) ||
+        //     existingProduct.description;
+        // const categories =
         //     window
-        //         .prompt(
-        //             'Enter new images:',
-        //             existingProduct.images.join(', ')
-        //         )
+        //         .prompt('Enter new categories:', existingProduct.categories.join(', '))
         //         ?.split(',')
-        //         .map((item) => item.trim()) || existingProduct.images;
-
-        const updatedProduct: ProductInput = {
-            name,
-            price,
-            stock,
-            categories,
-            description,
-            images: existingProduct.images,
-            sizes,
-            colors,
-        };
-
-        try {
-            // setError(null);
-            await ProductService.updateProduct(id.toString(), updatedProduct);
-            getProducts();
-        } catch (err: any) {
-            throw err.message;
-        }
+        //         .map((item) => item.trim()) || existingProduct.categories;
+        // const sizes =
+        //     window
+        //         .prompt('Enter new sizes:', existingProduct.sizes.join(', '))
+        //         ?.split(',')
+        //         .map((item) => item.trim()) || existingProduct.sizes;
+        // const colors =
+        //     window
+        //         .prompt('Enter new colors:', existingProduct.colors.join(', '))
+        //         ?.split(',')
+        //         .map((item) => item.trim()) || existingProduct.colors;
+        // // const images =
+        // //     window
+        // //         .prompt(
+        // //             'Enter new images:',
+        // //             existingProduct.images.join(', ')
+        // //         )
+        // //         ?.split(',')
+        // //         .map((item) => item.trim()) || existingProduct.images;
+        // const updatedProduct: ProductInput = {
+        //     name,
+        //     price,
+        //     stock,
+        //     categories,
+        //     description,
+        //     images: existingProduct.images,
+        //     sizes,
+        //     colors,
+        // };
+        // try {
+        //     // setError(null);
+        //     await ProductService.updateProduct(id.toString(), updatedProduct);
+        //     getProducts();
+        // } catch (err: any) {
+        //     throw err.message;
+        // }
     };
 
     const deleteProduct = async (id: number) => {
-        try {
-            // setError(null);
-            const response = await ProductService.deleteProduct(id.toString());
-            getProducts();
-        } catch (err: any) {
-            throw err.message;
+        const response = await ProductService.deleteProduct(id.toString());
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be an admin to delete a product.');
+            } else {
+                return new Error(response.statusText);
+            }
+        } else {
+            mutate('products', getProducts());
         }
     };
 
     const addItemToCart = async (productId: number) => {
-        try {
-            const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
-            if (loggedInUserEmail == null) {
-                throw new Error('You must be logged in to add an item to your cart.');
+        const response = await CartService.addItemToCart(
+            loggedInUser?.email!,
+            productId.toString(),
+            '1'
+        );
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be an admin to delete a product.');
+            } else {
+                return new Error(response.statusText);
             }
-            await CartService.addItemToCart(loggedInUserEmail, productId.toString(), '1');
-        } catch (err: any) {
-            throw err.message;
         }
     };
 
@@ -212,6 +211,13 @@ const Products: React.FC = () => {
     };
 
     const { data: products, isLoading, error } = useSWR('products', getProducts);
+
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     useInterval(() => {
         mutate('products', getProducts());

@@ -81,7 +81,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                                 <div className="flex flex-col justify-center items-center ml-4">
                                     <button
                                         onClick={() => {
-                                            addItemToCart(product.id);
+                                            addItemToCart(product.id!);
                                         }}
                                         className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
                                     >
@@ -107,14 +107,14 @@ const ProductOverviewTable: React.FC<Props> = ({
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => updateProduct(product.id)}
+                                        onClick={() => updateProduct(product.id!)}
                                         className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Update
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => deleteProduct(product.id)}
+                                        onClick={() => deleteProduct(product.id!)}
                                         className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Delete

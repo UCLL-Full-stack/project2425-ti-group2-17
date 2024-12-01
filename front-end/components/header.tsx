@@ -2,29 +2,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import { Customer } from '@types';
 
 const Header: React.FC = () => {
     const router = useRouter();
-    const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
-    const [loggedInUserEmail, setLoggedInUserEmail] = useState<string | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
 
     useEffect(() => {
-        const userId = sessionStorage.getItem('loggedInUserId');
-        const userEmail = sessionStorage.getItem('loggedInUserEmail');
-
-        if (userId) {
-            setLoggedInUserId(parseInt(userId));
-        } else {
-            setLoggedInUserId(null);
+        const storedUser = sessionStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
         }
-        setLoggedInUserEmail(userEmail);
     }, []);
 
     const handleClick = () => {
-        sessionStorage.removeItem('loggedInUserId');
-        setLoggedInUserId(null);
-        sessionStorage.removeItem('loggedInUserEmail');
-        setLoggedInUserEmail(null);
+        sessionStorage.removeItem('loggedInUser');
+        setLoggedInUser(null);
     };
     return (
         <header className="p-3 mb-3 border-bottom bg-dark bg-gradient">
@@ -39,7 +32,7 @@ const Header: React.FC = () => {
                 <Link href="/products" className="nav-link px-4 fs-5 text-white">
                     Products
                 </Link>
-                {loggedInUserEmail && (
+                {loggedInUser && (
                     <button
                         onClick={() => {
                             router.push('/checkout');
@@ -55,12 +48,12 @@ const Header: React.FC = () => {
                         />
                     </button>
                 )}
-                {!loggedInUserEmail && (
+                {!loggedInUser && (
                     <Link href="/login" className="nav-link px-4 fs-5 text-white">
                         Login
                     </Link>
                 )}
-                {loggedInUserEmail && (
+                {loggedInUser && (
                     <a
                         href="/login"
                         className="nav-link px-4 fs-5 text-white"
@@ -69,9 +62,9 @@ const Header: React.FC = () => {
                         Logout
                     </a>
                 )}
-                {loggedInUserEmail && (
+                {loggedInUser && (
                     <div className="nav-link px-4 fs-5 text-white">
-                        Welcome, {loggedInUserEmail}!
+                        Welcome, {loggedInUser.fullname}!
                     </div>
                 )}
             </nav>

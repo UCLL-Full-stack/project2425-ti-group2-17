@@ -48,7 +48,7 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                                 <div className="mt-4">
                                     <div className="text-left">
                                         <strong>Categories:</strong>{' '}
-                                        {cartItem.product.category.join(', ')}
+                                        {cartItem.product.categories.join(', ')}
                                     </div>
                                     <div className="text-left">
                                         <strong>Sizes:</strong> {cartItem.product.sizes.join(', ')}
@@ -60,13 +60,13 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                                 </div>
                                 <div>
                                     <button
-                                        onClick={() => updateQuantity(cartItem.product.id, 1)}
+                                        onClick={() => updateQuantity(cartItem.product.id!, 1)}
                                         className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Add one
                                     </button>
                                     <button
-                                        onClick={() => updateQuantity(cartItem.product.id, -1)}
+                                        onClick={() => updateQuantity(cartItem.product.id!, -1)}
                                         className="w-min bg-black text-white py-2 rounded px-1"
                                     >
                                         Remove one

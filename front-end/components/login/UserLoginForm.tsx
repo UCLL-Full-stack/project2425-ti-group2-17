@@ -6,9 +6,9 @@ import { FormEvent, useState } from 'react';
 
 const UserLoginForm: React.FC = () => {
     const router = useRouter();
-    const [email, setEmail] = useState<string | null>('');
+    const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState<string | null>(null);
-    const [password, setPassword] = useState<string | null>('');
+    const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
@@ -34,24 +34,38 @@ const UserLoginForm: React.FC = () => {
     };
 
     const handleSubmit = async (event: FormEvent) => {
-        try {
-            event.preventDefault();
-            clearErrors();
-            if (!validate()) {
-                return;
-            }
-            const Customer = await CustomerService.loginCustomer(email!, password!);
+        event.preventDefault();
+
+        clearErrors();
+
+        if (!validate()) {
+            return;
+        }
+
+        const userToLogin = { email, password };
+        const response = await CustomerService.loginCustomer(userToLogin);
+
+        if (response.status === 200) {
             setStatusMessages([
                 {
                     message: 'Login successful. Redirecting to homepage...',
                     type: 'success',
                 },
             ]);
-            sessionStorage.setItem('loggedInUserEmail', email!);
-            sessionStorage.setItem('loggedInUserId', Customer.id!);
-            setTimeout(() => router.push('/'), 2000);
-        } catch (err: any) {
-            console.log();
+            const user = await response.json();
+            sessionStorage.setItem(
+                'loggedInUser',
+                JSON.stringify({
+                    token: user.token,
+                    email: user.email,
+                    fullname: user.fullname,
+                    role: user.role,
+                })
+            );
+            setTimeout(() => {
+                router.push('/');
+            }, 2000);
+        } else {
             setStatusMessages([
                 {
                     message: 'Login unsuccessful.',

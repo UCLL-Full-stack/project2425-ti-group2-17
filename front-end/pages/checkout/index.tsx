@@ -1,5 +1,5 @@
 import Header from '@components/header';
-import { Cart } from '@types';
+import { Cart, Customer } from '@types';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import CartService from '@services/CartService';
@@ -9,55 +9,68 @@ import useInterval from 'use-interval';
 
 const Checkout: React.FC = () => {
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
-    const [loggedInUserId, setLoggedInUserId] = useState<number>();
-    const [loggedInUserEmail, setLoggedInUserEmail] = useState<string>();
+    const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [internalError, setInternalError] = useState<string | null>(null);
 
     const getCartByEmail = async () => {
-        try {
-            const response = await CartService.getCartByEmail(loggedInUserEmail!);
-            return response;
-        } catch (err: any) {
-            throw err;
+        const response = await CartService.getCartByEmail(loggedInUser?.email!);
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to view this page.');
+            } else {
+                return new Error(response.statusText);
+            }
+        } else {
+            const cart = await response.json();
+            return cart;
         }
     };
 
     const convertCartToOrder = async (paymentStatus: string) => {
-        try {
-            await CartService.convertCartToOrder(loggedInUserEmail!, paymentStatus);
+        const response = await CartService.convertCartToOrder(loggedInUser?.email!, paymentStatus);
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to create your order.');
+            } else {
+                return new Error(response.statusText);
+            }
+        } else {
             setOrderStatus('Your order has been placed and an invoice has been sent.');
-        } catch (err: any) {
-            throw err;
+            mutate('cart', getCartByEmail());
         }
     };
 
     const updateQuantity = async (productId: number, quantity: number) => {
-        try {
-            if (quantity > 0) {
-                await CartService.addItemToCart(
-                    loggedInUserEmail!,
-                    productId.toString(),
-                    quantity.toString()
-                );
-            } else if (quantity < 0) {
-                await CartService.removeItemFromCart(
-                    loggedInUserEmail!,
-                    productId.toString(),
-                    Math.abs(quantity).toString()
-                );
+        let response;
+        if (quantity > 0) {
+            response = await CartService.addItemToCart(
+                loggedInUser?.email!,
+                productId.toString(),
+                quantity.toString()
+            );
+        } else if (quantity < 0) {
+            response = await CartService.removeItemFromCart(
+                loggedInUser?.email!,
+                productId.toString(),
+                Math.abs(quantity).toString()
+            );
+        }
+        if (response && !response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to add items to your cart.');
+            } else {
+                return new Error(response.statusText);
             }
-        } catch (err: any) {
-            console.log('test');
-            console.log(err.message);
-            throw err;
+        } else {
+            mutate('cart', getCartByEmail());
         }
     };
 
     useEffect(() => {
-        const userId = sessionStorage.getItem('loggedInUserId');
-        const userEmail = sessionStorage.getItem('loggedInUserEmail');
-        setLoggedInUserId(parseInt(userId!));
-        setLoggedInUserEmail(userEmail!);
+        const storedUser = sessionStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(JSON.parse(storedUser));
+        }
     }, []);
 
     const { data: cart, isLoading, error } = useSWR('cart', getCartByEmail);
@@ -73,12 +86,8 @@ const Checkout: React.FC = () => {
             <Header />
             <main className="d-flex flex-column justify-content-center align-items-center">
                 <h1>Checkout</h1>
-                {error && <div className="alert alert-danger">{error}</div>}
-                {error && (
-                    <div className="alert alert-danger">
-                        {error instanceof Error ? error.message : 'An unknown error occurred'}
-                    </div>
-                )}
+                {error && <div className="text-red-800">{error}</div>}
+                {isLoading && <p className="text-green-800">Loading...</p>}
                 <section className="flex w-full justify-center">
                     {cart && (
                         <CartOverviewTable

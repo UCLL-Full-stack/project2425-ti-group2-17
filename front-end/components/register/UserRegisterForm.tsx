@@ -1,9 +1,8 @@
 import CustomerService from '@services/CustomerService';
-import { StatusMessage } from '@types';
+import { Customer, StatusMessage } from '@types';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
-import { CustomerInput } from '@types';
 
 const UserRegisterForm: React.FC = () => {
     const router = useRouter();
@@ -68,7 +67,7 @@ const UserRegisterForm: React.FC = () => {
             if (!validate()) {
                 return;
             }
-            const customerInput: CustomerInput = {
+            const customerInput: Customer = {
                 firstName: firstName!,
                 lastName: lastName!,
                 email: email!,

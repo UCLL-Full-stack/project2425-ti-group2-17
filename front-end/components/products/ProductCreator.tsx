@@ -1,5 +1,5 @@
 import ProductService from '@services/ProductService';
-import { Product, ProductInput } from '@types';
+import { Product } from '@types';
 import { useState, useEffect, FormEvent } from 'react';
 
 type Props = {
@@ -74,7 +74,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             return;
         }
 
-        const newProduct: ProductInput = {
+        const newProduct: Product = {
             //   id: product.id,
             name,
             price: Number(price),
@@ -96,7 +96,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             }
 
             const data = await response.json();
-            onSave(response.id!);
+            onSave(data.id!);
             onClose();
         } catch (error) {
             console.error('An error occurred while updating the user:', error);
