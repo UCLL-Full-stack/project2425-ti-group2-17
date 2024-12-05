@@ -12,13 +12,13 @@ import ProductCreator from '@components/products/ProductCreator';
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+    const [selectedColors, setSelectedColors] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [uniqueColors, setUniqueColors] = useState<string[]>([]);
     const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number>(0);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
-    const [colorFilters, setColorFilters] = useState<{ [key: string]: boolean }>({});
-    const [categoryFilters, setCategoryFilters] = useState<{ [key: string]: boolean }>({});
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
@@ -44,10 +44,12 @@ const Products: React.FC = () => {
                 (product) =>
                     (selectedSizes.length === 0 ||
                         product.sizes.some((size) => selectedSizes.includes(size))) &&
-                    (!Object.values(colorFilters).some(Boolean) ||
-                        product.colors.some((color) => colorFilters[color])) &&
-                    (!Object.values(categoryFilters).some(Boolean) ||
-                        product.categories.some((category) => categoryFilters[category])) &&
+                    (selectedColors.length === 0 ||
+                        product.colors.some((color) => selectedColors.includes(color))) &&
+                    (selectedCategories.length === 0 ||
+                        product.categories.some((category) =>
+                            selectedCategories.includes(category)
+                        )) &&
                     (searchQuery === '' ||
                         product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
                     product.price >= minPrice &&
@@ -65,18 +67,30 @@ const Products: React.FC = () => {
         setUniqueCategories(Array.from(categories));
     };
 
-    const handleColorFilterChange = (color: string) => {
-        setColorFilters((current) => ({
-            ...current,
-            [color]: !current[color],
-        }));
+    const handleSizeChange = (inputSize: string) => {
+        if (selectedSizes.includes(inputSize)) {
+            setSelectedSizes(selectedSizes.filter((size) => size !== inputSize));
+        } else {
+            setSelectedSizes([...selectedSizes, inputSize]);
+        }
     };
 
-    const handleCategoryFilterChange = (category: string) => {
-        setCategoryFilters((current) => ({
-            ...current,
-            [category]: !current[category],
-        }));
+    const handleColorChange = (inputColor: string) => {
+        if (selectedColors.includes(inputColor)) {
+            setSelectedColors(selectedColors.filter((color) => color !== inputColor));
+        } else {
+            setSelectedColors([...selectedColors, inputColor]);
+        }
+    };
+
+    const handleCategoryChange = (inputCategory: string) => {
+        if (selectedCategories.includes(inputCategory)) {
+            setSelectedCategories(
+                selectedCategories.filter((category) => category !== inputCategory)
+            );
+        } else {
+            setSelectedCategories([...selectedCategories, inputCategory]);
+        }
     };
 
     const getProducts = async () => {
@@ -228,14 +242,6 @@ const Products: React.FC = () => {
         }
     };
 
-    const handleSizeChange = (inputSize: string) => {
-        if (selectedSizes.includes(inputSize)) {
-            setSelectedSizes(selectedSizes.filter((size) => size !== inputSize));
-        } else {
-            setSelectedSizes([...selectedSizes, inputSize]);
-        }
-    };
-
     const { data, isLoading, error } = useSWR('products', getProducts);
 
     useEffect(() => {
@@ -282,7 +288,7 @@ const Products: React.FC = () => {
                         </label>
                     ))}
                 </div>
-                {colorFilters && (
+                {uniqueColors && (
                     <div className="flex flex-col mb-2 text-sm font-medium">
                         <p className="font-medium border-b-2 border-yellow-400 mb-2">Colors</p>
                         <div className="flex flex-col max-h-60 overflow-y-auto">
@@ -290,8 +296,10 @@ const Products: React.FC = () => {
                                 <label key={color} className="flex items-center gap-2 mb-1">
                                     <input
                                         type="checkbox"
-                                        checked={colorFilters[color] || false}
-                                        onChange={() => handleColorFilterChange(color)}
+                                        value={color}
+                                        checked={selectedColors.includes(color)}
+                                        onChange={() => handleColorChange(color)}
+                                        className="border border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     {color}
                                 </label>
@@ -299,7 +307,7 @@ const Products: React.FC = () => {
                         </div>
                     </div>
                 )}
-                {categoryFilters && (
+                {uniqueCategories && (
                     <div className="flex flex-col mb-2 text-sm font-medium">
                         <p className="font-medium border-b-2 border-yellow-400 mb-2">Categories</p>
                         <div className="flex flex-col max-h-60 overflow-y-auto">
@@ -307,8 +315,10 @@ const Products: React.FC = () => {
                                 <label key={category} className="flex items-center gap-2 mb-1">
                                     <input
                                         type="checkbox"
-                                        checked={categoryFilters[category] || false}
-                                        onChange={() => handleCategoryFilterChange(category)}
+                                        value={category}
+                                        checked={selectedCategories.includes(category)}
+                                        onChange={() => handleCategoryChange(category)}
+                                        className="border border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     {category}
                                 </label>
