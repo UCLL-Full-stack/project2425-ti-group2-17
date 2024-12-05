@@ -12,11 +12,14 @@ import ProductCreator from '@components/products/ProductCreator';
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-    const [selectedColors, setSelectedColors] = useState<string[]>([]);
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [uniqueColors, setUniqueColors] = useState<string[]>([]);
+    const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [minPrice, setminPrice] = useState<number>(0);
-    const [maxPrice, setmaxPrice] = useState<number>(1000);
+    const [minPrice, setMinPrice] = useState<number>(0);
+    const [maxPrice, setMaxPrice] = useState<number>(1000);
+    const [colorFilters, setColorFilters] = useState<{ [key: string]: boolean }>({});
+    const [categoryFilters, setCategoryFilters] = useState<{ [key: string]: boolean }>({});
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
     const openCreateProduct = () => setIsCreateProductOpen(true);
@@ -29,28 +32,51 @@ const Products: React.FC = () => {
 
     const filterProducts = (productData: Product[]) => {
         if (minPrice < 0) {
-            setminPrice(0);
+            setMinPrice(0);
         }
         if (maxPrice < 0) {
-            setmaxPrice(1000);
+            setMaxPrice(1000);
         } else if (maxPrice < minPrice) {
-            setmaxPrice(minPrice);
+            setMaxPrice(minPrice);
         }
-        return productData.filter(
-            (product) =>
-                (selectedSizes.length === 0 ||
-                    product.sizes.some((size) => selectedSizes.includes(size))) &&
-                (selectedColors.length === 0 ||
-                    product.colors.some((color) => selectedColors.includes(color))) &&
-                (selectedCategories.length === 0 ||
-                    product.categories.some((categories) =>
-                        selectedCategories.includes(categories)
-                    )) &&
-                (searchQuery === '' ||
-                    product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
-                product.price >= minPrice &&
-                product.price <= maxPrice
+        setFilteredProducts(
+            productData.filter(
+                (product) =>
+                    (selectedSizes.length === 0 ||
+                        product.sizes.some((size) => selectedSizes.includes(size))) &&
+                    (!Object.values(colorFilters).some(Boolean) ||
+                        product.colors.some((color) => colorFilters[color])) &&
+                    (!Object.values(categoryFilters).some(Boolean) ||
+                        product.categories.some((category) => categoryFilters[category])) &&
+                    (searchQuery === '' ||
+                        product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+                    product.price >= minPrice &&
+                    product.price <= maxPrice
+            )
         );
+    };
+
+    const getUniqueColorsAndCategories = (products: Product[]) => {
+        const colors = new Set<string>(products.flatMap((product: Product) => product.colors));
+        const categories = new Set<string>(
+            products.flatMap((product: Product) => product.categories)
+        );
+        setUniqueColors(Array.from(colors));
+        setUniqueCategories(Array.from(categories));
+    };
+
+    const handleColorFilterChange = (color: string) => {
+        setColorFilters((current) => ({
+            ...current,
+            [color]: !current[color],
+        }));
+    };
+
+    const handleCategoryFilterChange = (category: string) => {
+        setCategoryFilters((current) => ({
+            ...current,
+            [category]: !current[category],
+        }));
     };
 
     const getProducts = async () => {
@@ -63,7 +89,8 @@ const Products: React.FC = () => {
             }
         } else {
             const products = await response.json();
-            const filteredProducts: any = filterProducts(products);
+            getUniqueColorsAndCategories(products);
+            filterProducts(products);
             return filteredProducts;
         }
     };
@@ -209,7 +236,7 @@ const Products: React.FC = () => {
         }
     };
 
-    const { data: products, isLoading, error } = useSWR('products', getProducts);
+    const { data, isLoading, error } = useSWR('products', getProducts);
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
@@ -218,6 +245,8 @@ const Products: React.FC = () => {
     useInterval(() => {
         mutate('products', getProducts());
     }, 1000);
+
+    const products: Product[] = Array.isArray(data) ? data : [];
 
     return (
         <>
@@ -253,6 +282,57 @@ const Products: React.FC = () => {
                         </label>
                     ))}
                 </div>
+                {colorFilters && (
+                    <div className="flex flex-col mb-2 text-sm font-medium">
+                        <p className="font-medium border-b-2 border-yellow-400 mb-2">Colors</p>
+                        <div className="flex flex-col max-h-60 overflow-y-auto">
+                            {uniqueColors.map((color) => (
+                                <label key={color} className="flex items-center gap-2 mb-1">
+                                    <input
+                                        type="checkbox"
+                                        checked={colorFilters[color] || false}
+                                        onChange={() => handleColorFilterChange(color)}
+                                    />
+                                    {color}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {categoryFilters && (
+                    <div className="flex flex-col mb-2 text-sm font-medium">
+                        <p className="font-medium border-b-2 border-yellow-400 mb-2">Categories</p>
+                        <div className="flex flex-col max-h-60 overflow-y-auto">
+                            {uniqueCategories.map((category) => (
+                                <label key={category} className="flex items-center gap-2 mb-1">
+                                    <input
+                                        type="checkbox"
+                                        checked={categoryFilters[category] || false}
+                                        onChange={() => handleCategoryFilterChange(category)}
+                                    />
+                                    {category}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                <div className="flex flex-col mb-2 text-sm font-medium">
+                    <label className="flex items-center space-x-2">
+                        <input
+                            type="number"
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(Number(e.target.value))}
+                            className="border border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <input
+                            type="number"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(Number(e.target.value))}
+                            className="border border-gray-300 rounded focus:ring-blue-500"
+                        />
+                    </label>
+                </div>
+
                 <section>
                     {products && (
                         <ProductOverviewTable
