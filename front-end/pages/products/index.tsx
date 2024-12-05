@@ -275,18 +275,21 @@ const Products: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col mb-2 text-sm font-medium">
-                    {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
-                        <label key={size} className="flex items-center space-x-2">
-                            <input
-                                type="checkbox"
-                                value={size}
-                                checked={selectedSizes.includes(size)}
-                                onChange={() => handleSizeChange(size)}
-                                className="border border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <span>{size}</span>
-                        </label>
-                    ))}
+                    <p className="font-medium border-b-2 border-yellow-400 mb-2">Sizes</p>
+                    <div className="flex flex-col max-h-60 overflow-y-auto">
+                        {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                            <label key={size} className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    value={size}
+                                    checked={selectedSizes.includes(size)}
+                                    onChange={() => handleSizeChange(size)}
+                                    className="border border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                {size}
+                            </label>
+                        ))}
+                    </div>
                 </div>
                 {uniqueColors && (
                     <div className="flex flex-col mb-2 text-sm font-medium">
@@ -326,21 +329,25 @@ const Products: React.FC = () => {
                         </div>
                     </div>
                 )}
+
                 <div className="flex flex-col mb-2 text-sm font-medium">
-                    <label className="flex items-center space-x-2">
-                        <input
-                            type="number"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(Number(e.target.value))}
-                            className="border border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <input
-                            type="number"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(Number(e.target.value))}
-                            className="border border-gray-300 rounded focus:ring-blue-500"
-                        />
-                    </label>
+                    <p className="font-medium border-b-2 border-yellow-400 mb-2">Price</p>
+                    <div className="flex flex-col max-h-60 overflow-y-auto">
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="number"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(Number(e.target.value))}
+                                className="border border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <input
+                                type="number"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                                className="border border-gray-300 rounded focus:ring-blue-500"
+                            />
+                        </label>
+                    </div>
                 </div>
 
                 <section>
