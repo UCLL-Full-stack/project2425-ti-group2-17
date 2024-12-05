@@ -27,7 +27,7 @@ const Products: React.FC = () => {
         // setIsModalOpen(true);
     };
 
-    const filterProducts = (productData: Product[]): Product[] => {
+    const filterProducts = (productData: Product[]) => {
         if (minPrice < 0) {
             setminPrice(0);
         }
@@ -54,7 +54,6 @@ const Products: React.FC = () => {
     };
 
     const getProducts = async () => {
-        //     const getProducts = async (): Promise<Product[]> => {
         const response = await ProductService.getAllProducts();
         if (!response.ok) {
             if (response.status === 401) {
@@ -64,7 +63,8 @@ const Products: React.FC = () => {
             }
         } else {
             const products = await response.json();
-            return products;
+            const filteredProducts: any = filterProducts(products);
+            return filteredProducts;
         }
     };
 
