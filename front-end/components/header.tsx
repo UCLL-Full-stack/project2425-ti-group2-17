@@ -20,9 +20,12 @@ const Header: React.FC = () => {
     return (
         <nav className="border-gray-200" style={{ backgroundColor: '#0000a3' }}>
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a className="flex items-center text-3xl font-extrabold tracking-wide text-gray-900 dark:text-white uppercase">
+                <Link
+                    href="/"
+                    className="flex items-center text-3xl font-extrabold tracking-wide text-gray-900 dark:text-white uppercase"
+                >
                     JB Clothing
-                </a>
+                </Link>
                 <div className="flex items-center space-x-4">
                     <Link
                         href="/"
