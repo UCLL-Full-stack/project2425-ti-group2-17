@@ -5,7 +5,6 @@ import styles from '@styles/home.module.css';
 
 type Props = {
     products: Array<Product>;
-    createProduct: () => void;
     updateProduct: (id: number) => void;
     deleteProduct: (id: number) => void;
     addItemToCart: (id: number) => void;
@@ -13,25 +12,14 @@ type Props = {
 
 const ProductOverviewTable: React.FC<Props> = ({
     products,
-    createProduct,
     updateProduct,
     deleteProduct,
     addItemToCart,
 }: Props) => {
     return (
         <>
-            <div className="d-flex flex-column justify-content-center align-items-center">
-                <button
-                    type="button"
-                    onClick={() => createProduct()}
-                    className="w-min bg-black text-white py-2 rounded px-1"
-                >
-                    Create product
-                </button>
-            </div>
-
             {products && products.length > 0 ? (
-                <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
+                <div className="container mx-auto px-4 flex flex-row flex-wrap">
                     {products.map((product) => {
                         return (
                             <article

@@ -276,7 +276,6 @@ const Products: React.FC = () => {
 
                 <section className="flex">
                     <div className="w-1/5 p-4">
-                        {/* Input section */}
                         <div className="flex flex-col mb-2 text-sm font-medium">
                             <p className="font-medium border-b-2 border-yellow-400 mb-2">Sizes</p>
                             <div className="flex flex-col max-h-60 overflow-y-auto">
@@ -361,13 +360,21 @@ const Products: React.FC = () => {
                                 </label>
                             </div>
                         </div>
+                        <div className="d-flex flex-column justify-content-center align-items-center">
+                            <button
+                                type="button"
+                                onClick={() => createProduct()}
+                                className="w-min bg-black text-white py-2 rounded px-1"
+                            >
+                                Create product
+                            </button>
+                        </div>
                     </div>
 
                     <div className="w-4/5 p-4">
                         {products && (
                             <ProductOverviewTable
                                 products={products}
-                                createProduct={createProduct}
                                 updateProduct={updateProduct}
                                 deleteProduct={deleteProduct}
                                 addItemToCart={addItemToCart}
