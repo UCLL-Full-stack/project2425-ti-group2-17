@@ -15,6 +15,8 @@ const UserRegisterForm: React.FC = () => {
     const [password, setPassword] = useState<string | null>('');
     const [confirmationPassword, setConfirmationPassword] = useState<string | null>('');
     const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [confirmationPasswordError, setConfirmationPasswordError] = useState<string | null>(null);
+    const [passwordMatchError, setPasswordMatchError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
     const clearErrors = () => {
@@ -22,6 +24,8 @@ const UserRegisterForm: React.FC = () => {
         setLastNameError(null);
         setEmailError(null);
         setPasswordError(null);
+        setConfirmationPasswordError(null);
+        setPasswordMatchError(null);
         setStatusMessages([]);
     };
 
@@ -48,12 +52,12 @@ const UserRegisterForm: React.FC = () => {
         }
 
         if (!confirmationPassword || confirmationPassword.trim() === '') {
-            setPasswordError('Confirmation password is required.');
+            setConfirmationPasswordError('Confirmation password is required.');
             result = false;
         }
 
         if (password !== confirmationPassword) {
-            setPasswordError('Passwords must match.');
+            setPasswordMatchError('Passwords must match.');
             result = false;
         }
 
@@ -152,6 +156,7 @@ const UserRegisterForm: React.FC = () => {
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
                 </div>
+                {passwordError && <div className="text-red-800">{passwordError} </div>}
                 <div className="block mb-2 text-sm font-medium">
                     <input
                         type="text"
@@ -160,7 +165,12 @@ const UserRegisterForm: React.FC = () => {
                         placeholder="Confirm your password:"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
-                    {passwordError && <div className="text-red-800">{passwordError} </div>}
+                    {confirmationPasswordError && (
+                        <div className="text-red-800">{confirmationPasswordError} </div>
+                    )}
+                    {passwordMatchError && !confirmationPasswordError && (
+                        <div className="text-red-800">{passwordMatchError} </div>
+                    )}
                 </div>
 
                 <button
