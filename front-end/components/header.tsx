@@ -16,58 +16,71 @@ const Header: React.FC = () => {
         sessionStorage.removeItem('loggedInUser');
         setLoggedInUser(null);
     };
+
     return (
-        <header className="p-3 mb-3 border-bottom bg-dark bg-gradient">
-            <a className="fs-2 d-flex justify-content-center mb-2 mb-lg-0 text-white-50 text-decoration-none">
-                {' '}
-                Clothing Store App
-            </a>
-            <nav className="nav justify-content-center">
-                <Link href="/" className="nav-link px-4 fs-5 text-white">
-                    Home
+        <nav className="border-gray-200" style={{ backgroundColor: '#0000a3' }}>
+            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <Link
+                    href="/"
+                    className="flex items-center text-3xl font-extrabold tracking-wide text-gray-900 dark:text-white uppercase"
+                >
+                    JB Clothing
                 </Link>
-                {loggedInUser && (
-                    <Link href="/products" className="nav-link px-4 fs-5 text-white">
-                        Products
-                    </Link>
-                )}
-                {loggedInUser && (
-                    <button
-                        onClick={() => {
-                            router.push('/checkout');
-                        }}
-                        className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
+                <div className="flex items-center space-x-4">
+                    <Link
+                        href="/"
+                        className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                     >
-                        <Image
-                            src="/images/shopping-cart.png"
-                            alt="Add to Cart"
-                            width={30}
-                            height={30}
-                            className="mr-2"
-                        />
-                    </button>
-                )}
-                {!loggedInUser && (
-                    <Link href="/login" className="nav-link px-4 fs-5 text-white">
-                        Login
+                        Home
                     </Link>
-                )}
-                {loggedInUser && (
-                    <a
-                        href="/login"
-                        className="nav-link px-4 fs-5 text-white"
-                        onClick={handleClick}
-                    >
-                        Logout
-                    </a>
-                )}
-                {loggedInUser && (
-                    <div className="nav-link px-4 fs-5 text-white">
-                        Welcome, {loggedInUser.fullname}!
-                    </div>
-                )}
-            </nav>
-        </header>
+                    {loggedInUser && (
+                        <Link
+                            href="/products"
+                            className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                        >
+                            Products
+                        </Link>
+                    )}
+
+                    {!loggedInUser && (
+                        <Link
+                            href="/login"
+                            className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                        >
+                            Login
+                        </Link>
+                    )}
+                    {loggedInUser && (
+                        <a
+                            href="/login"
+                            className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                            onClick={handleClick}
+                        >
+                            Logout
+                        </a>
+                    )}
+                    {loggedInUser && (
+                        <div className="block py-2 px-4 text-gray-900 dark:text-white">
+                            Welcome, {loggedInUser.fullname}!
+                        </div>
+                    )}
+                    {loggedInUser && (
+                        <button
+                            onClick={() => router.push('/checkout')}
+                            className="flex items-center py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                        >
+                            <Image
+                                src="/images/shopping-cart.png"
+                                alt="Add to Cart"
+                                width={30}
+                                height={30}
+                                className="mr-2"
+                            />
+                        </button>
+                    )}
+                </div>
+            </div>
+        </nav>
     );
 };
 
