@@ -264,7 +264,7 @@ const Products: React.FC = () => {
                 <h1>Products</h1>
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
-                <div className="block mb-2 text-sm font-medium">
+                <section className="block mb-2 text-sm font-medium">
                     <input
                         type="text"
                         value={searchQuery ?? ''}
@@ -272,99 +272,113 @@ const Products: React.FC = () => {
                         placeholder="What are you looking for?"
                         className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
                     />
-                </div>
+                </section>
 
-                <div className="flex flex-col mb-2 text-sm font-medium">
-                    <p className="font-medium border-b-2 border-yellow-400 mb-2">Sizes</p>
-                    <div className="flex flex-col max-h-60 overflow-y-auto">
-                        {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
-                            <label key={size} className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    value={size}
-                                    checked={selectedSizes.includes(size)}
-                                    onChange={() => handleSizeChange(size)}
-                                    className="border border-gray-300 rounded focus:ring-blue-500"
-                                />
-                                {size}
-                            </label>
-                        ))}
-                    </div>
-                </div>
-                {uniqueColors && (
-                    <div className="flex flex-col mb-2 text-sm font-medium">
-                        <p className="font-medium border-b-2 border-yellow-400 mb-2">Colors</p>
-                        <div className="flex flex-col max-h-60 overflow-y-auto">
-                            {uniqueColors.map((color) => (
-                                <label key={color} className="flex items-center gap-2 mb-1">
+                <section className="flex">
+                    <div className="w-1/5 p-4">
+                        {/* Input section */}
+                        <div className="flex flex-col mb-2 text-sm font-medium">
+                            <p className="font-medium border-b-2 border-yellow-400 mb-2">Sizes</p>
+                            <div className="flex flex-col max-h-60 overflow-y-auto">
+                                {['XS', 'S', 'M', 'L', 'XL'].map((size) => (
+                                    <label key={size} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            value={size}
+                                            checked={selectedSizes.includes(size)}
+                                            onChange={() => handleSizeChange(size)}
+                                            className="border border-gray-300 rounded focus:ring-blue-500"
+                                        />
+                                        {size}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {uniqueColors && (
+                            <div className="flex flex-col mb-2 text-sm font-medium">
+                                <p className="font-medium border-b-2 border-yellow-400 mb-2">
+                                    Colors
+                                </p>
+                                <div className="flex flex-col max-h-60 overflow-y-auto">
+                                    {uniqueColors.map((color) => (
+                                        <label key={color} className="flex items-center gap-2 mb-1">
+                                            <input
+                                                type="checkbox"
+                                                value={color}
+                                                checked={selectedColors.includes(color)}
+                                                onChange={() => handleColorChange(color)}
+                                                className="border border-gray-300 rounded focus:ring-blue-500"
+                                            />
+                                            {color}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {uniqueCategories && (
+                            <div className="flex flex-col mb-2 text-sm font-medium">
+                                <p className="font-medium border-b-2 border-yellow-400 mb-2">
+                                    Categories
+                                </p>
+                                <div className="flex flex-col max-h-60 overflow-y-auto">
+                                    {uniqueCategories.map((category) => (
+                                        <label
+                                            key={category}
+                                            className="flex items-center gap-2 mb-1"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                value={category}
+                                                checked={selectedCategories.includes(category)}
+                                                onChange={() => handleCategoryChange(category)}
+                                                className="border border-gray-300 rounded focus:ring-blue-500"
+                                            />
+                                            {category}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col mb-2 text-sm font-medium">
+                            <p className="font-medium border-b-2 border-yellow-400 mb-2">Price</p>
+                            <div className="flex flex-col max-h-60 overflow-y-auto">
+                                <label className="flex items-center space-x-2">
                                     <input
-                                        type="checkbox"
-                                        value={color}
-                                        checked={selectedColors.includes(color)}
-                                        onChange={() => handleColorChange(color)}
-                                        className="border border-gray-300 rounded focus:ring-blue-500"
+                                        type="number"
+                                        value={minPrice}
+                                        onChange={(e) => setMinPrice(Number(e.target.value))}
+                                        className="border border-gray-300 rounded focus:ring-blue-500 w-16"
                                     />
-                                    {color}
+                                    <input
+                                        type="number"
+                                        value={maxPrice}
+                                        onChange={(e) => setMaxPrice(Number(e.target.value))}
+                                        className="border border-gray-300 rounded focus:ring-blue-500 w-16"
+                                    />
                                 </label>
-                            ))}
+                            </div>
                         </div>
                     </div>
-                )}
-                {uniqueCategories && (
-                    <div className="flex flex-col mb-2 text-sm font-medium">
-                        <p className="font-medium border-b-2 border-yellow-400 mb-2">Categories</p>
-                        <div className="flex flex-col max-h-60 overflow-y-auto">
-                            {uniqueCategories.map((category) => (
-                                <label key={category} className="flex items-center gap-2 mb-1">
-                                    <input
-                                        type="checkbox"
-                                        value={category}
-                                        checked={selectedCategories.includes(category)}
-                                        onChange={() => handleCategoryChange(category)}
-                                        className="border border-gray-300 rounded focus:ring-blue-500"
-                                    />
-                                    {category}
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
-                <div className="flex flex-col mb-2 text-sm font-medium">
-                    <p className="font-medium border-b-2 border-yellow-400 mb-2">Price</p>
-                    <div className="flex flex-col max-h-60 overflow-y-auto">
-                        <label className="flex items-center space-x-2">
-                            <input
-                                type="number"
-                                value={minPrice}
-                                onChange={(e) => setMinPrice(Number(e.target.value))}
-                                className="border border-gray-300 rounded focus:ring-blue-500"
+                    <div className="w-4/5 p-4">
+                        {products && (
+                            <ProductOverviewTable
+                                products={products}
+                                createProduct={createProduct}
+                                updateProduct={updateProduct}
+                                deleteProduct={deleteProduct}
+                                addItemToCart={addItemToCart}
                             />
-                            <input
-                                type="number"
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                                className="border border-gray-300 rounded focus:ring-blue-500"
-                            />
-                        </label>
-                    </div>
-                </div>
-
-                <section>
-                    {products && (
-                        <ProductOverviewTable
-                            products={products}
-                            createProduct={createProduct}
-                            updateProduct={updateProduct}
-                            deleteProduct={deleteProduct}
-                            addItemToCart={addItemToCart}
+                        )}
+                        <ProductCreator
+                            isOpen={isCreateProductOpen}
+                            onClose={closeCreateProduct}
+                            onSave={handleSaveProduct}
                         />
-                    )}
-                    <ProductCreator
-                        isOpen={isCreateProductOpen}
-                        onClose={closeCreateProduct}
-                        onSave={handleSaveProduct}
-                    />
+                    </div>
                 </section>
             </main>
         </>
