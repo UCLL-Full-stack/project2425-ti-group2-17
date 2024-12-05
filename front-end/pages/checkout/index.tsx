@@ -10,35 +10,20 @@ import useInterval from 'use-interval';
 const Checkout: React.FC = () => {
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
-    const [internalError, setInternalError] = useState<string | null>(null);
-
-    // const getLoggedInUser = async () => {
-    //     const storedUser = sessionStorage.getItem('loggedInUser');
-    //     if (storedUser) {
-    //         setLoggedInUser(JSON.parse(storedUser));
-    //     }
-    //     console.log('test');
-    //     console.log(loggedInUser);
-    //     console.log('test2');
-    //     console.log(storedUser!);
-    //     console.log('test3');
-    //     console.log(JSON.parse(storedUser!));
-    // };
 
     const getCartByEmail = async () => {
-        // if (!loggedInUser) {
-        //     await getLoggedInUser();
-        // }
-        const response = await CartService.getCartByEmail(loggedInUser?.email!);
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be logged in to view this page.');
+        if (loggedInUser) {
+            const response = await CartService.getCartByEmail(loggedInUser.email!);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    return new Error('You must be logged in to view this page.');
+                } else {
+                    return new Error(response.statusText);
+                }
             } else {
-                return new Error(response.statusText);
+                const cart = await response.json();
+                return cart;
             }
-        } else {
-            const cart = await response.json();
-            return cart;
         }
     };
 
