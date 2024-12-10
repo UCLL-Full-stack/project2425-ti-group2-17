@@ -1,3 +1,5 @@
+type Role = 'admin' | 'salesman' | 'customer';
+
 type Admin = {
     id?: number;
     firstName: string;
@@ -14,6 +16,7 @@ type Customer = {
     email?: string;
     password?: string;
     wishlist?: Product[];
+    role?: Role;
 };
 
 type Cart = {

@@ -11,8 +11,6 @@ const loginCustomer = (customer: Customer) => {
 };
 
 const createCustomer = (customer: Customer) => {
-    console.log('service');
-    console.log(customer);
     return fetch(process.env.NEXT_PUBLIC_API_URL + `/customers/signup`, {
         method: 'POST',
         headers: {
