@@ -20,6 +20,7 @@ const Products: React.FC = () => {
     const [minPrice, setMinPrice] = useState<number>(0);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
 
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
     const openCreateProduct = () => setIsCreateProductOpen(true);
@@ -250,9 +251,17 @@ const Products: React.FC = () => {
 
     useInterval(() => {
         mutate('products', getProducts());
-    }, 1000);
+    }, 10000);
 
-    const products: Product[] = Array.isArray(data) ? data : [];
+    useEffect(() => {
+        filterProducts(allProducts);
+    }, [selectedSizes, selectedColors, selectedCategories, searchQuery, minPrice, maxPrice]);
+    useEffect(() => {
+        if (Array.isArray(data)) {
+            setAllProducts(data);
+            getUniqueColorsAndCategories(data);
+        }
+    }, [data]);
 
     return (
         <>
@@ -372,9 +381,9 @@ const Products: React.FC = () => {
                     </div>
 
                     <div className="w-4/5 p-4">
-                        {products && (
+                        {filteredProducts && (
                             <ProductOverviewTable
-                                products={products}
+                                products={filteredProducts}
                                 updateProduct={updateProduct}
                                 deleteProduct={deleteProduct}
                                 addItemToCart={addItemToCart}
