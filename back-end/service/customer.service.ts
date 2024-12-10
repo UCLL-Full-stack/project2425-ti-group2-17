@@ -21,6 +21,11 @@ const getCustomerByEmail = async (email: string): Promise<Customer | null> => {
     return customer;
 };
 
+const getWishlistByEmail = async (email: string): Promise<Product[] | null> => {
+    const customer = await getCustomerByEmail(email);
+    return customer!.getWishlist();
+};
+
 const createCustomer = async ({
     firstName,
     lastName,
@@ -142,6 +147,7 @@ const authenticate = async ({
 export default {
     getCustomers,
     getCustomerByEmail,
+    getWishlistByEmail,
     createCustomer,
     updateCustomer,
     deleteCustomer,

@@ -121,6 +121,29 @@ test('given customers in the DB, when getting customer by incorrect email, then 
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({ email });
 });
 
+test('given customers in the DB, when getting wishlist by customer email, then that wishlist is returned', async () => {
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
+
+    const result = await customerService.getWishlistByEmail('john.doe@example.com');
+
+    expect(result).toEqual(customers[0].getWishlist());
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
+});
+
+test('given customers in the DB, when getting wishlist by incorrect customer email, then an error is thrown', async () => {
+    customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
+
+    const email = 'invalid@example.com';
+    const getWishlistByEmail = async () => await customerService.getWishlistByEmail(email);
+
+    await expect(getWishlistByEmail()).rejects.toThrow(
+        `Customer with email ${email} does not exist.`
+    );
+    expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({ email });
+});
+
 test('given a valid customer input, when creating a new customer, then it successfully creates the customer', async () => {
     const newCustomerInput: CustomerInput = {
         firstName: 'Bob',

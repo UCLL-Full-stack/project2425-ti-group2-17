@@ -125,7 +125,9 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Customer'
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
  *       404:
  *         description: Customer not found
  *       500:
@@ -134,13 +136,49 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
 
 customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await customerService.getCustomerByEmail(req.params.email);
+        const customer = await customerService.getWishlistByEmail(req.params.email);
         res.status(200).json(customer);
     } catch (error) {
         next(error);
     }
 });
 
+/**
+ * @swagger
+ * /customers/{email}:
+ *   get:
+ *     security:
+ *      - bearerAuth: []
+ *     summary: Get the wishlist of a customer by email
+ *     tags: [Customers]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Email of the customer to retrieve
+ *     responses:
+ *       200:
+ *         description: Customer details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Internal server error
+ */
+
+customerRouter.get('/wishlist/:email', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = await customerService.getCustomerByEmail(req.params.email);
+        res.status(200).json(customer);
+    } catch (error) {
+        next(error);
+    }
+});
 /**
  * @swagger
  * /customers:

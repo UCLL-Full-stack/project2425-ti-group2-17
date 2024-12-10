@@ -36,7 +36,7 @@ const customers: Customer[] = [
         password: 'password789',
         role: 'customer',
         wishlist: [],
-        id: 2,
+        id: 3,
     }),
 ];
 const product1 = new Product({
@@ -257,67 +257,70 @@ test('given non-existent product, when removing item from cart, then an error is
     await expect(removeCartItem).rejects.toThrow('Product with id 3 does not exist.');
 });
 
-test('given quantity greater than in cart, when removing item from cart, then an error is thrown', async () => {
+test('given valid cart and payment info, when converting cart to order, then order is created', async () => {
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
-    productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
-    cartDb.removeCartItem = mockCartDbRemoveCartItem.mockImplementation(() => {
-        throw new Error('There are not that many products in the cart to remove.');
+    orderDb.createOrder = mockOrderDbCreateOrder.mockReturnValue(order1);
+    cartDb.emptyCart = mockCartDbEmptyCart.mockReturnValue('cart successfully emptied.');
+
+    const result = await cartService.convertCartToOrder('john.doe@example.com', 'paid');
+
+    expect(result.getCustomer()).toEqual(order1.getCustomer());
+    expect(result.getItems()).toEqual(order1.getItems());
+    expect(result.getPayment().getAmount()).toEqual(order1.getPayment().getAmount());
+    expect(result.getPayment().getPaymentStatus()).toEqual(order1.getPayment().getPaymentStatus());
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
     });
-
-    const removeCartItem = async () =>
-        await cartService.removeCartItem('john.doe@example.com', 1, 5);
-
-    await expect(removeCartItem).rejects.toThrow(
-        'There are not that many products in the cart to remove.'
+    expect(mockOrderDbCreateOrder).toHaveBeenCalledWith(
+        expect.objectContaining({
+            customer: order1.getCustomer(),
+            items: order1.getItems(),
+            payment: expect.objectContaining({
+                amount: order1.getPayment().getAmount(),
+                paymentStatus: order1.getPayment().getPaymentStatus(),
+            }),
+        })
     );
+    expect(mockCartDbEmptyCart).toHaveBeenCalled();
 });
 
-// test('given valid cart and payment info, when converting cart to order, then order is created', () => {
-//     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
-//     orderDb.createOrder = mockOrderDbCreateOrder.mockReturnValue(order1);
-//     cartDb.emptyCart = mockCartDbEmptyCart.mockReturnValue('cart successfully emptied.');
+test('given non-existent cart, when converting cart to order, then an error is thrown', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
 
-//     const result = cartService.convertCartToOrder(1, 'paid');
+    const convertCartToOrder = async () =>
+        cartService.convertCartToOrder('bob.smith@example.com', 'paid');
 
-//     expect(result.getCustomer()).toEqual(order1.getCustomer());
-//     expect(result.getItems()).toEqual(order1.getItems());
-//     expect(result.getPayment().getAmount()).toEqual(order1.getPayment().getAmount());
-//     expect(result.getPayment().getPaymentStatus()).toEqual(order1.getPayment().getPaymentStatus());
-//     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
-//     expect(mockOrderDbCreateOrder).toHaveBeenCalledWith(
-//         expect.objectContaining({
-//             customer: order1.getCustomer(),
-//             items: order1.getItems(),
-//             payment: expect.objectContaining({
-//                 amount: order1.getPayment().getAmount(),
-//                 paymentStatus: order1.getPayment().getPaymentStatus(),
-//             }),
-//         })
-//     );
-//     expect(mockCartDbEmptyCart).toHaveBeenCalled();
-// });
+    await expect(convertCartToOrder).rejects.toThrow(
+        'Cart with email bob.smith@example.com does not exist.'
+    );
 
-// test('given non-existent cart, when converting cart to order, then an error is thrown', () => {
-//     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(null);
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'bob.smith@example.com',
+    });
+});
 
-//     expect(() => cartService.convertCartToOrder(3, 'paid')).toThrow(
-//         'Cart with id 3 does not exist.'
-//     );
-//     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
-// });
+test('given missing payment info, when converting cart to order, then an error is thrown', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
 
-// test('given missing payment info, when converting cart to order, then an error is thrown', () => {
-//     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    const convertCartToOrder = async () =>
+        cartService.convertCartToOrder('john.doe@example.com', '');
 
-//     expect(() => cartService.convertCartToOrder(1, '')).toThrow('Payment status is required.');
-//     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
-// });
+    await expect(convertCartToOrder).rejects.toThrow('Payment status is required.');
 
-// test('given invalid payment info, when converting cart to order, then an error is thrown', () => {
-//     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(cartJohn);
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
+});
 
-//     expect(() => cartService.convertCartToOrder(1, 'invalid')).toThrow(
-//         'Payment status must be paid or unpaid.'
-//     );
-//     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
-// });
+test('given invalid payment info, when converting cart to order, then an error is thrown', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
+
+    const convertCartToOrder = async () =>
+        cartService.convertCartToOrder('john.doe@example.com', 'invalid');
+
+    await expect(convertCartToOrder).rejects.toThrow('Payment status must be paid or unpaid.');
+
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
+});
