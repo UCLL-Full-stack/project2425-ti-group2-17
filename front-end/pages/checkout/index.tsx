@@ -83,7 +83,6 @@ const Checkout: React.FC = () => {
             </Head>
             <Header />
             <main className="d-flex flex-column justify-content-center align-items-center">
-                <h1>Checkout</h1>
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <section className="flex w-full justify-center">

@@ -270,7 +270,6 @@ const Products: React.FC = () => {
             </Head>
             <Header />
             <main className="d-flex flex-column justify-content-center align-items-center">
-                <h1>Products</h1>
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <section className="block mb-2 text-sm font-medium">
