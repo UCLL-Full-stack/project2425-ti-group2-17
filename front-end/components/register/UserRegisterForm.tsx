@@ -65,20 +65,20 @@ const UserRegisterForm: React.FC = () => {
     };
 
     const handleSubmit = async (event: FormEvent) => {
-        try {
-            event.preventDefault();
-            clearErrors();
-            if (!validate()) {
-                return;
-            }
-            const customerInput: Customer = {
-                firstName: firstName!,
-                lastName: lastName!,
-                email: email!,
-                password: password!,
-            };
+        event.preventDefault();
+        clearErrors();
+        if (!validate()) {
+            return;
+        }
+        const customerInput: Customer = {
+            firstName: firstName!,
+            lastName: lastName!,
+            email: email!,
+            password: password!,
+        };
 
-            const customer = await CustomerService.createCustomer(customerInput);
+        const response = await CustomerService.createCustomer(customerInput);
+        if (response.status === 200) {
             setStatusMessages([
                 {
                     message: 'Signup successful. Redirecting to loginpage...',
@@ -86,7 +86,7 @@ const UserRegisterForm: React.FC = () => {
                 },
             ]);
             setTimeout(() => router.push('/login'), 2000);
-        } catch (err: any) {
+        } else {
             setStatusMessages([
                 {
                     message: 'Signup unsuccessful.',

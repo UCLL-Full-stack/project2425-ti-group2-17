@@ -168,7 +168,9 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
 
 customerRouter.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log('controller');
         const customer = <CustomerInput>req.body;
+        console.log(customer);
         const result = await customerService.createCustomer(customer);
         res.status(200).json(result);
     } catch (error) {
