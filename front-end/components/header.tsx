@@ -71,7 +71,21 @@ const Header: React.FC = () => {
                         >
                             <Image
                                 src="/images/shopping-cart.png"
-                                alt="Add to Cart"
+                                alt="Go to checkout"
+                                width={30}
+                                height={30}
+                                className="mr-2"
+                            />
+                        </button>
+                    )}
+                    {loggedInUser && (
+                        <button
+                            onClick={() => router.push('/wishlist')}
+                            className="flex items-center py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                        >
+                            <Image
+                                src="/images/wishlist.png"
+                                alt="Go to wishlist"
                                 width={30}
                                 height={30}
                                 className="mr-2"
