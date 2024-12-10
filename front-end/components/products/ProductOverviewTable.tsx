@@ -1,20 +1,24 @@
 import React from 'react';
-import { Product } from '@types';
+import { Product, Customer } from '@types';
 import ProductArticle from './ProductArticle';
 import Image from 'next/image';
 
 type Props = {
     products: Array<Product>;
+    loggedInUser: Customer;
     updateProduct: (id: number) => void;
     deleteProduct: (id: number) => void;
     addItemToCart: (id: number) => void;
+    addToWishlist: (email: string, id: number) => void;
 };
 
 const ProductOverviewTable: React.FC<Props> = ({
     products,
+    loggedInUser,
     updateProduct,
     deleteProduct,
     addItemToCart,
+    addToWishlist,
 }) => {
     return (
         <>
@@ -37,7 +41,9 @@ const ProductOverviewTable: React.FC<Props> = ({
                                 />
                             </button>
                             <button
-                                onClick={() => {}}
+                                onClick={() => {
+                                    addToWishlist(loggedInUser.email!, product.id!);
+                                }}
                                 className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
                             >
                                 <Image

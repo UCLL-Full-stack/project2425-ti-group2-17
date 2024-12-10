@@ -8,6 +8,7 @@ import CartService from '@services/CartService';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 import ProductCreator from '@components/products/ProductCreator';
+import CustomerService from '@services/CustomerService';
 
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
@@ -243,6 +244,31 @@ const Products: React.FC = () => {
         }
     };
 
+    const addToWishlist = async (email: string, productId: number) => {
+        const response = await CustomerService.addToWishlist(email, productId.toString());
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to add a product to your wishlist.');
+            } else {
+                return new Error(response.statusText);
+            }
+        }
+    };
+
+    const removeFromWishlist = async (email: string, productId: number) => {
+        const response = await CustomerService.removeFromWishlist(
+            loggedInUser?.email!,
+            productId.toString()
+        );
+        if (!response.ok) {
+            if (response.status === 401) {
+                return new Error('You must be logged in to add a product to your wishlist.');
+            } else {
+                return new Error(response.statusText);
+            }
+        }
+    };
+
     const { data, isLoading, error } = useSWR('products', getProducts);
 
     useEffect(() => {
@@ -380,12 +406,14 @@ const Products: React.FC = () => {
                     </div>
 
                     <div className="w-4/5 p-4">
-                        {filteredProducts && (
+                        {filteredProducts && loggedInUser && (
                             <ProductOverviewTable
                                 products={filteredProducts}
+                                loggedInUser={loggedInUser}
                                 updateProduct={updateProduct}
                                 deleteProduct={deleteProduct}
                                 addItemToCart={addItemToCart}
+                                addToWishlist={addToWishlist}
                             />
                         )}
                         <ProductCreator
