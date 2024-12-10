@@ -136,7 +136,7 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
 
 customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await customerService.getWishlistByEmail(req.params.email);
+        const customer = await customerService.getCustomerByEmail(req.params.email);
         res.status(200).json(customer);
     } catch (error) {
         next(error);
@@ -173,8 +173,8 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
 
 customerRouter.get('/wishlist/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await customerService.getCustomerByEmail(req.params.email);
-        res.status(200).json(customer);
+        const wishlist = await customerService.getWishlistByEmail(req.params.email);
+        res.status(200).json(wishlist);
     } catch (error) {
         next(error);
     }

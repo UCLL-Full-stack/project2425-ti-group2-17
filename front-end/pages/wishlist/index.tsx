@@ -9,60 +9,24 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 import ProductCreator from '@components/products/ProductCreator';
 import CustomerService from '@services/CustomerService';
+import ProductArticle from '@components/products/ProductArticle';
 
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
 
     const getProducts = async () => {
-        const response = await ProductService.getAllProducts();
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be logged in to view this page.');
+        if (loggedInUser) {
+            const response = await CustomerService.getWishlist(loggedInUser.email!);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    return new Error('You must be logged in to view this page.');
+                } else {
+                    return new Error(response.statusText);
+                }
             } else {
-                return new Error(response.statusText);
-            }
-        } else {
-            const products = await response.json();
-            return products;
-        }
-    };
-
-    const addItemToCart = async (productId: number) => {
-        const response = await CartService.addItemToCart(
-            loggedInUser?.email!,
-            productId.toString(),
-            '1'
-        );
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be an admin to delete a product.');
-            } else {
-                return new Error(response.statusText);
-            }
-        }
-    };
-
-    const addToWishlist = async (email: string, productId: number) => {
-        const response = await CustomerService.addToWishlist(email, productId.toString());
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be logged in to add a product to your wishlist.');
-            } else {
-                return new Error(response.statusText);
-            }
-        }
-    };
-
-    const removeFromWishlist = async (email: string, productId: number) => {
-        const response = await CustomerService.removeFromWishlist(
-            loggedInUser?.email!,
-            productId.toString()
-        );
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be logged in to add a product to your wishlist.');
-            } else {
-                return new Error(response.statusText);
+                const products = await response.json();
+                console.log(products);
+                return products;
             }
         }
     };
@@ -75,7 +39,7 @@ const Products: React.FC = () => {
 
     useInterval(() => {
         mutate('products', getProducts());
-    }, 10000);
+    }, 1000);
 
     return (
         <>
@@ -87,16 +51,9 @@ const Products: React.FC = () => {
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <div className="w-4/5 p-4">
-                    {/* {data && loggedInUser && (
-                            <ProductOverviewTable
-                                products={data}
-                                loggedInUser={loggedInUser}
-                                updateProduct={updateProduct}
-                                deleteProduct={deleteProduct}
-                                addItemToCart={addItemToCart}
-                                addToWishlist={addToWishlist}
-                            />
-                        )} */}
+                    {data && loggedInUser && (
+                        <ProductOverviewTable products={data} loggedInUser={loggedInUser} />
+                    )}
                 </div>
             </main>
         </>
