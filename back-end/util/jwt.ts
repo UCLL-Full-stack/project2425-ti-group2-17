@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { Role } from '../types';
 
 const generateJwtToken = ({ email, role }: { email: string; role: Role }): string => {

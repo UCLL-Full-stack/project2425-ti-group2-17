@@ -8,7 +8,8 @@ import customerDB from '../repository/customer.db';
 import productDb from '../repository/product.db';
 import { AuthenticationResponse, CustomerInput } from '../types';
 // import cartService from './cart.service';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { generateJwtToken } from '../util/jwt';
 
 const getCustomers = async (): Promise<Customer[]> => await customerDB.getCustomers();
