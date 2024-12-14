@@ -20,8 +20,6 @@ const Products: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number>(0);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
-    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-    const [allProducts, setAllProducts] = useState<Product[]>([]);
 
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
     const openCreateProduct = () => setIsCreateProductOpen(true);
@@ -29,7 +27,7 @@ const Products: React.FC = () => {
 
     const handleSaveProduct = async () => {
         // setSelectedProduct(newProductId);
-        setIsCreateProductOpen(true);
+        // setIsCreateProductOpen(true);
     };
 
     const filterProducts = (productData: Product[]) => {
@@ -41,22 +39,18 @@ const Products: React.FC = () => {
         } else if (maxPrice < minPrice) {
             setMaxPrice(minPrice);
         }
-        setFilteredProducts(
-            productData.filter(
-                (product) =>
-                    (selectedSizes.length === 0 ||
-                        product.sizes.some((size) => selectedSizes.includes(size))) &&
-                    (selectedColors.length === 0 ||
-                        product.colors.some((color) => selectedColors.includes(color))) &&
-                    (selectedCategories.length === 0 ||
-                        product.categories.some((category) =>
-                            selectedCategories.includes(category)
-                        )) &&
-                    (searchQuery === '' ||
-                        product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
-                    product.price >= minPrice &&
-                    product.price <= maxPrice
-            )
+        return productData.filter(
+            (product) =>
+                (selectedSizes.length === 0 ||
+                    product.sizes.some((size) => selectedSizes.includes(size))) &&
+                (selectedColors.length === 0 ||
+                    product.colors.some((color) => selectedColors.includes(color))) &&
+                (selectedCategories.length === 0 ||
+                    product.categories.some((category) => selectedCategories.includes(category))) &&
+                (searchQuery === '' ||
+                    product.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+                product.price >= minPrice &&
+                product.price <= maxPrice
         );
     };
 
@@ -97,23 +91,14 @@ const Products: React.FC = () => {
 
     const getProducts = async () => {
         const response = await ProductService.getAllProducts();
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new Error('You must be logged in to view this page.');
-            } else {
-                return new Error(response.statusText);
-            }
-        } else {
+        if (response.ok) {
             const products = await response.json();
             getUniqueColorsAndCategories(products);
-            filterProducts(products);
-            return filteredProducts;
+            return filterProducts(products);
         }
     };
 
-    const createProduct = async () => {};
-
-    const { data, isLoading, error } = useSWR('products', getProducts);
+    const { data: products, isLoading, error } = useSWR('products', getProducts);
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
@@ -121,17 +106,11 @@ const Products: React.FC = () => {
 
     useInterval(() => {
         mutate('products', getProducts());
-    }, 10000);
+    }, 4000);
 
     useEffect(() => {
-        filterProducts(allProducts);
+        mutate('products', getProducts());
     }, [selectedSizes, selectedColors, selectedCategories, searchQuery, minPrice, maxPrice]);
-    useEffect(() => {
-        if (Array.isArray(data)) {
-            setAllProducts(data);
-            getUniqueColorsAndCategories(data);
-        }
-    }, [data]);
 
     return (
         <>
@@ -250,11 +229,8 @@ const Products: React.FC = () => {
                     </div>
 
                     <div className="w-4/5 p-4">
-                        {filteredProducts && loggedInUser && (
-                            <ProductOverviewTable
-                                products={filteredProducts}
-                                loggedInUser={loggedInUser}
-                            />
+                        {products && loggedInUser && (
+                            <ProductOverviewTable products={products} loggedInUser={loggedInUser} />
                         )}
                         <ProductCreator
                             isOpen={isCreateProductOpen}

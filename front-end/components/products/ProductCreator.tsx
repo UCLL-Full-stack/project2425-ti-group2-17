@@ -1,5 +1,6 @@
 import ProductService from '@services/ProductService';
-import { Product } from '@types';
+import { Product, StatusMessage } from '@types';
+import classNames from 'classnames';
 import { useState, useEffect, FormEvent } from 'react';
 
 type Props = {
@@ -10,8 +11,10 @@ type Props = {
 
 const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
     const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [stock, setStock] = useState('');
+    // const [price, setPrice] = useState('');
+    const [price, setPrice] = useState<number>(0);
+    // const [stock, setStock] = useState('');
+    const [stock, setStock] = useState<number>(0);
     const [categories, setCategories] = useState<string[]>([]);
     const [description, setDescription] = useState('');
     //   const [images, setImages] = useState<string[]>([]);
@@ -26,6 +29,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
     //   const [imagesError, setImagesError] = useState<string | null>(null);
     const [sizesError, setSizesError] = useState<string | null>(null);
     const [colorsError, setColorsError] = useState<string | null>(null);
+    const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
     if (!isOpen) return null;
 
@@ -42,7 +46,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
         // setImagesError(null);
         setSizesError(null);
         setColorsError(null);
-        // setStatusMessages([]);
+        setStatusMessages([]);
     };
 
     const validate = (
@@ -59,9 +63,15 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
         if (!price) {
             setPriceError('Price is required.');
             isValid = false;
+        } else if (price < 0) {
+            setPriceError('Price may not be negative.');
+            isValid = false;
         }
         if (!stock) {
             setStockError('Stock is required.');
+            isValid = false;
+        } else if (stock < 0) {
+            setStockError('Stock may not be negative.');
             isValid = false;
         }
         if (!cleanedCategories || cleanedCategories.length === 0) {
@@ -86,6 +96,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             )
         ) {
             setSizesError('All sizes must be XS or S or M or L or XL seperated by commas.');
+            isValid = false;
         }
         if (!cleanedColors || cleanedColors.length === 0) {
             setColorsError('Colors are required.');
@@ -112,9 +123,8 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
         const newProduct: Product = {
             //   id: product.id,
             name,
-            price: Number(price),
-            stock: Number(stock),
-            // categories: filteredCategories,
+            price: price,
+            stock: stock,
             categories: cleanedCategories,
             description,
             images: ['unimplemented'],
@@ -122,19 +132,25 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             colors: cleanedColors,
         };
 
-        console.log('product');
-        console.log(newProduct);
-
         const response = await ProductService.createProduct(newProduct);
         if (response.ok) {
-            const data = await response.json();
-            const savedProductId: string = data.id;
+            const product = await response.json();
             onSave();
-            onClose();
+            setStatusMessages([
+                {
+                    message: 'Created product: ' + product.name,
+                    type: 'success',
+                },
+            ]);
+            setTimeout(onClose, 1000);
+        } else {
+            setStatusMessages([
+                {
+                    message: 'Failed to create product: ' + response.statusText,
+                    type: 'error',
+                },
+            ]);
         }
-        // else {
-        //   console.error("Failed to create product: " + data);
-        // }
     };
 
     return (
@@ -183,7 +199,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
                             <input
                                 type="number"
                                 value={price}
-                                onChange={(e) => setPrice(e.target.value)}
+                                onChange={(e) => setPrice(Number(e.target.value))}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
                             />
 
@@ -196,7 +212,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
                             <input
                                 type="number"
                                 value={stock}
-                                onChange={(e) => setStock(e.target.value)}
+                                onChange={(e) => setStock(Number(e.target.value))}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
                             />
 
@@ -249,6 +265,23 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
                         >
                             Save
                         </button>
+                        {statusMessages && (
+                            <div className="row">
+                                <ul className="list-none mb-3 mx-auto">
+                                    {statusMessages.map(({ message, type }, index) => (
+                                        <li
+                                            key={index}
+                                            className={classNames({
+                                                'text-red-800': type === 'error',
+                                                'text-green-800': type === 'success',
+                                            })}
+                                        >
+                                            {message}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>
