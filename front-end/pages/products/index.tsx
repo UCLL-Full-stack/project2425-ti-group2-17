@@ -24,22 +24,19 @@ const Products: React.FC = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
-    const openCreateProduct = () => setIsCreateProductOpen(true);
+    const openCreateProduct = () => {
+        setSelectedProduct(null);
+        setIsCreateProductOpen(true);
+    };
     const closeCreateProduct = () => setIsCreateProductOpen(false);
 
     const reloadProducts = () => {
         mutate('products', getProducts());
-        console.log('reload');
     };
 
     const openUpdateProduct = (product: Product) => {
         setSelectedProduct(product);
         setIsCreateProductOpen(true);
-    };
-
-    const closeUpdateProduct = () => {
-        setSelectedProduct(null);
-        setIsCreateProductOpen(false);
     };
 
     const handleSaveProduct = async () => {

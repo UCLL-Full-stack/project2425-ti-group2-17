@@ -1,26 +1,22 @@
 import Header from '@components/header';
-import { Cart, Customer } from '@types';
+import { Cart, Customer, StatusMessage } from '@types';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import CartService from '@services/CartService';
 import CartOverviewTable from '@components/checkout/CartOverviewTable';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
+import classNames from 'classnames';
 
 const Checkout: React.FC = () => {
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
+    const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
     const getCartByEmail = async () => {
         if (loggedInUser) {
             const response = await CartService.getCartByEmail(loggedInUser.email!);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    return new Error('You must be logged in to view this page.');
-                } else {
-                    return new Error(response.statusText);
-                }
-            } else {
+            if (response.ok) {
                 const cart = await response.json();
                 return cart;
             }
@@ -28,12 +24,24 @@ const Checkout: React.FC = () => {
     };
 
     const convertCartToOrder = async (paymentStatus: string) => {
+        setStatusMessages([]);
         const response = await CartService.convertCartToOrder(loggedInUser?.email!, paymentStatus);
         if (!response.ok) {
             if (response.status === 401) {
-                return new Error('You must be logged in to create your order.');
+                setStatusMessages([
+                    {
+                        message: 'You must be logged in to create your order.',
+                        type: 'error',
+                    },
+                ]);
             } else {
-                return new Error(response.statusText);
+                const errorResponse = await response.json();
+                setStatusMessages([
+                    {
+                        message: 'Failed to update product: ' + errorResponse.message,
+                        type: 'error',
+                    },
+                ]);
             }
         } else {
             setOrderStatus('Your order has been placed and an invoice has been sent.');
@@ -58,9 +66,20 @@ const Checkout: React.FC = () => {
         }
         if (response && !response.ok) {
             if (response.status === 401) {
-                return new Error('You must be logged in to add items to your cart.');
+                setStatusMessages([
+                    {
+                        message: 'You must be logged in to adjust item quantities in your cart.',
+                        type: 'error',
+                    },
+                ]);
             } else {
-                return new Error(response.statusText);
+                const errorResponse = await response.json();
+                setStatusMessages([
+                    {
+                        message: 'Failed to adjust item quantity in cart: ' + errorResponse.message,
+                        type: 'error',
+                    },
+                ]);
             }
         } else {
             mutate('cart', getCartByEmail());
@@ -86,6 +105,23 @@ const Checkout: React.FC = () => {
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <section className="flex w-full justify-center">
+                    {statusMessages && (
+                        <div className="row">
+                            <ul className="list-none mb-3 mx-auto">
+                                {statusMessages.map(({ message, type }, index) => (
+                                    <li
+                                        key={index}
+                                        className={classNames({
+                                            'text-red-800': type === 'error',
+                                            'text-green-800': type === 'success',
+                                        })}
+                                    >
+                                        {message}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     {cart && loggedInUser && (
                         <CartOverviewTable
                             cart={cart}

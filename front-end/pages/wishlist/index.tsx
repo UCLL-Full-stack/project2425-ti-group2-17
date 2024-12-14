@@ -1,5 +1,5 @@
 import Header from '@components/header';
-import { Customer, Product } from '@types';
+import { Customer, Product, StatusMessage } from '@types';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import ProductService from '@services/ProductService';
@@ -14,18 +14,15 @@ import ProductArticle from '@components/products/ProductArticle';
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
 
+    const reloadProducts = () => {
+        mutate('products', getProducts());
+    };
+
     const getProducts = async () => {
         if (loggedInUser) {
             const response = await CustomerService.getWishlist(loggedInUser.email!);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    return new Error('You must be logged in to view this page.');
-                } else {
-                    return new Error(response.statusText);
-                }
-            } else {
+            if (response.ok) {
                 const products = await response.json();
-                console.log(products);
                 return products;
             }
         }
@@ -39,7 +36,7 @@ const Products: React.FC = () => {
 
     useInterval(() => {
         mutate('products', getProducts());
-    }, 1000);
+    }, 4000);
 
     return (
         <>
@@ -52,7 +49,11 @@ const Products: React.FC = () => {
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <div className="w-4/5 p-4">
                     {data && loggedInUser && (
-                        <ProductOverviewTable products={data} loggedInUser={loggedInUser} />
+                        <ProductOverviewTable
+                            products={data}
+                            loggedInUser={loggedInUser}
+                            reloadProducts={reloadProducts}
+                        />
                     )}
                 </div>
             </main>

@@ -111,8 +111,6 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
     const handleUpdateProduct = async (request: Product) => {
         const response = await ProductService.updateProduct(id, request);
         if (response.ok) {
-            //   const id = data.id;
-            //   onSave(id);
             const product = await response.json();
             onSave();
             setStatusMessages([
@@ -209,6 +207,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
             setColors([]);
             setUpdatingProduct(false);
         }
+        clearErrors();
     }, [productToUpdate]);
 
     if (!isOpen) return null;
@@ -223,7 +222,8 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
                     &#x2715;
                 </button>
 
-                <h2 className="text-2xl font-bold mb-6">Create product</h2>
+                {!updatingProduct && <h2 className="text-2xl font-bold mb-6">Create product</h2>}
+                {updatingProduct && <h2 className="text-2xl font-bold mb-6">Update product</h2>}
                 <form onSubmit={handleSave}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="col-span-1">
