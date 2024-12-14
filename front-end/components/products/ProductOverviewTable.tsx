@@ -7,6 +7,8 @@ import CartService from '@services/CartService';
 import ProductService from '@services/ProductService';
 import ProductCreator from './ProductCreator';
 import classNames from 'classnames';
+import useSWR, { mutate } from 'swr';
+import useInterval from 'use-interval';
 
 type Props = {
     products: Array<Product>;
@@ -75,10 +77,13 @@ const ProductOverviewTable: React.FC<Props> = ({
         }
     };
 
-    const addToWishlist = async (email: string, productId: number) => {
+    const addToWishlist = async (productId: number) => {
         setStatusMessages([]);
 
-        const response = await CustomerService.addToWishlist(email, productId.toString());
+        const response = await CustomerService.addToWishlist(
+            loggedInUser?.email!,
+            productId.toString()
+        );
         if (!response.ok) {
             if (response.status === 401) {
                 setStatusMessages([
@@ -96,10 +101,12 @@ const ProductOverviewTable: React.FC<Props> = ({
                     },
                 ]);
             }
+        } else {
+            mutate('wishlist', getWishlist());
         }
     };
 
-    const removeFromWishlist = async (email: string, productId: number) => {
+    const removeFromWishlist = async (productId: number) => {
         setStatusMessages([]);
 
         const response = await CustomerService.removeFromWishlist(
@@ -123,79 +130,41 @@ const ProductOverviewTable: React.FC<Props> = ({
                     },
                 ]);
             }
+        } else {
+            mutate('wishlist', getWishlist());
         }
     };
+
+    const getWishlist = async () => {
+        const response = await CustomerService.getWishlist(loggedInUser.email!);
+        if (response.ok) {
+            const wishlist = await response.json();
+            return wishlist;
+        }
+    };
+
+    const { data: wishlist, isLoading, error } = useSWR('wishlist', getWishlist);
+
+    useInterval(() => {
+        mutate('wishlist', getWishlist());
+    }, 4000);
+
     return (
         <>
             {products && products.length > 0 ? (
                 <div className="container mx-auto px-4 flex flex-row flex-wrap">
                     <div>
-                        {statusMessages && (
-                            <div className="row">
-                                <ul className="list-none mb-3 mx-auto">
-                                    {statusMessages.map(({ message, type }, index) => (
-                                        <li
-                                            key={index}
-                                            className={classNames({
-                                                'text-red-800': type === 'error',
-                                                'text-green-800': type === 'success',
-                                            })}
-                                        >
-                                            {message}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
                         {products.map((product) => (
-                            <ProductArticle key={product.id} product={product}>
-                                <button
-                                    onClick={() => {
-                                        addItemToCart(product.id!);
-                                    }}
-                                    className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
-                                >
-                                    <Image
-                                        src="/images/shopping-cart.png"
-                                        alt="Add to Cart"
-                                        width={30}
-                                        height={30}
-                                        className="mr-2"
-                                    />
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        addToWishlist(loggedInUser.email!, product.id!);
-                                    }}
-                                    className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
-                                >
-                                    <Image
-                                        src="/images/wishlist.png"
-                                        alt="Toggle Wishlist"
-                                        width={30}
-                                        height={30}
-                                        className="mr-2"
-                                    />
-                                </button>
-                                {updateProduct && (
-                                    <div>
-                                        <button
-                                            type="button"
-                                            onClick={() => updateProduct(product)}
-                                            className="w-min bg-black text-white py-2 rounded px-1"
-                                        >
-                                            Update
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => deleteProduct(product.id!)}
-                                            className="w-min bg-black text-white py-2 rounded px-1"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                )}
-                            </ProductArticle>
+                            <ProductArticle
+                                key={product.id}
+                                product={product}
+                                wishlist={wishlist ?? []}
+                                updateProduct={updateProduct}
+                                addItemToCart={addItemToCart}
+                                addToWishlist={addToWishlist}
+                                removeFromWishlist={removeFromWishlist}
+                                deleteProduct={deleteProduct}
+                            ></ProductArticle>
                         ))}
                     </div>
                 </div>

@@ -127,7 +127,7 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Product'
+ *                 $ref: '#/components/schemas/Customer'
  *       404:
  *         description: Customer not found
  *       500:
@@ -145,7 +145,7 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
 
 /**
  * @swagger
- * /customers/{email}:
+ * /customers/wishlist/{email}:
  *   get:
  *     security:
  *      - bearerAuth: []
@@ -157,16 +157,16 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
  *         required: true
  *         schema:
  *           type: string
- *         description: Email of the customer to retrieve
+ *         description: Email of the customer
  *     responses:
  *       200:
- *         description: Customer details
+ *         description: Wishlist details
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Customer'
+ *               $ref: '#/components/schemas/Product'
  *       404:
- *         description: Customer not found
+ *         description: Wishlist not found
  *       500:
  *         description: Internal server error
  */
