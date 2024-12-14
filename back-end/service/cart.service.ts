@@ -45,7 +45,11 @@ const removeCartItem = async (
     return await cartDB.removeCartItem(existingCart!, product, quantity);
 };
 
-const convertCartToOrder = async (email: string, paymentStatus: string): Promise<Order> => {
+const convertCartToOrder = async (
+    email: string,
+    paymentStatus: string,
+    discountCode: string
+): Promise<Order> => {
     const cart = await getCartByEmail(email);
 
     if (!cart) throw new Error(`Cart with user email ${email} does not exist.`);

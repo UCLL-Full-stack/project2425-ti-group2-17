@@ -275,6 +275,12 @@ cartRouter.put(
  *           type: string
  *           enum: [paid, unpaid]
  *         description: Payment status of the order
+ *       - in: query
+ *         name: discountCode
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Optional discount code to apply to the order
  *     responses:
  *       200:
  *         description: Order successfully created
@@ -296,7 +302,9 @@ cartRouter.post(
         try {
             const { email } = req.params;
             const { paymentStatus } = req.query as { paymentStatus: string };
-            const order = await cartService.convertCartToOrder(email, paymentStatus);
+            const { discountCode } = req.query as { discountCode: string };
+            console.log(discountCode);
+            const order = await cartService.convertCartToOrder(email, paymentStatus, discountCode);
             res.status(200).json(order);
         } catch (error) {
             next(error);
