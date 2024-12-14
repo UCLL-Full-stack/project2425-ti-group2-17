@@ -21,13 +21,25 @@ const Products: React.FC = () => {
     const [minPrice, setMinPrice] = useState<number>(0);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
 
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
     const openCreateProduct = () => setIsCreateProductOpen(true);
     const closeCreateProduct = () => setIsCreateProductOpen(false);
 
+    const openUpdateProduct = (product: Product) => {
+        setSelectedProduct(product);
+        setIsCreateProductOpen(true);
+    };
+
+    const closeUpdateProduct = () => {
+        setSelectedProduct(null);
+        setIsCreateProductOpen(false);
+    };
+
     const handleSaveProduct = async () => {
-        // setSelectedProduct(newProductId);
-        // setIsCreateProductOpen(true);
+        setSelectedProduct(null);
+        mutate('products', getProducts());
     };
 
     const filterProducts = (productData: Product[]) => {
@@ -230,12 +242,17 @@ const Products: React.FC = () => {
 
                     <div className="w-4/5 p-4">
                         {products && loggedInUser && (
-                            <ProductOverviewTable products={products} loggedInUser={loggedInUser} />
+                            <ProductOverviewTable
+                                products={products}
+                                loggedInUser={loggedInUser}
+                                updateProduct={openUpdateProduct}
+                            />
                         )}
                         <ProductCreator
                             isOpen={isCreateProductOpen}
                             onClose={closeCreateProduct}
                             onSave={handleSaveProduct}
+                            productToUpdate={selectedProduct}
                         />
                     </div>
                 </section>

@@ -7,13 +7,13 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     onSave: () => void;
+    productToUpdate: Product | null;
 };
 
-const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
+const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpdate }) => {
+    const [id, setId] = useState('');
     const [name, setName] = useState('');
-    // const [price, setPrice] = useState('');
     const [price, setPrice] = useState<number>(0);
-    // const [stock, setStock] = useState('');
     const [stock, setStock] = useState<number>(0);
     const [categories, setCategories] = useState<string[]>([]);
     const [description, setDescription] = useState('');
@@ -30,6 +30,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
     const [sizesError, setSizesError] = useState<string | null>(null);
     const [colorsError, setColorsError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
+    const [updatingProduct, setUpdatingProduct] = useState(false);
 
     if (!isOpen) return null;
 
@@ -109,30 +110,32 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
         return Array.from(new Set(data.filter((item) => item.trim() !== '')));
     };
 
-    const handleSave = async (event: FormEvent) => {
-        event.preventDefault();
-
-        clearErrors();
-        const cleanedCategories = cleanData(categories);
-        const cleanedSizes = cleanData(sizes);
-        const cleanedColors = cleanData(colors);
-
-        if (!validate(cleanedCategories, cleanedSizes, cleanedColors)) {
-            return;
+    const handleUpdateProduct = async (request: Product) => {
+        const response = await ProductService.updateProduct(id, request);
+        if (response.ok) {
+            //   const id = data.id;
+            //   onSave(id);
+            const product = await response.json();
+            onSave();
+            setStatusMessages([
+                {
+                    message: 'Updated product: ' + product.name,
+                    type: 'success',
+                },
+            ]);
+        } else {
+            const error = await response.json();
+            setStatusMessages([
+                {
+                    message: 'Failed to update product: ' + error.message,
+                    type: 'error',
+                },
+            ]);
         }
-        const newProduct: Product = {
-            //   id: product.id,
-            name,
-            price: price,
-            stock: stock,
-            categories: cleanedCategories,
-            description,
-            images: ['unimplemented'],
-            sizes: cleanedSizes,
-            colors: cleanedColors,
-        };
+    };
 
-        const response = await ProductService.createProduct(newProduct);
+    const handleCreateProduct = async (request: Product) => {
+        const response = await ProductService.createProduct(request);
         if (response.ok) {
             const product = await response.json();
             onSave();
@@ -144,14 +147,71 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             ]);
             setTimeout(onClose, 1000);
         } else {
+            const error = await response.json();
             setStatusMessages([
                 {
-                    message: 'Failed to create product: ' + response.statusText,
+                    message: 'Failed to create product: ' + error.message,
                     type: 'error',
                 },
             ]);
         }
     };
+
+    const handleSave = async (event: FormEvent) => {
+        event.preventDefault();
+
+        clearErrors();
+        const cleanedCategories = cleanData(categories);
+        const cleanedSizes = cleanData(sizes);
+        const cleanedColors = cleanData(colors);
+
+        if (!validate(cleanedCategories, cleanedSizes, cleanedColors)) {
+            return;
+        }
+        const request: Product = {
+            //   id: product.id,
+            name,
+            price: price,
+            stock: stock,
+            categories: cleanedCategories,
+            description,
+            images: ['unimplemented'],
+            sizes: cleanedSizes,
+            colors: cleanedColors,
+        };
+
+        if (updatingProduct) {
+            handleUpdateProduct(request);
+        } else {
+            handleCreateProduct(request);
+        }
+    };
+
+    // useEffect(() => {
+    //     if (productToUpdate) {
+    //         setId(productToUpdate.id!.toString());
+    //         setName(productToUpdate.name);
+    //         setPrice(productToUpdate.price);
+    //         setStock(productToUpdate.stock);
+    //         setCategories(productToUpdate.categories);
+    //         setDescription(productToUpdate.description);
+    //         //   setImages(productToUpdate.images)
+    //         setSizes(productToUpdate.sizes);
+    //         setColors(productToUpdate.colors);
+    //         setUpdatingProduct(true);
+    //     } else {
+    //         setId('none');
+    //         setName('');
+    //         setPrice(0);
+    //         setStock(0);
+    //         setCategories([]);
+    //         setDescription('');
+    //         // setImages([])
+    //         setSizes([]);
+    //         setColors([]);
+    //         setUpdatingProduct(false);
+    //     }
+    // }, [productToUpdate]);
 
     return (
         <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">

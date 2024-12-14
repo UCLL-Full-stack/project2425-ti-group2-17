@@ -9,67 +9,10 @@ import ProductService from '@services/ProductService';
 type Props = {
     products: Array<Product>;
     loggedInUser: Customer;
+    updateProduct: (product: Product) => void;
 };
 
-const ProductOverviewTable: React.FC<Props> = ({ products, loggedInUser }) => {
-    const updateProduct = async (id: number) => {
-        // const existingProduct = products?.find((product) => product.id === id);
-        // if (!existingProduct) {
-        //     throw new Error('Product not found');
-        //     return;
-        // }
-        // const name = window.prompt('Enter new name:', existingProduct.name) || existingProduct.name;
-        // const price =
-        //     Number(window.prompt('Enter new price:', existingProduct.price.toString())) ||
-        //     existingProduct.price;
-        // const stock =
-        //     Number(window.prompt('Enter new stock:', existingProduct.stock.toString())) ||
-        //     existingProduct.stock;
-        // const description =
-        //     window.prompt('Enter new description:', existingProduct.description) ||
-        //     existingProduct.description;
-        // const categories =
-        //     window
-        //         .prompt('Enter new categories:', existingProduct.categories.join(', '))
-        //         ?.split(',')
-        //         .map((item) => item.trim()) || existingProduct.categories;
-        // const sizes =
-        //     window
-        //         .prompt('Enter new sizes:', existingProduct.sizes.join(', '))
-        //         ?.split(',')
-        //         .map((item) => item.trim()) || existingProduct.sizes;
-        // const colors =
-        //     window
-        //         .prompt('Enter new colors:', existingProduct.colors.join(', '))
-        //         ?.split(',')
-        //         .map((item) => item.trim()) || existingProduct.colors;
-        // // const images =
-        // //     window
-        // //         .prompt(
-        // //             'Enter new images:',
-        // //             existingProduct.images.join(', ')
-        // //         )
-        // //         ?.split(',')
-        // //         .map((item) => item.trim()) || existingProduct.images;
-        // const updatedProduct: ProductInput = {
-        //     name,
-        //     price,
-        //     stock,
-        //     categories,
-        //     description,
-        //     images: existingProduct.images,
-        //     sizes,
-        //     colors,
-        // };
-        // try {
-        //     // setError(null);
-        //     await ProductService.updateProduct(id.toString(), updatedProduct);
-        //     getProducts();
-        // } catch (err: any) {
-        //     throw err.message;
-        // }
-    };
-
+const ProductOverviewTable: React.FC<Props> = ({ products, loggedInUser, updateProduct }) => {
     const deleteProduct = async (id: number) => {
         const response = await ProductService.deleteProduct(id.toString());
         if (!response.ok) {
@@ -156,7 +99,7 @@ const ProductOverviewTable: React.FC<Props> = ({ products, loggedInUser }) => {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => updateProduct(product.id!)}
+                                onClick={() => updateProduct(product)}
                                 className="w-min bg-black text-white py-2 rounded px-1"
                             >
                                 Update
