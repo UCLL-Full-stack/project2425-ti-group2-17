@@ -27,6 +27,11 @@ const Products: React.FC = () => {
     const openCreateProduct = () => setIsCreateProductOpen(true);
     const closeCreateProduct = () => setIsCreateProductOpen(false);
 
+    const reloadProducts = () => {
+        mutate('products', getProducts());
+        console.log('reload');
+    };
+
     const openUpdateProduct = (product: Product) => {
         setSelectedProduct(product);
         setIsCreateProductOpen(true);
@@ -246,6 +251,7 @@ const Products: React.FC = () => {
                                 products={products}
                                 loggedInUser={loggedInUser}
                                 updateProduct={openUpdateProduct}
+                                reloadProducts={reloadProducts}
                             />
                         )}
                         <ProductCreator

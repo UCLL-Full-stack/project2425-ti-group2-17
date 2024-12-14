@@ -7,7 +7,7 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     onSave: () => void;
-    productToUpdate: Product | null;
+    productToUpdate?: Product | null;
 };
 
 const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpdate }) => {
@@ -31,8 +31,6 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
     const [colorsError, setColorsError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
     const [updatingProduct, setUpdatingProduct] = useState(false);
-
-    if (!isOpen) return null;
 
     const stringToList = (inputString: string) => {
         return inputString.split(',').map((category) => category.trim());
@@ -187,31 +185,33 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
         }
     };
 
-    // useEffect(() => {
-    //     if (productToUpdate) {
-    //         setId(productToUpdate.id!.toString());
-    //         setName(productToUpdate.name);
-    //         setPrice(productToUpdate.price);
-    //         setStock(productToUpdate.stock);
-    //         setCategories(productToUpdate.categories);
-    //         setDescription(productToUpdate.description);
-    //         //   setImages(productToUpdate.images)
-    //         setSizes(productToUpdate.sizes);
-    //         setColors(productToUpdate.colors);
-    //         setUpdatingProduct(true);
-    //     } else {
-    //         setId('none');
-    //         setName('');
-    //         setPrice(0);
-    //         setStock(0);
-    //         setCategories([]);
-    //         setDescription('');
-    //         // setImages([])
-    //         setSizes([]);
-    //         setColors([]);
-    //         setUpdatingProduct(false);
-    //     }
-    // }, [productToUpdate]);
+    useEffect(() => {
+        if (productToUpdate) {
+            setId(productToUpdate.id!.toString());
+            setName(productToUpdate.name);
+            setPrice(productToUpdate.price);
+            setStock(productToUpdate.stock);
+            setCategories(productToUpdate.categories);
+            setDescription(productToUpdate.description);
+            //   setImages(productToUpdate.images)
+            setSizes(productToUpdate.sizes);
+            setColors(productToUpdate.colors);
+            setUpdatingProduct(true);
+        } else {
+            setId('none');
+            setName('');
+            setPrice(0);
+            setStock(0);
+            setCategories([]);
+            setDescription('');
+            // setImages([])
+            setSizes([]);
+            setColors([]);
+            setUpdatingProduct(false);
+        }
+    }, [productToUpdate]);
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
