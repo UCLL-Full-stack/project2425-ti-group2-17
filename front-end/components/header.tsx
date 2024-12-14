@@ -42,6 +42,15 @@ const Header: React.FC = () => {
                         </Link>
                     )}
 
+                    {loggedInUser && (
+                        <Link
+                            href="/orders"
+                            className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
+                        >
+                            Orders
+                        </Link>
+                    )}
+
                     {!loggedInUser && (
                         <Link
                             href="/login"
