@@ -262,13 +262,13 @@ cartRouter.put(
  *     summary: Apply a discount code to the cart using the customer's email
  *     tags: [Carts]
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: email
  *         required: true
  *         schema:
  *           type: string
  *         description: Email of the customer
- *       - in: query
+ *       - in: path
  *         name: code
  *         required: true
  *         schema:
@@ -283,15 +283,18 @@ cartRouter.put(
  *               $ref: '#/components/schemas/DiscountCode'
  */
 
-cartRouter.put('/addDiscountCode', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email, code } = req.query as { email: string; code: string };
-        const discountCode = await cartService.addDiscountCode(email, code);
-        res.status(200).json(discountCode);
-    } catch (error) {
-        next(error);
+cartRouter.put(
+    '/addDiscountCode/:email/:code',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { email, code } = req.params;
+            const discountCode = await cartService.addDiscountCode(email, code);
+            res.status(200).json(discountCode);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 /**
  * @swagger
@@ -302,13 +305,13 @@ cartRouter.put('/addDiscountCode', async (req: Request, res: Response, next: Nex
  *     summary: Remove a discount code from the cart using the customer's email
  *     tags: [Carts]
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: email
  *         required: true
  *         schema:
  *           type: string
  *         description: Email of the customer
- *       - in: query
+ *       - in: path
  *         name: code
  *         required: true
  *         schema:
@@ -324,15 +327,18 @@ cartRouter.put('/addDiscountCode', async (req: Request, res: Response, next: Nex
  *               example: "That discount code has been removed from your cart."
  */
 
-cartRouter.put('/removeDiscountCode', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { email, code } = req.query as { email: string; code: string };
-        const message = await cartService.removeDiscountCode(email, code);
-        res.status(200).json(message);
-    } catch (error) {
-        next(error);
+cartRouter.put(
+    '/removeDiscountCode/:email/:code',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { email, code } = req.params;
+            const message = await cartService.removeDiscountCode(email, code);
+            res.status(200).json(message);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 /**
  * @swagger

@@ -7,11 +7,20 @@ import CartOverviewTable from '@components/checkout/CartOverviewTable';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 import classNames from 'classnames';
+import AddDiscountCodeForm from '@components/checkout/AddDiscountCodeForm';
 
 const Checkout: React.FC = () => {
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
+    const [isAddDiscountCodeOpen, setIsAddDiscountCodeOpen] = useState(false);
+
+    const openAddDiscountCode = () => setIsAddDiscountCodeOpen(true);
+    const closeAddDiscountCode = () => setIsAddDiscountCodeOpen(false);
+
+    const handleSaveDiscountCode = async () => {
+        mutate('cart', getCartByEmail());
+    };
 
     const getCartByEmail = async () => {
         if (loggedInUser) {
@@ -127,6 +136,15 @@ const Checkout: React.FC = () => {
                             cart={cart}
                             convertCartToOrder={convertCartToOrder}
                             updateQuantity={updateQuantity}
+                            openAddDiscountCode={openAddDiscountCode}
+                        />
+                    )}
+                    {loggedInUser && loggedInUser.email && (
+                        <AddDiscountCodeForm
+                            isOpen={isAddDiscountCodeOpen}
+                            onClose={closeAddDiscountCode}
+                            onSave={handleSaveDiscountCode}
+                            email={loggedInUser.email}
                         />
                     )}
                 </section>

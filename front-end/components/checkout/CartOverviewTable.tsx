@@ -6,9 +6,15 @@ type Props = {
     cart: Cart;
     convertCartToOrder: (paymentStatus: string) => void;
     updateQuantity: (id: number, quantity: number) => void;
+    openAddDiscountCode: () => void;
 };
 
-const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQuantity }) => {
+const CartOverviewTable: React.FC<Props> = ({
+    cart,
+    convertCartToOrder,
+    updateQuantity,
+    openAddDiscountCode,
+}) => {
     return (
         <>
             {cart && cart.products.length > 0 ? (
@@ -34,6 +40,13 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
                             <p className="text-left mt-8">
                                 Total price: ${Math.round(cart.totalAmount * 100) / 100}
                             </p>
+                            <button
+                                type="button"
+                                onClick={() => openAddDiscountCode()}
+                                className="w-min bg-black text-white py-2 rounded px-1"
+                            >
+                                Add discount code
+                            </button>
                             <button
                                 type="button"
                                 onClick={() => convertCartToOrder('paid')}

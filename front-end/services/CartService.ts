@@ -59,6 +59,17 @@ const removeItemFromCart = (email: string, productId: string, quantity: string) 
     );
 };
 
+const addDiscountCodeToCart = (email: string, code: string) => {
+    const token = JSON.parse(sessionStorage.getItem('loggedInUser')!).token;
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/carts/addDiscountCode/${email}/${code}`, {
+        method: 'PUT',
+        headers: {
+            'content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const convertCartToOrder = (email: string, paymentStatus: string) => {
     const token = JSON.parse(sessionStorage.getItem('loggedInUser')!).token;
     return fetch(
@@ -80,6 +91,7 @@ const CartService = {
     getCartByEmail,
     addItemToCart,
     removeItemFromCart,
+    addDiscountCodeToCart,
     convertCartToOrder,
 };
 
