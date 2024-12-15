@@ -19,6 +19,15 @@ type CustomerInput = {
     wishlist?: ProductInput[];
 };
 
+type DiscountCodeInput = {
+    id?: number;
+    code: string;
+    type: string;
+    value: number;
+    expirationDate: Date;
+    isActive: boolean;
+};
+
 type CartInput = {
     id?: number;
     customer: CustomerInput;
@@ -76,6 +85,7 @@ export {
     Role,
     AdminInput,
     CustomerInput,
+    DiscountCodeInput,
     CartInput,
     CartItemInput,
     OrderInput,

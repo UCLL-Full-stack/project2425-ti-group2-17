@@ -69,6 +69,10 @@ export class DiscountCode {
         return this.expirationDate;
     }
 
+    getIsActive() {
+        return this.isActive;
+    }
+
     isActiveCode() {
         return this.isActive && this.expirationDate > new Date();
     }
@@ -78,6 +82,21 @@ export class DiscountCode {
     }
     activate() {
         this.isActive = true;
+    }
+
+    updateCode(discountCode: {
+        code: string;
+        type: string;
+        value: number;
+        expirationDate: Date;
+        isActive: boolean;
+    }) {
+        this.validate(discountCode);
+        this.code = discountCode.code;
+        this.type = discountCode.type;
+        this.value = discountCode.value;
+        this.expirationDate = discountCode.expirationDate;
+        this.isActive = discountCode.isActive;
     }
 
     static from({ id, code, type, value, expirationDate, isActive }: DiscountCodePrisma) {

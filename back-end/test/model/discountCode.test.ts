@@ -31,7 +31,7 @@ test('given: valid percentage discount code, when: created, then: it initializes
     expect(percentageDiscountCode.getExpirationDate()).toEqual(
         percentageDiscountTestData.expirationDate
     );
-    expect(percentageDiscountCode.isActiveCode()).toEqual(true);
+    expect(percentageDiscountCode.getIsActive()).toEqual(true);
 });
 
 test('given: valid fixed discount code, when: created, then: it initializes correctly', () => {
@@ -39,7 +39,7 @@ test('given: valid fixed discount code, when: created, then: it initializes corr
     expect(fixedDiscountCode.getType()).toEqual('fixed');
     expect(fixedDiscountCode.getValue()).toEqual(110);
     expect(fixedDiscountCode.getExpirationDate()).toEqual(fixedDiscountTestData.expirationDate);
-    expect(fixedDiscountCode.isActiveCode()).toEqual(true);
+    expect(fixedDiscountCode.getIsActive()).toEqual(true);
 });
 
 test('given: a discount code, when: value is invalid, then: throws an error', () => {

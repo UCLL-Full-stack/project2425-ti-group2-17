@@ -125,9 +125,7 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Customer'
+ *               $ref: '#/components/schemas/Customer'
  *       404:
  *         description: Customer not found
  *       500:
@@ -164,7 +162,9 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Product'
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
  *       404:
  *         description: Wishlist not found
  *       500:
