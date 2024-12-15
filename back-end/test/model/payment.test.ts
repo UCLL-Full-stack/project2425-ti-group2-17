@@ -50,10 +50,10 @@ test('given: valid amount, when: setAmount is called, then: amount is updated', 
     expect(payment.getAmount()).toEqual(100);
 });
 
-test('given: invalid amount (zero), when: setAmount is called, then: an error is thrown', () => {
-    expect(() => payment.setAmount(0)).toThrow('Amount must be greater than zero.');
+test('given: invalid amount (negative), when: setAmount is called, then: an error is thrown', () => {
+    expect(() => payment.setAmount(-50)).toThrow('Amount must be positive.');
 });
 
-test('given: invalid amount (negative), when: setAmount is called, then: an error is thrown', () => {
-    expect(() => payment.setAmount(-50)).toThrow('Amount must be greater than zero.');
+test('given: negative amount for payment, when: validate is called, then: an error is thrown.', () => {
+    expect(() => createPayment({ amount: -10 })).toThrow('Amount must be positive.');
 });

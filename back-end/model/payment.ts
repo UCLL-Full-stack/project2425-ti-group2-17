@@ -31,14 +31,17 @@ export class Payment {
     }
 
     setAmount(amount: number): void {
-        if (amount <= 0) {
-            throw new Error('Amount must be greater than zero.');
+        if (amount < 0) {
+            throw new Error('Amount must be positive.');
         }
 
         this.amount = amount;
     }
 
     validate(payment: { amount: number; date: Date; paymentStatus: string }) {
+        if (payment.amount < 0) {
+            throw new Error('Amount must be positive.');
+        }
         if (payment.paymentStatus !== 'paid' && payment.paymentStatus !== 'unpaid') {
             throw new Error('Payment status must be either paid or unpaid.');
         }
