@@ -10,12 +10,13 @@ type ProductCardProps = {
     product: Product;
     quantity?: number;
     // children: React.ReactNode;
-    wishlist: Product[];
+    wishlist?: Product[];
     updateProduct?: (product: Product) => void;
-    addItemToCart: (id: number) => void;
-    addToWishlist: (id: number) => void;
-    removeFromWishlist: (id: number) => void;
+    addItemToCart?: (id: number) => void;
+    addToWishlist?: (id: number) => void;
+    removeFromWishlist?: (id: number) => void;
     deleteProduct?: (id: number) => void;
+    updateQuantity?: (id: number, quantity: number) => void;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -27,6 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     addToWishlist,
     removeFromWishlist,
     deleteProduct,
+    updateQuantity,
 }) => {
     return (
         <article
@@ -78,21 +80,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
             </div>
             <div className="flex flex-col justify-center items-center ml-4">
-                <button
-                    onClick={() => {
-                        addItemToCart(product.id!);
-                    }}
-                    className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
-                >
-                    <Image
-                        src="/images/shopping-cart.png"
-                        alt="Add to Cart"
-                        width={30}
-                        height={30}
-                        className="mr-2"
-                    />
-                </button>
+                {addItemToCart && (
+                    <button
+                        onClick={() => {
+                            addItemToCart(product.id!);
+                        }}
+                        className="flex items-center bg-white border rounded p-2 mt-2 transition duration-200 hover:bg-gray-200"
+                    >
+                        <Image
+                            src="/images/shopping-cart.png"
+                            alt="Add to Cart"
+                            width={30}
+                            height={30}
+                            className="mr-2"
+                        />
+                    </button>
+                )}
                 {wishlist &&
+                    addToWishlist &&
                     !wishlist.some(
                         (productInWishlist: Product) => productInWishlist.id === product.id
                     ) && (
@@ -113,6 +118,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         </button>
                     )}
                 {wishlist &&
+                    removeFromWishlist &&
                     wishlist.some(
                         (productInWishlist: Product) => productInWishlist.id === product.id
                     ) && (
@@ -148,6 +154,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             className="w-min bg-black text-white py-2 rounded px-1"
                         >
                             Delete
+                        </button>
+                    </div>
+                )}
+                {updateQuantity && (
+                    <div>
+                        <button
+                            onClick={() => updateQuantity(product.id!, 1)}
+                            className="w-min bg-black text-white py-2 rounded px-1"
+                        >
+                            Add one
+                        </button>
+                        <button
+                            onClick={() => updateQuantity(product.id!, -1)}
+                            className="w-min bg-black text-white py-2 rounded px-1"
+                        >
+                            Remove one
                         </button>
                     </div>
                 )}

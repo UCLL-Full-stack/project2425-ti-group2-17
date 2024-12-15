@@ -13,26 +13,18 @@ const CartOverviewTable: React.FC<Props> = ({ cart, convertCartToOrder, updateQu
         <>
             {cart && cart.products.length > 0 ? (
                 <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
-                    {cart.products.map((cartItem) => (
-                        <ProductArticle
-                            key={cartItem.product.id}
-                            product={cartItem.product}
-                            quantity={cartItem.quantity}
-                        >
-                            <button
-                                onClick={() => updateQuantity(cartItem.product.id!, 1)}
-                                className="w-min bg-black text-white py-2 rounded px-1"
-                            >
-                                Add one
-                            </button>
-                            <button
-                                onClick={() => updateQuantity(cartItem.product.id!, -1)}
-                                className="w-min bg-black text-white py-2 rounded px-1"
-                            >
-                                Remove one
-                            </button>
-                        </ProductArticle>
-                    ))}
+                    {cart.products
+                        .sort((cartItem1, cartItem2) =>
+                            cartItem1.product.name.localeCompare(cartItem2.product.name)
+                        )
+                        .map((cartItem) => (
+                            <ProductArticle
+                                key={cartItem.product.id}
+                                product={cartItem.product}
+                                quantity={cartItem.quantity}
+                                updateQuantity={updateQuantity}
+                            />
+                        ))}
                     <div className="container mx-auto mt-8 px-4 flex flex-row flex-wrap">
                         <article
                             key="overview"

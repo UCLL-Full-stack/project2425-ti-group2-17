@@ -19,6 +19,15 @@ type Customer = {
     role?: Role;
 };
 
+type DiscountCode = {
+    id?: number;
+    code: string;
+    type: string;
+    value: number;
+    expirationDate: Date;
+    isActive: boolean;
+};
+
 type Cart = {
     id?: number;
     customer: Customer;
@@ -71,4 +80,15 @@ type StatusMessage = {
     type: 'error' | 'success';
 };
 
-export type { Admin, Customer, Cart, CartItem, Order, OrderItem, Payment, Product, StatusMessage };
+export type {
+    Admin,
+    Customer,
+    DiscountCode,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
+    Payment,
+    Product,
+    StatusMessage,
+};
