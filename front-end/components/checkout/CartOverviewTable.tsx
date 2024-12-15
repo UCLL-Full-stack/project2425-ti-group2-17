@@ -38,7 +38,17 @@ const CartOverviewTable: React.FC<Props> = ({
                         >
                             <h2>Overview</h2>
                             <p className="text-left mt-8">
-                                Total price: ${Math.round(cart.totalAmount * 100) / 100}
+                                Total price without discounts: $
+                                {Math.round(
+                                    cart.products.reduce(
+                                        (total, item) => total + item.product.price * item.quantity,
+                                        0
+                                    ) * 100
+                                ) / 100}
+                            </p>
+                            <p className="text-left mt-8">
+                                Total price with discounts: $
+                                {Math.round(cart.totalAmount * 100) / 100}
                             </p>
                             <button
                                 type="button"
