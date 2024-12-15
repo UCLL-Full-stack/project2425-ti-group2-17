@@ -94,7 +94,7 @@ const Checkout: React.FC = () => {
 
     useInterval(() => {
         mutate('cart', getCartByEmail());
-    }, 1000);
+    }, 4000);
     return (
         <>
             <Head>

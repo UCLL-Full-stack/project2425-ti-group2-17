@@ -122,10 +122,15 @@ const createOrder = async (order: Order): Promise<Order> => {
                 date: order.getDate(),
                 payment: {
                     create: {
-                        amount: order.calculateTotalAmount(),
+                        amount: order.getPayment().getAmount(),
                         date: order.getDate(),
                         paymentStatus: order.getPayment().getPaymentStatus(),
                     },
+                    // create: {
+                    //     amount: order.calculateTotalAmount(),
+                    //     date: order.getDate(),
+                    //     paymentStatus: order.getPayment().getPaymentStatus(),
+                    // },
                 },
             },
             include: { customer: true, items: { include: { product: true } }, payment: true },
