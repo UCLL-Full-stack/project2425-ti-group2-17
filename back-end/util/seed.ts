@@ -29,6 +29,7 @@ const main = async () => {
     await prisma.payment.deleteMany();
     await prisma.cartItem.deleteMany();
     await prisma.cart.deleteMany();
+    await prisma.discountCode.deleteMany();
     await prisma.customer.deleteMany();
     await prisma.product.deleteMany();
 
@@ -158,6 +159,66 @@ const main = async () => {
         },
     });
 
+    const tenPercentOff = await prisma.discountCode.create({
+        data: {
+            code: 'SAVE10P',
+            type: 'percentage',
+            value: 10,
+            expirationDate: new Date('2026-12-31'),
+            isActive: true,
+        },
+    });
+
+    const twentyPercentOff = await prisma.discountCode.create({
+        data: {
+            code: 'SAVE20P',
+            type: 'percentage',
+            value: 20,
+            expirationDate: new Date('2026-12-31'),
+            isActive: true,
+        },
+    });
+
+    const inactivePercentOff = await prisma.discountCode.create({
+        data: {
+            code: 'INACTIVEP',
+            type: 'percentage',
+            value: 20,
+            expirationDate: new Date('2026-12-31'),
+            isActive: false,
+        },
+    });
+
+    const thirtyFixedOff = await prisma.discountCode.create({
+        data: {
+            code: 'SAVE30F',
+            type: 'fixed',
+            value: 30,
+            expirationDate: new Date('2026-12-31'),
+            isActive: true,
+        },
+    });
+
+    const fiftyFixedOff = await prisma.discountCode.create({
+        data: {
+            code: 'SAVE50F',
+            type: 'fixed',
+            value: 50,
+            expirationDate: new Date('2026-12-31'),
+            isActive: true,
+        },
+    });
+
+    const inactiveFixedOff = await prisma.discountCode.create({
+        data: {
+            code: 'INACTIVEF',
+            type: 'fixed',
+            value: 50,
+            expirationDate: new Date('2026-12-31'),
+            isActive: false,
+        },
+    });
+
     const cartJohn = await prisma.cart.create({
         data: {
             customer: {
@@ -178,6 +239,9 @@ const main = async () => {
                         quantity: 1,
                     },
                 ],
+            },
+            discountCodes: {
+                connect: [{ id: twentyPercentOff.id }, { id: thirtyFixedOff.id }],
             },
             // totalAmount: ,
         },
@@ -204,6 +268,9 @@ const main = async () => {
                     },
                 ],
             },
+            discountCodes: {
+                connect: [{ id: tenPercentOff.id }, { id: thirtyFixedOff.id }],
+            },
             // totalAmount: ,
         },
     });
@@ -228,6 +295,9 @@ const main = async () => {
                         quantity: 1,
                     },
                 ],
+            },
+            discountCodes: {
+                connect: [{ id: thirtyFixedOff.id }, { id: fiftyFixedOff.id }],
             },
             // totalAmount: ,
         },

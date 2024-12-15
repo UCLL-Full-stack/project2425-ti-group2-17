@@ -7,6 +7,7 @@ import {
     Product as ProductPrisma,
     CartItem as CartItemPrisma,
     Cart as CartPrisma,
+    DiscountCode as DiscountCodePrisma,
 } from '@prisma/client';
 
 export class Cart {
@@ -14,7 +15,7 @@ export class Cart {
     private customer: Customer;
     private products: CartItem[];
     private totalAmount: number;
-    private discountCodes: DiscountCode[] = [];
+    private discountCodes: DiscountCode[];
 
     constructor(cart: {
         customer: Customer;
@@ -26,6 +27,7 @@ export class Cart {
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;
+        this.discountCodes = [];
         cart.discountCodes.forEach((discountCode: DiscountCode) =>
             this.applyDiscountCode(discountCode)
         );
@@ -152,25 +154,27 @@ export class Cart {
         this.products = [];
     }
 
-    // static from({
-    //     id,
-    //     customer,
-    //     cartItems,
-    //     discountCodes
-    // }: CartPrisma & {
-    //     customer: CustomerPrisma;
-    //     cartItems: (CartItemPrisma & { product: ProductPrisma })[];
-    //     discountCodes: DiscountCodePrisma;
-    // }) {
-    //     const cart = new Cart({
-    //         id,
-    //         customer: Customer.fromWithoutWishlist(customer),
-    //         products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
-    //             CartItem.from(cartItem)
-    //         ),
-    //         discountCodes: discountCodes.map((discountCode:DiscountCodePrisma)=>DiscountCode.from(discountCode))
-    //     });
-    //     cart.totalAmount = cart.calculateTotalAmount();
-    //     return cart;
-    // }
+    static from({
+        id,
+        customer,
+        cartItems,
+        discountCodes,
+    }: CartPrisma & {
+        customer: CustomerPrisma;
+        cartItems: (CartItemPrisma & { product: ProductPrisma })[];
+        discountCodes: DiscountCodePrisma[];
+    }) {
+        const cart = new Cart({
+            id,
+            customer: Customer.fromWithoutWishlist(customer),
+            products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
+                CartItem.from(cartItem)
+            ),
+            discountCodes: discountCodes.map((discountCode: DiscountCodePrisma) =>
+                DiscountCode.from(discountCode)
+            ),
+        });
+        cart.totalAmount = cart.calculateTotalAmount();
+        return cart;
+    }
 }

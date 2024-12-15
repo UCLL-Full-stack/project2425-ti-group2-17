@@ -10,6 +10,7 @@ const getCarts = async (): Promise<Cart[]> => {
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
         return cartsPrisma.map((cartPrisma) => Cart.from(cartPrisma));
@@ -26,6 +27,7 @@ const getCartById = async ({ id }: { id: number }): Promise<Cart | null> => {
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
 
@@ -50,6 +52,7 @@ const getCartByCustomerEmail = async ({ email }: { email: string }): Promise<Car
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
 
@@ -70,6 +73,7 @@ const getCartByCustomerId = async ({ id }: { id: number }): Promise<Cart | null>
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
 
@@ -97,6 +101,7 @@ const createCart = async (customer: Customer): Promise<Cart> => {
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
         return Cart.from(cartPrisma);

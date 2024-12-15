@@ -34,6 +34,16 @@ model Product {
   orderItems   OrderItem[]
 }
 
+model DiscountCode {
+  id              Int         @id @default(autoincrement())
+  code            String      @unique
+  type            String
+  value           Int
+  expirationDate  DateTime
+  isActive        Boolean
+  carts           Cart[] 
+}
+
 model CartItem {
   id        Int       @id @default(autoincrement())
   product   Product   @relation(fields: [productId], references: [id])
@@ -44,10 +54,11 @@ model CartItem {
 }
 
 model Cart {
-  id           Int       @id @default(autoincrement())
-  customer     Customer  @relation(fields: [customerId], references: [id])
-  customerId   Int       @unique
-  cartItems    CartItem[]
+  id            Int       @id @default(autoincrement())
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  customerId    Int       @unique
+  cartItems     CartItem[]
+  discountCodes DiscountCode[] 
 }
 
 model Order {

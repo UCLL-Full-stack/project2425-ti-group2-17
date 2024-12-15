@@ -1,3 +1,5 @@
+import { DiscountCode as DiscountCodePrisma } from '@prisma/client';
+
 export class DiscountCode {
     private code: string;
     private type: string;
@@ -78,21 +80,14 @@ export class DiscountCode {
         this.isActive = true;
     }
 
-    // static from({
-    //         id,
-    //         code,
-    //         type,
-    //         value,
-    //         expirationDate,
-    //         isActive,
-    //     }: DiscountCodePrisma) {
-    //         return new DiscountCode({
-    //             id,
-    //             code,
-    //             type,
-    //             value,
-    //             expirationDate,
-    //             isActive,
-    //         });
-    //     }
+    static from({ id, code, type, value, expirationDate, isActive }: DiscountCodePrisma) {
+        return new DiscountCode({
+            id,
+            code,
+            type,
+            value,
+            expirationDate,
+            isActive,
+        });
+    }
 }
