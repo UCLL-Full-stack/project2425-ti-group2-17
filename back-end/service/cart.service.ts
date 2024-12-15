@@ -6,6 +6,8 @@ import { Payment } from '../model/payment';
 import { OrderItem } from '../model/orderItem';
 import { Order } from '../model/order';
 import orderDb from '../repository/order.db';
+import { DiscountCodeInput } from '../types';
+import discountCodeDb from '../repository/discountCode.db';
 
 const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
@@ -48,7 +50,7 @@ const removeCartItem = async (
 const convertCartToOrder = async (
     email: string,
     paymentStatus: string,
-    discountCode: string
+    discountCodeInputs?: DiscountCodeInput[]
 ): Promise<Order> => {
     const cart = await getCartByEmail(email);
 
@@ -62,6 +64,18 @@ const convertCartToOrder = async (
         throw new Error('Payment status must be paid or unpaid.');
     }
 
+    if (discountCodeInputs && discountCodeInputs.length > 0) {
+        discountCodeInputs.forEach(async (discountCodeInput) => {
+            const discountCode = await discountCodeDb.getDiscountCodeByCode({
+                code: discountCodeInput.code,
+            });
+            if (!discountCode) {
+                throw new Error('Invalid discount code.');
+            }
+            cart.applyDiscountCode(discountCode);
+        });
+    }
+
     const customer = cart.getCustomer();
     const items = cart.getProducts().map(
         (cartItem) =>
@@ -72,7 +86,7 @@ const convertCartToOrder = async (
     );
 
     const payment = new Payment({
-        amount: items.reduce((total, item) => total + item.getTotalPrice(), 0),
+        amount: cart.getTotalAmount(),
         date: new Date(),
         paymentStatus: paymentStatus,
     });
@@ -84,10 +98,10 @@ const convertCartToOrder = async (
         payment,
     });
 
-    await orderDb.createOrder(order);
+    const outputOrder = await orderDb.createOrder(order);
     await cartDB.emptyCart(cart);
 
-    return order;
+    return outputOrder;
 };
 
 export default {

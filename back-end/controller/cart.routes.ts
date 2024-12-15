@@ -36,7 +36,7 @@
 
 import { NextFunction, Request, Response, Router } from 'express';
 import cartService from '../service/cart.service';
-import { CartInput, CartItemInput } from '../types';
+import { CartInput, CartItemInput, DiscountCodeInput } from '../types';
 
 const cartRouter = Router();
 
@@ -275,12 +275,15 @@ cartRouter.put(
  *           type: string
  *           enum: [paid, unpaid]
  *         description: Payment status of the order
- *       - in: query
- *         name: discountCode
- *         required: false
- *         schema:
- *           type: string
- *         description: Optional discount code to apply to the order
+ *     requestBody:
+ *       description: An optional array of discount codes to apply to the order
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/DiscountCodeInput'
  *     responses:
  *       200:
  *         description: Order successfully created
@@ -302,9 +305,12 @@ cartRouter.post(
         try {
             const { email } = req.params;
             const { paymentStatus } = req.query as { paymentStatus: string };
-            const { discountCode } = req.query as { discountCode: string };
-            console.log(discountCode);
-            const order = await cartService.convertCartToOrder(email, paymentStatus, discountCode);
+            const discountCodeInputs = <DiscountCodeInput[]>req.body;
+            const order = await cartService.convertCartToOrder(
+                email,
+                paymentStatus,
+                discountCodeInputs
+            );
             res.status(200).json(order);
         } catch (error) {
             next(error);

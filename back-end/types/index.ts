@@ -50,6 +50,7 @@ type OrderInput = {
 };
 
 type OrderItemInput = {
+    id?: number;
     order: OrderInput;
     product: ProductInput;
     quantity: number;
