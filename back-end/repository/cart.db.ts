@@ -3,6 +3,8 @@ import { Customer } from '../model/customer';
 import { CartItem } from '../model/cartItem';
 import { Product } from '../model/product';
 import database from './database';
+import { DiscountCode } from '../model/discountCode';
+import discountCodeDb from './discountCode.db';
 
 const getCarts = async (): Promise<Cart[]> => {
     try {
@@ -147,6 +149,7 @@ const addCartItem = async (cart: Cart, product: Product, quantity: number): Prom
                 include: {
                     customer: true,
                     cartItems: { include: { product: true } },
+                    discountCodes: true,
                 },
             });
         } else {
@@ -237,6 +240,54 @@ const removeCartItem = async (
     }
 };
 
+const addDiscountCode = async (
+    cart: Cart,
+    discountCode: DiscountCode
+): Promise<DiscountCode | null> => {
+    try {
+        await database.cart.update({
+            where: { id: cart.getId() },
+            data: {
+                discountCodes: {
+                    connect: { id: discountCode.getId() },
+                },
+            },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+                discountCodes: true,
+            },
+        });
+        return discountCodeDb.getDiscountCodeByCode({ code: discountCode.getCode() });
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+const removeDiscountCode = async (cart: Cart, discountCode: string): Promise<string> => {
+    try {
+        await database.cart.update({
+            where: { id: cart.getId() },
+            data: {
+                discountCodes: {
+                    disconnect: { code: discountCode },
+                },
+            },
+            include: {
+                customer: true,
+                cartItems: { include: { product: true } },
+                discountCodes: true,
+            },
+        });
+
+        return 'Discount code successfully deleted';
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
 const emptyCart = async (cart: Cart): Promise<string> => {
     try {
         await database.cartItem.deleteMany({
@@ -251,6 +302,7 @@ const emptyCart = async (cart: Cart): Promise<string> => {
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
+                discountCodes: true,
             },
         });
 
@@ -270,5 +322,7 @@ export default {
     deleteCart,
     addCartItem,
     removeCartItem,
+    addDiscountCode,
+    removeDiscountCode,
     emptyCart,
 };

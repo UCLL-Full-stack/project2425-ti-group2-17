@@ -6,7 +6,7 @@ export class DiscountCode {
     private value: number;
     private expirationDate: Date;
     private isActive: boolean;
-    private id?: number;
+    public id?: number;
 
     constructor(discountCode: {
         code: string;
@@ -31,7 +31,6 @@ export class DiscountCode {
         value: number;
         expirationDate: Date;
         isActive: boolean;
-        id?: number;
     }) {
         if (!discountCode.code) {
             throw new Error('Discount code is required.');

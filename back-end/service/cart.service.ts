@@ -8,6 +8,7 @@ import { Order } from '../model/order';
 import orderDb from '../repository/order.db';
 import { DiscountCodeInput } from '../types';
 import discountCodeDb from '../repository/discountCode.db';
+import { DiscountCode } from '../model/discountCode';
 
 const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
 
@@ -47,11 +48,27 @@ const removeCartItem = async (
     return await cartDB.removeCartItem(existingCart!, product, quantity);
 };
 
-const convertCartToOrder = async (
-    email: string,
-    paymentStatus: string,
-    discountCodeInputs?: DiscountCodeInput[]
-): Promise<Order> => {
+const addDiscountCode = async (email: string, code: string): Promise<DiscountCode | null> => {
+    const existingCart = await getCartByEmail(email);
+    const existingDiscountCode = await discountCodeDb.getDiscountCodeByCode({ code: code });
+    if (!existingDiscountCode) throw new Error(`DiscountCode with code ${code} does not exist.`);
+
+    const appliedDiscountCode = existingCart!.applyDiscountCode(existingDiscountCode);
+
+    return await cartDB.addDiscountCode(existingCart!, appliedDiscountCode);
+};
+
+const removeDiscountCode = async (email: string, code: string): Promise<string> => {
+    const existingCart = await getCartByEmail(email);
+    const existingDiscountCode = await discountCodeDb.getDiscountCodeByCode({ code: code });
+    if (!existingDiscountCode) throw new Error(`DiscountCode with code ${code} does not exist.`);
+
+    existingCart!.removeDiscountCode(existingDiscountCode);
+
+    return await cartDB.removeDiscountCode(existingCart!, code);
+};
+
+const convertCartToOrder = async (email: string, paymentStatus: string): Promise<Order> => {
     const cart = await getCartByEmail(email);
 
     if (!cart) throw new Error(`Cart with user email ${email} does not exist.`);
@@ -62,18 +79,6 @@ const convertCartToOrder = async (
 
     if (paymentStatus !== 'paid' && paymentStatus !== 'unpaid') {
         throw new Error('Payment status must be paid or unpaid.');
-    }
-
-    if (discountCodeInputs && discountCodeInputs.length > 0) {
-        discountCodeInputs.forEach(async (discountCodeInput) => {
-            const discountCode = await discountCodeDb.getDiscountCodeByCode({
-                code: discountCodeInput.code,
-            });
-            if (!discountCode) {
-                throw new Error('Invalid discount code.');
-            }
-            cart.applyDiscountCode(discountCode);
-        });
     }
 
     const customer = cart.getCustomer();
@@ -109,6 +114,8 @@ export default {
     getCartById,
     addCartItem,
     removeCartItem,
+    addDiscountCode,
+    removeDiscountCode,
     convertCartToOrder,
     getCartByEmail,
 };

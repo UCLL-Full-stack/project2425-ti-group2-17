@@ -73,17 +73,28 @@ export class Cart {
             }
         }
 
+        const existingDiscountIndex = this.discountCodes.findIndex(
+            (existingDiscountCode) => existingDiscountCode.getCode() === discountCode.getCode()
+        );
+
+        if (existingDiscountIndex !== -1) {
+            throw new Error('This discount code has already been applied to your cart.');
+        }
         this.discountCodes.push(discountCode);
         this.totalAmount = this.calculateTotalAmount();
+        return discountCode;
     }
 
     removeDiscountCode(discountCode: DiscountCode) {
-        const index = this.discountCodes.indexOf(discountCode);
-        if (index === -1) {
-            throw new Error('Discount code not found.');
+        const existingDiscountIndex = this.discountCodes.findIndex(
+            (existingDiscountCode) => existingDiscountCode.getCode() === discountCode.getCode()
+        );
+        if (existingDiscountIndex === -1) {
+            throw new Error('That discount code had not been applied to your cart.');
         }
-        this.discountCodes.splice(index, 1);
+        this.discountCodes.splice(existingDiscountIndex, 1);
         this.totalAmount = this.calculateTotalAmount();
+        return 'That discount code has been removed from your cart.';
     }
 
     calculateTotalAmount() {
@@ -152,6 +163,8 @@ export class Cart {
     }
     emptyCart() {
         this.products = [];
+        this.discountCodes = [];
+        this.totalAmount = 0;
     }
 
     static from({

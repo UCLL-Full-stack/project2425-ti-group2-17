@@ -176,10 +176,21 @@ test('given: discount code applied, when: removed, then: discount code is remove
     cart.addItem(product, 5);
     cart.applyDiscountCode(fixedDiscountCode1);
 
-    cart.removeDiscountCode(fixedDiscountCode1);
+    const result = cart.removeDiscountCode(fixedDiscountCode1);
 
+    expect(result).toEqual('That discount code has been removed from your cart.');
     expect(cart.getDiscountCodes()).toHaveLength(0);
     expect(cart.getTotalAmount()).toEqual(150);
+});
+
+test('given: discount code not in cart, when: attempting to remove discount code, then: error is thrown.', () => {
+    cart.addItem(product, 5);
+
+    cart.applyDiscountCode(fixedDiscountCode1);
+
+    expect(() => cart.removeDiscountCode(percentageDiscountCode)).toThrow(
+        'That discount code had not been applied to your cart.'
+    );
 });
 
 test('given: product in cart, when: product quantity decreased, then: total amount is recalculated.', () => {
@@ -189,4 +200,27 @@ test('given: product in cart, when: product quantity decreased, then: total amou
     cart.removeItem(product, 3);
 
     expect(cart.getTotalAmount()).toEqual(0);
+});
+
+test('given: items in cart, when: cart is emptied, then: all products and discount codes are removed.', () => {
+    cart.addItem(product, 5);
+    cart.applyDiscountCode(percentageDiscountCode);
+    cart.applyDiscountCode(fixedDiscountCode1);
+
+    cart.emptyCart();
+
+    console.log(cart);
+
+    expect(cart.getProducts()).toHaveLength(0);
+    expect(cart.getDiscountCodes()).toHaveLength(0);
+    expect(cart.getTotalAmount()).toEqual(0);
+});
+
+test('given: discount code already applied, when: same discount code is applied again, then: error is thrown.', () => {
+    cart.addItem(product, 5);
+    cart.applyDiscountCode(fixedDiscountCode1);
+
+    expect(() => cart.applyDiscountCode(fixedDiscountCode1)).toThrow(
+        'This discount code has already been applied to your cart.'
+    );
 });
