@@ -11,8 +11,18 @@ import { orderRouter } from './controller/order.routes';
 import { productRouter } from './controller/product.routes';
 import { paymentRouter } from './controller/payment.routes';
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
 
 const app = express();
+app.use(helmet());
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            connectSrc: ["'self'"],
+        },
+    })
+);
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 

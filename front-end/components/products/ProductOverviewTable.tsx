@@ -40,7 +40,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                 const error = await response.json();
                 setStatusMessages([
                     {
-                        message: 'Failed to update product: ' + error.message,
+                        message: 'Failed to delete product: ' + error.message,
                         type: 'error',
                     },
                 ]);
@@ -153,6 +153,23 @@ const ProductOverviewTable: React.FC<Props> = ({
         <>
             {products && products.length > 0 ? (
                 <div className="container mx-auto px-4 flex flex-row flex-wrap">
+                    {statusMessages && (
+                        <div className="row">
+                            <ul className="list-none mb-3 mx-auto">
+                                {statusMessages.map(({ message, type }, index) => (
+                                    <li
+                                        key={index}
+                                        className={classNames({
+                                            'text-red-800': type === 'error',
+                                            'text-green-800': type === 'success',
+                                        })}
+                                    >
+                                        {message}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     <div>
                         {products.map((product) => (
                             <ProductArticle
