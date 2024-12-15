@@ -298,14 +298,19 @@ const emptyCart = async (cart: Cart): Promise<string> => {
 
         await database.cart.update({
             where: { id: cart.getId() },
-            data: {},
+            data: {
+                discountCodes: {
+                    disconnect: cart.getDiscountCodes().map((discountCode) => ({
+                        id: discountCode.getId(),
+                    })),
+                },
+            },
             include: {
                 customer: true,
                 cartItems: { include: { product: true } },
                 discountCodes: true,
             },
         });
-
         return 'cart successfully emptied.';
     } catch (error) {
         console.error(error);
