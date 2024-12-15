@@ -77,4 +77,22 @@ export class DiscountCode {
     activate() {
         this.isActive = true;
     }
+
+    // static from({
+    //         id,
+    //         code,
+    //         type,
+    //         value,
+    //         expirationDate,
+    //         isActive,
+    //     }: DiscountCodePrisma) {
+    //         return new DiscountCode({
+    //             id,
+    //             code,
+    //             type,
+    //             value,
+    //             expirationDate,
+    //             isActive,
+    //         });
+    //     }
 }

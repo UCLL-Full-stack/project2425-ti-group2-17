@@ -1,5 +1,6 @@
 import { CartItem } from './cartItem';
 import { Customer } from './customer';
+import { DiscountCode } from './discountCode';
 import { Product } from './product';
 import {
     Customer as CustomerPrisma,
@@ -13,12 +14,22 @@ export class Cart {
     private customer: Customer;
     private products: CartItem[];
     private totalAmount: number;
+    private discountCodes: DiscountCode[] = [];
 
-    constructor(cart: { customer: Customer; products: CartItem[]; id?: number }) {
+    constructor(cart: {
+        customer: Customer;
+        products: CartItem[];
+        discountCodes: DiscountCode[];
+        id?: number;
+    }) {
         this.validate(cart);
         this.id = cart.id;
         this.customer = cart.customer;
         this.products = cart.products;
+        cart.discountCodes.forEach((discountCode: DiscountCode) =>
+            this.applyDiscountCode(discountCode)
+        );
+        this.discountCodes = cart.discountCodes;
         this.totalAmount = this.calculateTotalAmount();
     }
 
@@ -34,15 +45,62 @@ export class Cart {
         return this.products;
     }
 
+    getDiscountCodes() {
+        return this.discountCodes;
+    }
+
     getTotalAmount() {
         return this.totalAmount;
     }
 
-    calculateTotalAmount() {
-        return this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
+    // calculateTotalAmount() {
+    //     return this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
+    // }
+
+    applyDiscountCode(discountCode: DiscountCode) {
+        if (!discountCode.isActiveCode()) {
+            throw new Error('Inactive or expired discount code.');
+        }
+
+        if (discountCode.getType() === 'percentage') {
+            const existingPercentageDiscount = this.discountCodes.find(
+                (discountCode) => discountCode.getType() === 'percentage'
+            );
+            if (existingPercentageDiscount) {
+                throw new Error('Only one percentage discount can be applied.');
+            }
+        }
+
+        this.discountCodes.push(discountCode);
+        this.totalAmount = this.calculateTotalAmount();
     }
 
-    validate(cart: { customer: Customer; products: CartItem[] }) {
+    removeDiscountCode(discountCode: DiscountCode) {
+        const index = this.discountCodes.indexOf(discountCode);
+        if (index === -1) {
+            throw new Error('Discount code not found.');
+        }
+        this.discountCodes.splice(index, 1);
+        this.totalAmount = this.calculateTotalAmount();
+    }
+
+    calculateTotalAmount() {
+        const subtotal = this.products.reduce((total, item) => total + item.getTotalPrice(), 0);
+
+        let totalDiscount = 0;
+
+        this.discountCodes.forEach((discountCode) => {
+            if (discountCode.getType() === 'fixed') {
+                totalDiscount += discountCode.getValue();
+            } else if (discountCode.getType() === 'percentage') {
+                totalDiscount += subtotal * (discountCode.getValue() / 100);
+            }
+        });
+
+        return Math.max(0, subtotal - totalDiscount);
+    }
+
+    validate(cart: { customer: Customer; products: CartItem[]; discountCodes: DiscountCode[] }) {
         if (!cart.customer) {
             throw new Error('Customer cannot be null or undefined.');
         }
@@ -94,22 +152,25 @@ export class Cart {
         this.products = [];
     }
 
-    static from({
-        id,
-        customer,
-        cartItems,
-    }: CartPrisma & {
-        customer: CustomerPrisma;
-        cartItems: (CartItemPrisma & { product: ProductPrisma })[];
-    }) {
-        const cart = new Cart({
-            id,
-            customer: Customer.fromWithoutWishlist(customer),
-            products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
-                CartItem.from(cartItem)
-            ),
-        });
-        cart.totalAmount = cart.calculateTotalAmount();
-        return cart;
-    }
+    // static from({
+    //     id,
+    //     customer,
+    //     cartItems,
+    //     discountCodes
+    // }: CartPrisma & {
+    //     customer: CustomerPrisma;
+    //     cartItems: (CartItemPrisma & { product: ProductPrisma })[];
+    //     discountCodes: DiscountCodePrisma;
+    // }) {
+    //     const cart = new Cart({
+    //         id,
+    //         customer: Customer.fromWithoutWishlist(customer),
+    //         products: cartItems.map((cartItem: CartItemPrisma & { product: ProductPrisma }) =>
+    //             CartItem.from(cartItem)
+    //         ),
+    //         discountCodes: discountCodes.map((discountCode:DiscountCodePrisma)=>DiscountCode.from(discountCode))
+    //     });
+    //     cart.totalAmount = cart.calculateTotalAmount();
+    //     return cart;
+    // }
 }
