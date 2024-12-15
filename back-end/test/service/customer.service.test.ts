@@ -163,7 +163,7 @@ test('given a valid customer input, when creating a new customer, then it succes
 
     customerDb.createCustomer = mockCustomerDbCreateCustomer.mockReturnValue(createdCustomer);
 
-    const cart = new Cart({ customer: createdCustomer, products: [] });
+    const cart = new Cart({ customer: createdCustomer, products: [], discountCodes: [] });
 
     cartDb.createCart = mockCartDbCreateCart.mockReturnValue(cart);
 
@@ -263,7 +263,7 @@ test('given a non-existent customer, when updating customer, then an error is th
 test('given an existing customer, when deleting the customer, then the customer is deleted', async () => {
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
     cartDb.getCartByCustomerEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(
-        new Cart({ customer: customers[0], products: [], id: 1 })
+        new Cart({ customer: customers[0], products: [], discountCodes: [], id: 1 })
     );
 
     customerDb.deleteCustomer = mockCustomerDbDeleteCustomer.mockReturnValue(

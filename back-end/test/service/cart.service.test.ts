@@ -1,11 +1,13 @@
 import { Cart } from '../../model/cart';
 import { CartItem } from '../../model/cartItem';
 import { Customer } from '../../model/customer';
+import { DiscountCode } from '../../model/discountCode';
 import { Order } from '../../model/order';
 import { OrderItem } from '../../model/orderItem';
 import { Payment } from '../../model/payment';
 import { Product } from '../../model/product';
 import cartDb from '../../repository/cart.db';
+import discountCodeDb from '../../repository/discountCode.db';
 import orderDb from '../../repository/order.db';
 import productDb from '../../repository/product.db';
 import cartService from '../../service/cart.service';
@@ -68,6 +70,7 @@ const carts: Cart[] = [];
 const cartJohn = new Cart({
     customer: customers[0],
     products: [new CartItem({ product: product1, quantity: 2 })],
+    discountCodes: [],
     id: 1,
 });
 carts.push(cartJohn);
@@ -75,6 +78,7 @@ carts.push(cartJohn);
 const cartJane = new Cart({
     customer: customers[1],
     products: [new CartItem({ product: product2, quantity: 1 })],
+    discountCodes: [],
     id: 2,
 });
 carts.push(cartJane);
@@ -113,6 +117,14 @@ const order2 = new Order({
     id: 2,
 });
 
+const discount = new DiscountCode({
+    code: 'SAVE10',
+    type: 'percentage',
+    value: 10,
+    expirationDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    isActive: true,
+});
+
 let mockCartDbGetCarts: jest.Mock;
 let mockCartDbGetCartById: jest.Mock;
 let mockCartDbGetCartByCustomerEmail: jest.Mock;
@@ -122,6 +134,9 @@ let mockProductDbGetProductById: jest.Mock;
 let mockOrderDbCreateOrder: jest.Mock;
 let mockCartDbDeleteCart: jest.Mock;
 let mockCartDbEmptyCart: jest.Mock;
+let mockDiscountCodeDbGetDiscountCodeByCode: jest.Mock;
+let mockCartDbAddDiscountCode: jest.Mock;
+let mockCartDbRemoveDiscountCode: jest.Mock;
 
 beforeEach(() => {
     mockCartDbGetCarts = jest.fn();
@@ -133,6 +148,9 @@ beforeEach(() => {
     mockOrderDbCreateOrder = jest.fn();
     mockCartDbDeleteCart = jest.fn();
     mockCartDbEmptyCart = jest.fn();
+    mockDiscountCodeDbGetDiscountCodeByCode = jest.fn();
+    mockCartDbAddDiscountCode = jest.fn();
+    mockCartDbRemoveDiscountCode = jest.fn();
 });
 
 afterEach(() => {
@@ -320,6 +338,72 @@ test('given invalid payment info, when converting cart to order, then an error i
 
     await expect(convertCartToOrder).rejects.toThrow('Payment status must be paid or unpaid.');
 
+    expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
+        email: 'john.doe@example.com',
+    });
+});
+
+test('given a valid discount code and cart, when adding a discount code to the cart, then the discount is applied', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
+    discountCodeDb.getDiscountCodeByCode =
+        mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(discount);
+    cartDb.addDiscountCode = mockCartDbAddDiscountCode.mockReturnValue(
+        'Discount applied successfully'
+    );
+
+    const result = await cartService.addDiscountCode('john.doe@example.com', 'SAVE10');
+
+    expect(result).toEqual('Discount applied successfully');
+    expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE10' });
+    expect(mockCartDbAddDiscountCode).toHaveBeenCalledWith(cartJohn, discount);
+});
+
+test('given a non-existing discount code, when adding a discount code to the cart, then an error is thrown', async () => {
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
+    discountCodeDb.getDiscountCodeByCode =
+        mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(null);
+
+    const addDiscountCode = async () =>
+        await cartService.addDiscountCode('john.doe@example.com', 'INVALIDCODE');
+
+    await expect(addDiscountCode).rejects.toThrow(
+        'Discountcode with code INVALIDCODE does not exist.'
+    );
+    expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'INVALIDCODE' });
+});
+
+test('given an active discount code on the cart, when removing a discount code, then the discount is removed', async () => {
+    cartJohn.emptyCart();
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
+    discountCodeDb.getDiscountCodeByCode =
+        mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(discount);
+    cartDb.removeDiscountCode = mockCartDbRemoveDiscountCode.mockReturnValue(
+        'Discount removed successfully'
+    );
+    cartDb.addDiscountCode = mockCartDbAddDiscountCode.mockReturnValue(
+        'Discount applied successfully'
+    );
+
+    await cartService.addDiscountCode('john.doe@example.com', 'SAVE10');
+
+    const result = await cartService.removeDiscountCode('john.doe@example.com', 'SAVE10');
+
+    expect(result).toEqual('Discount removed successfully');
+    expect(mockCartDbRemoveDiscountCode).toHaveBeenCalledWith(cartJohn, 'SAVE10');
+});
+
+test('given valid, when removing a discount code not in the cart, then an error is thrown', async () => {
+    cartJohn.emptyCart();
+    cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
+    discountCodeDb.getDiscountCodeByCode =
+        mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(discount);
+
+    const removeDiscountCode = async () =>
+        await cartService.removeDiscountCode('john.doe@example.com', 'SAVE10');
+
+    await expect(removeDiscountCode).rejects.toThrow(
+        'That discount code had not been applied to your cart.'
+    );
     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
         email: 'john.doe@example.com',
     });

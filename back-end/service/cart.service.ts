@@ -51,7 +51,7 @@ const removeCartItem = async (
 const addDiscountCode = async (email: string, code: string): Promise<DiscountCode | null> => {
     const existingCart = await getCartByEmail(email);
     const existingDiscountCode = await discountCodeDb.getDiscountCodeByCode({ code: code });
-    if (!existingDiscountCode) throw new Error(`DiscountCode with code ${code} does not exist.`);
+    if (!existingDiscountCode) throw new Error(`Discountcode with code ${code} does not exist.`);
 
     const appliedDiscountCode = existingCart!.applyDiscountCode(existingDiscountCode);
 

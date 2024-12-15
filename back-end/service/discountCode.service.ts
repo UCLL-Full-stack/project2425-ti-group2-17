@@ -1,5 +1,4 @@
 import { DiscountCode } from '../model/discountCode';
-import cartDb from '../repository/cart.db';
 import discountCodeDB from '../repository/discountCode.db';
 import { DiscountCodeInput } from '../types';
 

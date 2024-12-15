@@ -164,7 +164,7 @@ const main = async () => {
             code: 'SAVE10P',
             type: 'percentage',
             value: 10,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2026-12-30'),
             isActive: true,
         },
     });
@@ -174,7 +174,7 @@ const main = async () => {
             code: 'SAVE20P',
             type: 'percentage',
             value: 20,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2027-11-29'),
             isActive: true,
         },
     });
@@ -184,7 +184,7 @@ const main = async () => {
             code: 'INACTIVEP',
             type: 'percentage',
             value: 20,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2028-10-28'),
             isActive: false,
         },
     });
@@ -194,7 +194,7 @@ const main = async () => {
             code: 'SAVE30F',
             type: 'fixed',
             value: 30,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2029-9-27'),
             isActive: true,
         },
     });
@@ -204,7 +204,7 @@ const main = async () => {
             code: 'SAVE50F',
             type: 'fixed',
             value: 50,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2030-8-26'),
             isActive: true,
         },
     });
@@ -214,7 +214,7 @@ const main = async () => {
             code: 'INACTIVEF',
             type: 'fixed',
             value: 50,
-            expirationDate: new Date('2026-12-31'),
+            expirationDate: new Date('2031-7-25'),
             isActive: false,
         },
     });
