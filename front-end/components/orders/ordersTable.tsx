@@ -14,8 +14,7 @@ const OrderTable = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await OrderService.getAllOrders();
-                const data = await response.json();
+                const data = await OrderService.getAllOrders();
                 setOrders(data);
             } catch (error) {
                 console.error('Error fetching orders:', error);
