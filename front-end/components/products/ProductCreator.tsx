@@ -119,6 +119,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
                     type: 'success',
                 },
             ]);
+            // setTimeout(onClose, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([

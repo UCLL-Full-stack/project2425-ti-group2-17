@@ -7,11 +7,18 @@ import { useState, useEffect, FormEvent } from 'react';
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    onSave: () => void;
+    handleSaveNewDiscountCode: () => void;
+    handleSaveUpdatedDiscountCode: () => void;
     discountToUpdate?: DiscountCode | null;
 };
 
-const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discountToUpdate }) => {
+const DiscountCodeEditor: React.FC<Props> = ({
+    isOpen,
+    onClose,
+    handleSaveNewDiscountCode,
+    handleSaveUpdatedDiscountCode,
+    discountToUpdate,
+}) => {
     const [code, setCode] = useState('');
     const [type, setType] = useState('');
     const [value, setValue] = useState<number>(0);
@@ -78,13 +85,15 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         const response = await DiscountService.updateDiscountCode(code, request);
         if (response.ok) {
             const discount = await response.json();
-            onSave();
+            // onSave();
             setStatusMessages([
                 {
                     message: 'Updated discount code: ' + discount.code,
                     type: 'success',
                 },
             ]);
+            // setTimeout(onClose, 1000);
+            setTimeout(handleSaveUpdatedDiscountCode, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -100,7 +109,7 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         const response = await DiscountService.createDiscountCode(request);
         if (response.ok) {
             const discount = await response.json();
-            onSave();
+            handleSaveNewDiscountCode();
             setStatusMessages([
                 {
                     message: 'Created discount code: ' + discount.code,
@@ -108,6 +117,7 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
                 },
             ]);
             setTimeout(onClose, 1000);
+            // setTimeout(onSave, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -159,13 +169,12 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
             const formattedDate = new Date(discountToUpdate.expirationDate).toLocaleDateString(
                 'en-GB'
             );
-
             setExpirationDate(formattedDate);
             setIsActive(discountToUpdate.isActive.toString());
             setUpdatingDiscount(true);
         } else {
             setCode('');
-            setType('');
+            setType('fixed');
             setValue(0);
             setExpirationDate('');
             setIsActive('false');
@@ -210,13 +219,20 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
                             <label className="block mb-1 text-sm font-semibold text-yellow-500">
                                 Type
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 value={type}
-                                onChange={(e) => setType(e.target.value)}
+                                onChange={(e) => {
+                                    setType(e.target.value);
+                                }}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
-                            />
-                            {typeError && <p className="text-red-500 text-sm">{typeError}</p>}
+                            >
+                                <option value={'fixed'} key={'fixed'}>
+                                    fixed
+                                </option>
+                                <option value={'percentage'} key={'percentage'}>
+                                    percentage
+                                </option>
+                            </select>
                         </div>
                         <div className="col-span-1">
                             <label className="block mb-1 text-sm font-semibold text-yellow-500">
@@ -250,20 +266,6 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
                             <label className="block mb-1 text-sm font-semibold text-yellow-500">
                                 isActive
                             </label>
-                            {/* <select
-                                value={isActive}
-                                onChange={(e) => {
-                                    setIsActive(e.target.value);
-                                }}
-                                className="w-full p-2 border border-gray-300 rounded outline-none"
-                            >
-                                <option selected value={'false'} key={'false'}>
-false
-                                </option>
-                                <option selected value={'true'} key={'true'}>
-                                    true
-                                </option>
-                            </select> */}
                             <select
                                 value={isActive}
                                 onChange={(e) => {
