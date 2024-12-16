@@ -135,7 +135,7 @@ const OrderTable = () => {
     return (
         <div className="overflow-x-auto shadow-lg rounded-lg max-w-6xl mx-auto py-4">
             <table className="min-w-full bg-white text-base">
-                <thead className="bg-blue-500 text-white">
+                <thead className="bg-gray-200 text-gray-700">
                     <tr>
                         <th
                             scope="col"
