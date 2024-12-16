@@ -17,7 +17,7 @@ const getAllOrders = async (): Promise<Order[]> => {
     return await response.json();
 };
 
-const getOrderById = async (id: number): Promise<Order> => {
+const getOrderById = async (id: string): Promise<Order> => {
     const token = JSON.parse(sessionStorage.getItem('loggedInUser')!).token;
     const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}`, {
         method: 'GET',
