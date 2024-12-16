@@ -1,4 +1,5 @@
 import Header from '@components/header';
+import OrdersTable from '@components/orders/ordersTable';
 import Head from 'next/head';
 
 const Order: React.FC = () => {
@@ -8,7 +9,7 @@ const Order: React.FC = () => {
                 <title>Orders</title>
             </Head>
             <Header />
-            <h1>Orders Page</h1>
+            <OrdersTable />
         </>
     );
 };
