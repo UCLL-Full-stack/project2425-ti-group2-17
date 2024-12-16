@@ -7,18 +7,11 @@ import { useState, useEffect, FormEvent } from 'react';
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    handleSaveNewDiscountCode: () => void;
-    handleSaveUpdatedDiscountCode: () => void;
+    onSave: () => void;
     discountToUpdate?: DiscountCode | null;
 };
 
-const DiscountCodeEditor: React.FC<Props> = ({
-    isOpen,
-    onClose,
-    handleSaveNewDiscountCode,
-    handleSaveUpdatedDiscountCode,
-    discountToUpdate,
-}) => {
+const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discountToUpdate }) => {
     const [code, setCode] = useState('');
     const [type, setType] = useState('');
     const [value, setValue] = useState<number>(0);
@@ -85,15 +78,13 @@ const DiscountCodeEditor: React.FC<Props> = ({
         const response = await DiscountService.updateDiscountCode(code, request);
         if (response.ok) {
             const discount = await response.json();
-            // onSave();
             setStatusMessages([
                 {
                     message: 'Updated discount code: ' + discount.code,
                     type: 'success',
                 },
             ]);
-            // setTimeout(onClose, 1000);
-            setTimeout(handleSaveUpdatedDiscountCode, 1000);
+            setTimeout(onSave, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -109,15 +100,13 @@ const DiscountCodeEditor: React.FC<Props> = ({
         const response = await DiscountService.createDiscountCode(request);
         if (response.ok) {
             const discount = await response.json();
-            handleSaveNewDiscountCode();
             setStatusMessages([
                 {
                     message: 'Created discount code: ' + discount.code,
                     type: 'success',
                 },
             ]);
-            setTimeout(onClose, 1000);
-            // setTimeout(onSave, 1000);
+            setTimeout(onSave, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -181,7 +170,7 @@ const DiscountCodeEditor: React.FC<Props> = ({
             setUpdatingDiscount(false);
         }
         clearErrors();
-    }, [discountToUpdate]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 

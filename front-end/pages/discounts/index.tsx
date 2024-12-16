@@ -27,12 +27,7 @@ const Discounts: React.FC = () => {
         setIsCreateDiscountCodeOpen(true);
     };
 
-    const handleSaveNewDiscountCode = async () => {
-        setSelectedDiscountCode(null);
-        mutate('discounts', getDiscounts());
-    };
-
-    const handleSaveUpdatedDiscountCode = async () => {
+    const handleSaveDiscountCode = async () => {
         setSelectedDiscountCode(null);
         setIsCreateDiscountCodeOpen(false);
         mutate('discounts', getDiscounts());
@@ -92,8 +87,7 @@ const Discounts: React.FC = () => {
                     <DiscountCodeEditor
                         isOpen={isCreateDiscountCodeOpen}
                         onClose={closeDiscountCodeEditor}
-                        handleSaveNewDiscountCode={handleSaveNewDiscountCode}
-                        handleSaveUpdatedDiscountCode={handleSaveUpdatedDiscountCode}
+                        onSave={handleSaveDiscountCode}
                         discountToUpdate={selectedDiscountcode}
                     />
                 </div>

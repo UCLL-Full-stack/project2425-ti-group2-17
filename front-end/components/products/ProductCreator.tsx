@@ -112,14 +112,13 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
         const response = await ProductService.updateProduct(id, request);
         if (response.ok) {
             const product = await response.json();
-            onSave();
             setStatusMessages([
                 {
                     message: 'Updated product: ' + product.name,
                     type: 'success',
                 },
             ]);
-            // setTimeout(onClose, 1000);
+            setTimeout(onSave, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -135,14 +134,13 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
         const response = await ProductService.createProduct(request);
         if (response.ok) {
             const product = await response.json();
-            onSave();
             setStatusMessages([
                 {
                     message: 'Created product: ' + product.name,
                     type: 'success',
                 },
             ]);
-            setTimeout(onClose, 1000);
+            setTimeout(onSave, 1000);
         } else {
             const error = await response.json();
             setStatusMessages([
@@ -209,7 +207,7 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
             setUpdatingProduct(false);
         }
         clearErrors();
-    }, [productToUpdate]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 

@@ -41,6 +41,7 @@ const Products: React.FC = () => {
 
     const handleSaveProduct = async () => {
         setSelectedProduct(null);
+        setIsCreateProductOpen(false);
         mutate('products', getProducts());
     };
 
