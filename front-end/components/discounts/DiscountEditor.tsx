@@ -133,12 +133,14 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         } else {
             isActiveBoolean = false;
         }
+        const [day, month, year] = expirationDate.split('/').map(Number);
+        const validDate = new Date(year, month - 1, day);
+
         const request: DiscountCode = {
-            //   id: product.id,
             code,
             type,
             value,
-            expirationDate: new Date(expirationDate),
+            expirationDate: validDate,
             isActive: isActiveBoolean,
         };
 

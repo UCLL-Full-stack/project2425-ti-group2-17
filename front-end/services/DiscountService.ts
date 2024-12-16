@@ -16,10 +16,10 @@ const createDiscountCode = (discountCode: DiscountCode) => {
     return fetch(process.env.NEXT_PUBLIC_API_URL + '/discounts', {
         method: 'POST',
         headers: {
-            'content-Type': 'application/json',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            body: JSON.stringify(discountCode),
         },
+        body: JSON.stringify(discountCode),
     });
 };
 
@@ -28,10 +28,10 @@ const updateDiscountCode = (code: string, discountCode: DiscountCode) => {
     return fetch(process.env.NEXT_PUBLIC_API_URL + `/discounts/${code}`, {
         method: 'PUT',
         headers: {
-            'content-Type': 'application/json',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            body: JSON.stringify(discountCode),
         },
+        body: JSON.stringify(discountCode),
     });
 };
 
