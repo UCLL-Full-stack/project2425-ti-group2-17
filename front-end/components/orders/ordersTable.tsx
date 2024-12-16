@@ -2,10 +2,10 @@ import OrderService from '@services/OrderService';
 import { Order } from '@types';
 import { useEffect, useState } from 'react';
 import React from 'react';
+import Link from 'next/link';
 
 const OrderTable = () => {
     const [orders, setOrders] = useState<Order[]>([]);
-
     const [sortConfig, setSortConfig] = useState<{
         key: keyof Order | 'customerName' | 'paymentAmount' | 'paymentStatus';
         direction: 'ascending' | 'descending';
@@ -186,9 +186,10 @@ const OrderTable = () => {
                         <tr
                             key={order.id}
                             className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                            style={{ cursor: 'pointer' }}
                         >
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                                {order.id}
+                                <Link href={`/orders/${order.id}`}>{order.id}</Link>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                                 {order.customer.firstName} {order.customer.lastName}
