@@ -1,14 +1,5 @@
 type Role = 'admin' | 'salesman' | 'customer';
 
-type AdminInput = {
-    id?: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    role: Role;
-};
-
 type CustomerInput = {
     id?: number;
     firstName: string;
@@ -84,7 +75,6 @@ type AuthenticationResponse = {
 
 export {
     Role,
-    AdminInput,
     CustomerInput,
     DiscountCodeInput,
     CartInput,

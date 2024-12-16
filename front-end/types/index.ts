@@ -1,13 +1,5 @@
 type Role = 'admin' | 'salesman' | 'customer';
 
-type Admin = {
-    id?: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-};
-
 type Customer = {
     id?: number;
     firstName?: string;
@@ -81,7 +73,6 @@ type StatusMessage = {
 };
 
 export type {
-    Admin,
     Customer,
     DiscountCode,
     Cart,
