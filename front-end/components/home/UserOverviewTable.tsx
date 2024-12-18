@@ -28,7 +28,6 @@ const UserOverviewTable: React.FC<Props> = ({}: Props) => {
                                     {t('home.email')}
                                 </th>
                                 <th scope="col" className="py-2 px-4 text-left">
-                                    {/* Password */}
                                     {t('home.password')}
                                 </th>
                                 <th scope="col" className="py-2 px-4 text-left">

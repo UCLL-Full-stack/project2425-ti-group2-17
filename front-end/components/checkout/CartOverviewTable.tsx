@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Cart } from '@types';
 import ProductArticle from '@components/products/ProductArticle';
 
@@ -15,6 +15,8 @@ const CartOverviewTable: React.FC<Props> = ({
     updateQuantity,
     openAddDiscountCode,
 }) => {
+    const [paymentStatusInput, setPaymentStatusInput] = useState('unpaid');
+
     return (
         <>
             {cart && cart.products.length > 0 ? (
@@ -57,9 +59,28 @@ const CartOverviewTable: React.FC<Props> = ({
                             >
                                 Add discount code
                             </button>
+                            <div className="col-span-1">
+                                <label className="block mb-1 text-sm font-semibold text-yellow-500">
+                                    Type
+                                </label>
+                                <select
+                                    value={paymentStatusInput}
+                                    onChange={(e) => {
+                                        setPaymentStatusInput(e.target.value);
+                                    }}
+                                    className="w-full p-2 border border-gray-300 rounded outline-none"
+                                >
+                                    <option value={'paid'} key={'paid'}>
+                                        Pay now
+                                    </option>
+                                    <option value={'unpaid'} key={'unpaid'}>
+                                        Pay later
+                                    </option>
+                                </select>
+                            </div>
                             <button
                                 type="button"
-                                onClick={() => convertCartToOrder('paid')}
+                                onClick={() => convertCartToOrder(paymentStatusInput)}
                                 className="w-min bg-black text-white py-2 rounded px-1"
                             >
                                 Order
