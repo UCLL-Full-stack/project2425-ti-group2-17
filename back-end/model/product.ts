@@ -143,12 +143,11 @@ export class Product {
             product.images.trim() !== 'jeans' &&
             product.images.trim() !== 'gloves' &&
             product.images.trim() !== 'cap' &&
-            product.images.trim() !== 'toque' &&
             product.images.trim() !== 'socks' &&
-            product.images.trim() !== 'placeholder'
+            product.images.trim() !== 'none'
         ) {
             throw new Error(
-                'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, toque, socks or placeholder.'
+                'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, socks or none.'
             );
         }
 

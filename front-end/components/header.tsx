@@ -68,7 +68,7 @@ const Header: React.FC = () => {
                             href="/login"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                         >
-                            - {t('header.nav.login')}
+                            {t('header.nav.login')}
                         </Link>
                     )}
                     {loggedInUser && (

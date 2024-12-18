@@ -35,11 +35,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             className="flex flex-row bg-gray-50 border border-gray-300 rounded-lg overflow-hidden m-4 p-4 shadow-md w-full"
         >
             <Image
-                src="/images/default-product-image.png"
+                src={`/images/${product.images}.png`}
                 alt="Product image"
                 className={styles.vercelLogo}
-                width={100}
-                height={100}
+                width={200}
+                height={200}
                 style={{ objectFit: 'cover' }}
             />
             <div className="flex flex-col justify-between ml-4 w-full">
