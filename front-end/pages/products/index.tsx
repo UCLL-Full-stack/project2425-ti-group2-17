@@ -7,10 +7,10 @@ import ProductOverviewTable from '@components/products/ProductOverviewTable';
 import CartService from '@services/CartService';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
-import ProductCreator from '@components/products/ProductCreator';
 import CustomerService from '@services/CustomerService';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import ProductEditor from '@components/products/ProductEditor';
 
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
@@ -255,7 +255,7 @@ const Products: React.FC = () => {
                                 reloadProducts={reloadProducts}
                             />
                         )}
-                        <ProductCreator
+                        <ProductEditor
                             isOpen={isCreateProductOpen}
                             onClose={closeCreateProduct}
                             onSave={handleSaveProduct}

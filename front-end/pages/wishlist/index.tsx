@@ -7,7 +7,7 @@ import ProductOverviewTable from '@components/products/ProductOverviewTable';
 import CartService from '@services/CartService';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
-import ProductCreator from '@components/products/ProductCreator';
+import ProductCreator from '@components/products/ProductEditor';
 import CustomerService from '@services/CustomerService';
 import ProductArticle from '@components/products/ProductArticle';
 import { useTranslation } from 'next-i18next';

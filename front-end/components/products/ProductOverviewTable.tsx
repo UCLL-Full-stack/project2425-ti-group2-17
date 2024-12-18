@@ -5,7 +5,7 @@ import Image from 'next/image';
 import CustomerService from '@services/CustomerService';
 import CartService from '@services/CartService';
 import ProductService from '@services/ProductService';
-import ProductCreator from './ProductCreator';
+import ProductEditor from './ProductEditor';
 import classNames from 'classnames';
 import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';

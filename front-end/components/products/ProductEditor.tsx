@@ -10,7 +10,7 @@ type Props = {
     productToUpdate?: Product | null;
 };
 
-const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpdate }) => {
+const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpdate }) => {
     const [id, setId] = useState('');
     const [name, setName] = useState('');
     const [price, setPrice] = useState<number>(0);
@@ -348,4 +348,4 @@ const ProductCreator: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpd
     );
 };
 
-export default ProductCreator;
+export default ProductEditor;
