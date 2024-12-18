@@ -62,7 +62,6 @@ const UserLoginForm: React.FC = () => {
                     role: user.role,
                 })
             );
-            sessionStorage.setItem('Email', user.email);
             setTimeout(() => {
                 router.push('/');
             }, 2000);

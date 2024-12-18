@@ -19,38 +19,33 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
     const [isActive, setIsActive] = useState('false');
 
     const [codeError, setCodeError] = useState<string | null>(null);
-    const [typeError, setTypeError] = useState<string | null>(null);
     const [valueError, setValueError] = useState<string | null>(null);
     const [expirationDateError, setExpirationDateError] = useState<string | null>(null);
-    const [isActiveError, setIsActiveError] = useState<string | null>(null);
 
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
     const [updatingDiscount, setUpdatingDiscount] = useState(false);
 
     const clearErrors = () => {
         setCodeError(null);
-        setTypeError(null);
         setValueError(null);
         setExpirationDateError(null);
-        setIsActiveError(null);
         setStatusMessages([]);
     };
 
-    const validate = () => {
+    const validate = (validExpirationDate: Date) => {
         let isValid = true;
 
         if (!code || code.trim() === '') {
             setCodeError('Code is required.');
             isValid = false;
         }
-        if (!type || type.trim() === '') {
-            setTypeError('Type is required.');
-            isValid = false;
-        }
         if (!value) {
             setValueError('Value is required.');
             isValid = false;
         } else if (value < 0) {
+            setValueError('Value may not be negative.');
+            isValid = false;
+        } else if (type === 'percentage' && value < 100) {
             setValueError('Value may not be negative.');
             isValid = false;
         }
@@ -61,15 +56,9 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         } else if (!datePattern.test(expirationDate)) {
             setExpirationDateError('ExpirationDate must be in format dd/mm/yyyy.');
             isValid = false;
-        } else if (new Date(expirationDate) < new Date()) {
+        } else if (validExpirationDate.getTime() < new Date().getTime()) {
             setExpirationDateError('ExpirationDate must be in the future.');
             isValid = false;
-        }
-        if (!isActive || isActive.trim() === '') {
-            setTypeError('IsActive is required.');
-            isValid = false;
-        } else if (!(isActive === 'true' || isActive === 'false')) {
-            setIsActiveError('IsActive must be true or false.');
         }
         return isValid;
     };
@@ -123,7 +112,10 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
 
         clearErrors();
 
-        if (!validate()) {
+        const [day, month, year] = expirationDate.split('/').map(Number);
+        const validExpirationDate = new Date(year, month - 1, day);
+
+        if (!validate(validExpirationDate)) {
             return;
         }
         let isActiveBoolean;
@@ -132,14 +124,12 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         } else {
             isActiveBoolean = false;
         }
-        const [day, month, year] = expirationDate.split('/').map(Number);
-        const validDate = new Date(year, month - 1, day);
 
         const request: DiscountCode = {
             code,
             type,
             value,
-            expirationDate: validDate,
+            expirationDate: validExpirationDate,
             isActive: isActiveBoolean,
         };
 
