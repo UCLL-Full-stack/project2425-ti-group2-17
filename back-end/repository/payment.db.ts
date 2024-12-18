@@ -1,45 +1,6 @@
 import { Payment } from '../model/payment';
 import database from './database';
 
-// const addPayment = async (payment: Payment): Promise<Payment> => {
-//     try {
-//         const paymentPrisma = await database.$transaction(async (prisma) => {
-//             // Create payment
-//             const newPayment = await prisma.payment.create({
-//                 data: {
-//                     amount: payment.getAmount(),
-//                     date: payment.getDate(),
-//                     paymentStatus: payment.getPaymentStatus(),
-//                 },
-//             });
-
-//             // Find and update associated order
-//             const order = await prisma.order.findUnique({
-//                 where: { paymentId: newPayment.id },
-//             });
-
-//             if (order) {
-//                 await prisma.order.update({
-//                     where: { id: order.id },
-//                     data: {
-//                         payment: {
-//                             update: {
-//                                 paymentStatus: payment.getPaymentStatus(),
-//                             },
-//                         },
-//                     },
-//                 });
-//             }
-
-//             return newPayment;
-//         });
-
-//         return Payment.from(paymentPrisma);
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 const addPayment = async ({
     orderId,
     amount,

@@ -10,20 +10,6 @@ const getOrders = async (): Promise<Order[]> => {
         const ordersPrisma = await database.order.findMany({
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
-        // return ordersPrisma.map((orderPrisma) => {
-        //     return Order.from({
-        //         ...orderPrisma,
-        //         customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-        //         items: orderPrisma.items.map(
-        //             (itemData) =>
-        //                 new OrderItem({
-        //                     ...itemData,
-        //                     product: new Product(itemData.product),
-        //                 })
-        //         ),
-        //         payment: new Payment(orderPrisma.payment),
-        //     });
-        // });
         return ordersPrisma.map((orderPrisma) => Order.from(orderPrisma));
     } catch (error) {
         console.error(error);
@@ -41,20 +27,6 @@ const getOrderById = async ({ id }: { id: number }): Promise<Order | undefined> 
         if (!orderPrisma) {
             return undefined;
         }
-
-        // return Order.from({
-        //     ...orderPrisma,
-        //     customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-        //     items: orderPrisma.items.map(
-        //         (itemData) =>
-        //             new OrderItem({
-        //                 ...itemData,
-        //                 product: new Product(itemData.product),
-        //             })
-        //     ),
-        //     payment: new Payment(orderPrisma.payment),
-        // });
-
         return Order.from(orderPrisma);
     } catch (error) {
         console.error(error);
@@ -72,21 +44,6 @@ const getOrdersByCustomer = async ({ email }: { email: string }): Promise<Order[
             },
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
-        // return ordersPrisma.map((orderPrisma) => {
-        //     return Order.from({
-        //         ...orderPrisma,
-        //         customer: new Customer({ ...orderPrisma.customer, wishlist: [] }),
-        //         items: orderPrisma.items.map(
-        //             (itemData) =>
-        //                 new OrderItem({
-        //                     ...itemData,
-        //                     product: new Product(itemData.product),
-        //                 })
-        //         ),
-        //         payment: new Payment(orderPrisma.payment),
-        //     });
-        // });
-
         return ordersPrisma.map((order) => Order.from(order));
     } catch (error) {
         console.error(error);
@@ -130,11 +87,6 @@ const createOrder = async (order: Order): Promise<Order> => {
                         date: order.getDate(),
                         paymentStatus: order.getPayment().getPaymentStatus(),
                     },
-                    // create: {
-                    //     amount: order.calculateTotalAmount(),
-                    //     date: order.getDate(),
-                    //     paymentStatus: order.getPayment().getPaymentStatus(),
-                    // },
                 },
             },
             include: { customer: true, items: { include: { product: true } }, payment: true },

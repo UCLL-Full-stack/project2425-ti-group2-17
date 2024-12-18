@@ -8,11 +8,11 @@ const createProduct = async (product: Product): Promise<Product> => {
                 name: product.getName(),
                 price: product.getPrice(),
                 stock: product.getStock(),
-                categories: { set: product.getCategories() },
+                categories: product.getCategories(),
                 description: product.getDescription(),
-                images: { set: product.getImages() },
-                sizes: { set: product.getSizes() },
-                colors: { set: product.getColors() },
+                images: product.getImages(),
+                sizes: product.getSizes(),
+                colors: product.getColors(),
             },
         });
         return Product.from(productPrisma);
@@ -90,11 +90,11 @@ const updateProduct = async (updatedProduct: Product): Promise<Product> => {
                 name: updatedProduct.getName(),
                 price: updatedProduct.getPrice(),
                 stock: updatedProduct.getStock(),
-                categories: { set: updatedProduct.getCategories() },
+                categories: updatedProduct.getCategories(),
                 description: updatedProduct.getDescription(),
-                images: { set: updatedProduct.getImages() },
-                sizes: { set: updatedProduct.getSizes() },
-                colors: { set: updatedProduct.getColors() },
+                images: updatedProduct.getImages(),
+                sizes: updatedProduct.getSizes(),
+                colors: updatedProduct.getColors(),
             },
         });
         return Product.from(productPrisma);

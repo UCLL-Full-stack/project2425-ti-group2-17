@@ -26,7 +26,7 @@ model Product {
   stock        Int
   categories   String[]
   description  String
-  images       String[]
+  images       String
   sizes        String[]
   colors       String[]
   cartItems    CartItem[]

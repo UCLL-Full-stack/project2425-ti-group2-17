@@ -7,7 +7,7 @@ export class Product {
     private stock: number;
     private categories: string[];
     private description: string;
-    private images: string[];
+    private images: string;
     private sizes: string[];
     private colors: string[];
 
@@ -17,7 +17,7 @@ export class Product {
         stock: number;
         categories: string[];
         description: string;
-        images: string[];
+        images: string;
         sizes: string[];
         colors: string[];
         id?: number;
@@ -58,7 +58,7 @@ export class Product {
         return this.description;
     }
 
-    getImages(): string[] {
+    getImages(): string {
         return this.images;
     }
 
@@ -90,7 +90,7 @@ export class Product {
         this.description = description;
     }
 
-    setImages(images: string[]): void {
+    setImages(images: string): void {
         this.images = images;
     }
 
@@ -108,7 +108,7 @@ export class Product {
         stock: number;
         categories: string[];
         description: string;
-        images: string[];
+        images: string;
         sizes: string[];
         colors: string[];
     }) {

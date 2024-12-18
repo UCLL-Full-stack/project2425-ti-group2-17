@@ -61,7 +61,7 @@ type ProductInput = {
     stock: number;
     categories: string[];
     description: string;
-    images: string[];
+    images: string;
     sizes: string[];
     colors: string[];
 };
