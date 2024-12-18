@@ -1,3 +1,4 @@
+import { UnauthorizedError } from 'express-jwt';
 import { Customer } from '../model/customer';
 import { Order } from '../model/order';
 import { OrderItem } from '../model/orderItem';
@@ -7,8 +8,14 @@ import customerDb from '../repository/customer.db';
 import orderDb from '../repository/order.db';
 import { OrderInput } from '../types';
 
-const getOrders = async (): Promise<Order[]> => {
-    return await orderDb.getOrders();
+const getOrders = async ({ email, role }: { email: string; role: string }): Promise<Order[]> => {
+    if (role === 'admin' || role === 'salesman') {
+        return orderDb.getOrders();
+    } else if (role === 'customer') {
+        return orderDb.getOrdersByCustomer({ email });
+    } else {
+        throw UnauthorizedError;
+    }
 };
 
 const getOrderById = async (id: number): Promise<Order> => {

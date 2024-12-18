@@ -62,10 +62,14 @@ const getOrderById = async ({ id }: { id: number }): Promise<Order | undefined> 
     }
 };
 
-const getOrdersByCustomer = async ({ id }: { id: number }): Promise<Order[]> => {
+const getOrdersByCustomer = async ({ email }: { email: string }): Promise<Order[]> => {
     try {
         const ordersPrisma = await database.order.findMany({
-            where: { customerId: id },
+            where: {
+                customer: {
+                    email: email,
+                },
+            },
             include: { customer: true, items: { include: { product: true } }, payment: true },
         });
         // return ordersPrisma.map((orderPrisma) => {

@@ -87,6 +87,10 @@ import { Router, Request, Response, NextFunction } from 'express';
 import orderService from '../service/order.service';
 import { OrderInput, OrderItemInput } from '../types';
 
+interface AuthenticatedRequest extends Request {
+    auth: any;
+}
+
 const orderRouter = Router();
 
 /**
@@ -112,7 +116,8 @@ const orderRouter = Router();
 
 orderRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const orders = await orderService.getOrders();
+        const { email, role } = (req as AuthenticatedRequest).auth;
+        const orders = await orderService.getOrders({ email, role });
         res.status(200).json(orders);
     } catch (error) {
         next(error);
