@@ -43,6 +43,7 @@ const main = async () => {
             images: 'shirt',
             sizes: ['S', 'M', 'L', 'XL'],
             colors: ['Red', 'Blue', 'Black'],
+            rating: 5,
         },
     });
 
@@ -56,6 +57,7 @@ const main = async () => {
             images: 'shoes',
             sizes: ['M', 'L', 'XL'],
             colors: ['White', 'Black'],
+            rating: 4,
         },
     });
 
@@ -69,6 +71,7 @@ const main = async () => {
             images: 'hoodie',
             sizes: ['S', 'M', 'L', 'XL'],
             colors: ['Gray', 'Navy'],
+            rating: 5,
         },
     });
 
@@ -82,6 +85,7 @@ const main = async () => {
             images: 'watch',
             sizes: ['M'],
             colors: ['Black', 'Silver'],
+            rating: 3,
         },
     });
 
@@ -95,6 +99,7 @@ const main = async () => {
             images: 'jeans',
             sizes: ['S', 'M', 'L', 'XL'],
             colors: ['Blue', 'Black'],
+            rating: 5,
         },
     });
 

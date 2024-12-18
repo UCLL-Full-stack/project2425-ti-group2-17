@@ -29,6 +29,7 @@ model Product {
   images       String
   sizes        String[]
   colors       String[]
+  rating       Int
   cartItems    CartItem[]
   customers    Customer[]
   orderItems   OrderItem[]

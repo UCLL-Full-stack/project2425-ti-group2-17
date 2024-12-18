@@ -64,6 +64,7 @@ type ProductInput = {
     images: string;
     sizes: string[];
     colors: string[];
+    rating: number;
 };
 
 type AuthenticationResponse = {

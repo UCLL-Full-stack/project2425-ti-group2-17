@@ -13,6 +13,7 @@ const createProduct = async (product: Product): Promise<Product> => {
                 images: product.getImages(),
                 sizes: product.getSizes(),
                 colors: product.getColors(),
+                rating: product.getRating(),
             },
         });
         return Product.from(productPrisma);
