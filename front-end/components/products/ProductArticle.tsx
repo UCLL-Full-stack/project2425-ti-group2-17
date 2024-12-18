@@ -76,6 +76,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     <div className="text-left">
                         <strong>Colors:</strong> {product.colors.join(', ')}
                     </div>
+                    <div className="text-left">
+                        <strong>Rating:</strong> {product.rating}
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col justify-center items-center ml-4">
