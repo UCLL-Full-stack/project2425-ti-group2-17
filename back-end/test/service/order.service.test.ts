@@ -59,7 +59,7 @@ afterEach(() => {
 test('given orders in the DB, when getting all orders, then all orders are returned', async () => {
     orderDb.getOrders = mockOrderDbGetOrders.mockReturnValue(orders);
 
-    const result = await orderService.getOrders();
+    const result = await orderService.getOrders({ email: 'admin@example.com', role: 'admin' });
 
     expect(result).toEqual(orders);
     expect(mockOrderDbGetOrders).toHaveBeenCalled();
