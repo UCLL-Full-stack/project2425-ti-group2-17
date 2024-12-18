@@ -15,11 +15,11 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
     const [name, setName] = useState('');
     const [price, setPrice] = useState<number>(0);
     const [stock, setStock] = useState<number>(0);
-    const [categories, setCategories] = useState<string[]>([]);
+    const [categories, setCategories] = useState('');
     const [description, setDescription] = useState('');
     //   const [images, setImages] = useState<string[]>([]);
     const [sizes, setSizes] = useState<string[]>([]);
-    const [colors, setColors] = useState<string[]>([]);
+    const [colors, setColors] = useState('');
 
     const [nameError, setNameError] = useState<string | null>(null);
     const [priceError, setPriceError] = useState<string | null>(null);
@@ -48,11 +48,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         setStatusMessages([]);
     };
 
-    const validate = (
-        cleanedCategories?: string[],
-        cleanedSizes?: string[],
-        cleanedColors?: string[]
-    ) => {
+    const validate = (cleanedSizes: string[]) => {
         let isValid = true;
 
         if (!name || name.trim() === '') {
@@ -73,8 +69,14 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setStockError('Stock may not be negative.');
             isValid = false;
         }
-        if (!cleanedCategories || cleanedCategories.length === 0) {
+        const pattern = /^([a-zA-Z]+)(,[a-zA-Z]+)*$/;
+        if (!categories || categories.length === 0) {
             setCategoriesError('Categories are required.');
+            isValid = false;
+        } else if (!pattern.test(categories)) {
+            setCategoriesError(
+                'Categories must be seperated by commas without spacing in between.'
+            );
             isValid = false;
         }
         if (!description || description.trim() === '') {
@@ -94,11 +96,16 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
                     size === 'XS' || size === 'S' || size === 'M' || size === 'L' || size === 'XL'
             )
         ) {
-            setSizesError('All sizes must be XS or S or M or L or XL seperated by commas.');
+            setSizesError(
+                'All sizes must be XS or S or M or L or XL seperated by commas without spacing in between.'
+            );
             isValid = false;
         }
-        if (!cleanedColors || cleanedColors.length === 0) {
+        if (!colors || colors.length === 0) {
             setColorsError('Colors are required.');
+            isValid = false;
+        } else if (!pattern.test(colors)) {
+            setColorsError('Colors must be seperated by commas without spacing in between.');
             isValid = false;
         }
         return isValid;
@@ -156,11 +163,9 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         event.preventDefault();
 
         clearErrors();
-        const cleanedCategories = cleanData(categories);
         const cleanedSizes = cleanData(sizes);
-        const cleanedColors = cleanData(colors);
 
-        if (!validate(cleanedCategories, cleanedSizes, cleanedColors)) {
+        if (!validate(cleanedSizes)) {
             return;
         }
         const request: Product = {
@@ -168,11 +173,11 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             name,
             price: price,
             stock: stock,
-            categories: cleanedCategories,
+            categories: stringToList(categories),
             description,
             images: ['unimplemented'],
             sizes: cleanedSizes,
-            colors: cleanedColors,
+            colors: stringToList(colors),
         };
 
         if (updatingProduct) {
@@ -188,22 +193,22 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setName(productToUpdate.name);
             setPrice(productToUpdate.price);
             setStock(productToUpdate.stock);
-            setCategories(productToUpdate.categories);
+            setCategories(productToUpdate.categories.join(','));
             setDescription(productToUpdate.description);
             //   setImages(productToUpdate.images)
             setSizes(productToUpdate.sizes);
-            setColors(productToUpdate.colors);
+            setColors(productToUpdate.colors.join(','));
             setUpdatingProduct(true);
         } else {
             setId('none');
             setName('');
             setPrice(0);
             setStock(0);
-            setCategories([]);
+            setCategories('');
             setDescription('');
             // setImages([])
             setSizes([]);
-            setColors([]);
+            setColors('');
             setUpdatingProduct(false);
         }
         clearErrors();
@@ -283,8 +288,8 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
                             </label>
                             <input
                                 type="text"
-                                value={categories.join(',')}
-                                onChange={(e) => setCategories(stringToList(e.target.value))}
+                                value={categories}
+                                onChange={(e) => setCategories(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
                             />
 
@@ -311,8 +316,8 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
                             </label>
                             <input
                                 type="text"
-                                value={colors.join(',')}
-                                onChange={(e) => setColors(stringToList(e.target.value))}
+                                value={colors}
+                                onChange={(e) => setColors(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
                             />
 
