@@ -131,8 +131,25 @@ export class Product {
 
         if (!product.description.trim()) throw new Error('The product description is required.');
 
-        if (product.images.length === 0) {
-            throw new Error('Product must have at least one image.');
+        if (!product.images.trim()) {
+            throw new Error('The product image is required.');
+        }
+
+        if (
+            product.images.trim() !== 'shoes' &&
+            product.images.trim() !== 'shirt' &&
+            product.images.trim() !== 'hoodie' &&
+            product.images.trim() !== 'watch' &&
+            product.images.trim() !== 'jeans' &&
+            product.images.trim() !== 'gloves' &&
+            product.images.trim() !== 'cap' &&
+            product.images.trim() !== 'toque' &&
+            product.images.trim() !== 'socks' &&
+            product.images.trim() !== 'placeholder'
+        ) {
+            throw new Error(
+                'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, toque, socks or placeholder.'
+            );
         }
 
         if (product.sizes.length === 0) {

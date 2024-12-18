@@ -26,7 +26,7 @@ const orders: Order[] = [
                     stock: 200,
                     categories: ['Clothing', 'Men'],
                     description: 'Comfortable cotton T-Shirt.',
-                    images: ['tshirt_front.jpg', 'tshirt_back.jpg'],
+                    images: 'shirt',
                     sizes: ['S', 'M', 'L', 'XL'],
                     colors: ['Red', 'Blue', 'Black'],
                 }),

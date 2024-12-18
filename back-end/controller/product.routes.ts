@@ -23,9 +23,7 @@
  *         description:
  *           type: string
  *         images:
- *           type: array
- *           items:
- *             type: string
+ *           type: string
  *         sizes:
  *           type: array
  *           items:
@@ -53,9 +51,7 @@
  *         description:
  *           type: string
  *         images:
- *           type: array
- *           items:
- *             type: string
+ *           type: string
  *         sizes:
  *           type: array
  *           items:

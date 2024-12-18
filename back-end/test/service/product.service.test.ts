@@ -18,7 +18,7 @@ const products: Product[] = [
         stock: 100,
         categories: ['Clothing', 'Tops'],
         description: 'A comfortable, everyday t-shirt available in multiple colors.',
-        images: ['https://example.com/images/tshirt1.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
         id: 1,
@@ -29,7 +29,7 @@ const products: Product[] = [
         stock: 50,
         categories: ['Footwear', 'Sports'],
         description: 'Lightweight and comfortable shoes designed for running.',
-        images: ['https://example.com/images/shoes1.jpg'],
+        images: 'shoes',
         sizes: ['M', 'L', 'XL'],
         colors: ['White', 'Black'],
         id: 2,
@@ -92,7 +92,7 @@ test('given a valid product input, when creating a product, then the product is 
         stock: 30,
         categories: ['Footwear', 'Sports'],
         description: 'Durable and comfortable running shoes.',
-        images: ['https://example.com/images/runningshoes.jpg'],
+        images: 'shoes',
         sizes: ['M', 'L', 'XL'],
         colors: ['Blue', 'Green'],
     };
@@ -119,7 +119,7 @@ test('given an existing product, when creating it again, then an error is thrown
         stock: 100,
         categories: ['Clothing', 'Tops'],
         description: 'A comfortable, everyday t-shirt available in multiple colors.',
-        images: ['https://example.com/images/tshirt1.jpg'],
+        images: 'image3.jpg',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
     };
@@ -140,7 +140,7 @@ test('given a valid product update, when updating a product, then the product is
         stock: 80,
         categories: ['Clothing', 'Tops'],
         description: 'Updated description for a comfortable t-shirt.',
-        images: ['https://example.com/images/tshirt1.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
     };
@@ -166,7 +166,7 @@ test('given a non-existent product ID, when updating the product, then an error 
         stock: 0,
         categories: ['Unknown'],
         description: 'This product does not exist.',
-        images: ['https://example.com/images/nonexistent.jpg'],
+        images: 'image3.jpg',
         sizes: ['N/A'],
         colors: ['N/A'],
     };

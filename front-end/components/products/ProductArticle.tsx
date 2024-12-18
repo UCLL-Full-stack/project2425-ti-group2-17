@@ -9,7 +9,6 @@ import ProductService from '@services/ProductService';
 type ProductCardProps = {
     product: Product;
     quantity?: number;
-    // children: React.ReactNode;
     wishlist?: Product[];
     updateProduct?: (product: Product) => void;
     addItemToCart?: (id: number) => void;

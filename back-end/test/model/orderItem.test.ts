@@ -7,7 +7,7 @@ const validProductTestData = {
     stock: 100,
     categories: ['Clothing', 'Men', 'Tops'],
     description: 'A comfortable cotton t-shirt',
-    images: ['image1.jpg', 'image2.jpg'],
+    images: 'shirt',
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Black', 'White', 'Green'],
 };

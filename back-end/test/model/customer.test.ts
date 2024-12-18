@@ -91,7 +91,7 @@ test('given: a product, when: added to wishlist, then: product appears in wishli
         stock: 100,
         categories: ['Clothing', 'Men', 'Tops'],
         description: 'A comfortable cotton t-shirt',
-        images: ['image1.jpg', 'image2.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
     });
@@ -109,7 +109,7 @@ test('given: a product in wishlist, when: removed from wishlist, then: product i
         stock: 100,
         categories: ['Clothing', 'Men', 'Tops'],
         description: 'A comfortable cotton t-shirt',
-        images: ['image1.jpg', 'image2.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
     });
@@ -128,7 +128,7 @@ test('given: product already in wishlist, when: adding product again, then: thro
         stock: 100,
         categories: ['Clothing', 'Men', 'Tops'],
         description: 'A comfortable cotton t-shirt',
-        images: ['image1.jpg', 'image2.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
     });
@@ -146,7 +146,7 @@ test('given: product not in wishlist, when: removing product, then: throws an er
         stock: 100,
         categories: ['Clothing', 'Men', 'Tops'],
         description: 'A comfortable cotton t-shirt',
-        images: ['image1.jpg', 'image2.jpg'],
+        images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
     });

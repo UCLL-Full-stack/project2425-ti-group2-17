@@ -6,7 +6,7 @@ const validProductTestData = {
     stock: 100,
     categories: ['Clothing', 'Men', 'Tops'],
     description: 'A comfortable cotton t-shirt',
-    images: ['image1.jpg', 'image2.jpg'],
+    images: 'shirt',
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Black', 'White', 'Green'],
 };
@@ -27,7 +27,7 @@ test('given: valid values for product, when: product is created, then: product i
     expect(product.getStock()).toEqual(100);
     expect(product.getCategories()).toEqual(['Clothing', 'Men', 'Tops']);
     expect(product.getDescription()).toEqual('A comfortable cotton t-shirt');
-    expect(product.getImages()).toEqual(['image1.jpg', 'image2.jpg']);
+    expect(product.getImages()).toEqual('shirt');
     expect(product.getSizes()).toEqual(['S', 'M', 'L', 'XL']);
     expect(product.getColors()).toEqual(['Black', 'White', 'Green']);
 });
@@ -63,7 +63,7 @@ test('given: no description for product, when: product is created, then: an erro
 });
 
 test('given: no images for product, when: product is created, then: an error is thrown.', () => {
-    expect(() => createProduct({ images: [] })).toThrow('Product must have at least one image.');
+    expect(() => createProduct({ images: '' })).toThrow('The product image is required.');
 });
 
 test('given: no sizes for product, when: product is created, then: an error is thrown.', () => {
@@ -81,5 +81,11 @@ test('given: invalid size for product, when: product is created, then: an error 
 test('given: no colors for product, when: product is created, then: an error is thrown.', () => {
     expect(() => createProduct({ colors: [] })).toThrow(
         'Product must be available in at least one color.'
+    );
+});
+
+test('given: invalid image for product, when: product is created, then: an error is thrown.', () => {
+    expect(() => createProduct({ images: 'invalid' })).toThrow(
+        'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, toque, socks or placeholder.'
     );
 });
