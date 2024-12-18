@@ -10,9 +10,12 @@ import useInterval from 'use-interval';
 import ProductCreator from '@components/products/ProductCreator';
 import CustomerService from '@services/CustomerService';
 import ProductArticle from '@components/products/ProductArticle';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
+    const { t } = useTranslation();
 
     const reloadProducts = () => {
         mutate('products', getProducts());
@@ -59,6 +62,16 @@ const Products: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps = async (context: { locale: any }) => {
+    const { locale } = context;
+
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default Products;

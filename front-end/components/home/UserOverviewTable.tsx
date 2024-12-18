@@ -2,10 +2,13 @@ import React from 'react';
 import { Product, Customer } from '@types';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
+import { useTranslation } from 'next-i18next';
 
 type Props = {};
 
 const UserOverviewTable: React.FC<Props> = ({}: Props) => {
+    const { t } = useTranslation();
+
     const users: Customer[] = [
         { email: 'john.doe@example.com', password: 'password123', role: 'customer' },
         { email: 'jane.smith@example.com', password: 'password456', role: 'customer' },
@@ -22,13 +25,14 @@ const UserOverviewTable: React.FC<Props> = ({}: Props) => {
                         <thead className="bg-yellow-300">
                             <tr>
                                 <th scope="col" className="py-2 px-4 text-left">
-                                    Email
+                                    {t('home.email')}
                                 </th>
                                 <th scope="col" className="py-2 px-4 text-left">
-                                    Password
+                                    {/* Password */}
+                                    {t('home.password')}
                                 </th>
                                 <th scope="col" className="py-2 px-4 text-left">
-                                    Role
+                                    {t('home.role')}
                                 </th>
                             </tr>
                         </thead>

@@ -9,12 +9,16 @@ import CustomerService from '@services/CustomerService';
 import DiscountService from '@services/DiscountService';
 import DiscountOverviewTable from '@components/discounts/DiscountOverviewTable';
 import DiscountCodeEditor from '@components/discounts/DiscountEditor';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Discounts: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
 
     const [selectedDiscountcode, setSelectedDiscountCode] = useState<DiscountCode | null>(null);
     const [isCreateDiscountCodeOpen, setIsCreateDiscountCodeOpen] = useState(false);
+    const { t } = useTranslation();
+
     const openCreateDiscountCode = () => {
         setSelectedDiscountCode(null);
         setIsCreateDiscountCodeOpen(true);
@@ -94,6 +98,16 @@ const Discounts: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps = async (context: { locale: any }) => {
+    const { locale } = context;
+
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default Discounts;

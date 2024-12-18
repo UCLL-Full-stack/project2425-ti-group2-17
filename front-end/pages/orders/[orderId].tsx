@@ -4,11 +4,14 @@ import OrderInfo from '@components/orders/orderInfo';
 import OrderService from '@services/OrderService';
 import { Order } from '@types';
 import Header from '@components/header';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const OrderPage: React.FC = () => {
     const [order, setOrder] = useState<Order | null>(null);
     const router = useRouter();
     const { orderId } = router.query;
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (orderId) {
@@ -35,6 +38,16 @@ const OrderPage: React.FC = () => {
             <OrderInfo order={order} />
         </div>
     );
+};
+
+export const getServerSideProps = async (context: { locale: any }) => {
+    const { locale } = context;
+
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default OrderPage;

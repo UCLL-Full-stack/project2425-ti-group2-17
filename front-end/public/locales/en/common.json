@@ -1,0 +1,20 @@
+{
+    "app.title": "JB-Clothing",
+    "header": {
+        "welcome": "Welcome",
+        "nav": {
+            "home": "Home",
+            "products": "Products",
+            "orders": "Orders",
+            "discounts": "Discounts",
+            "login": "Login",
+            "logout": "Logout"
+        }
+    },
+    "home": {
+        "title": "Home",
+        "email": "Email",
+        "password": "Password",
+        "role": "Role"
+    }
+}

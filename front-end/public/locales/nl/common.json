@@ -1,0 +1,20 @@
+{
+    "app.title": "JB-Kledij",
+    "header": {
+        "welcome": "Welkom",
+        "nav": {
+            "home": "Thuis",
+            "products": "Producten",
+            "orders": "Bestellingen",
+            "discounts": "Kortingen",
+            "login": "Inloggen",
+            "logout": "Uitloggen"
+        }
+    },
+    "home": {
+        "title": "Thuis",
+        "email": "E-mail",
+        "password": "Paswoord",
+        "role": "Rol"
+    }
+}

@@ -8,12 +8,15 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 import classNames from 'classnames';
 import AddDiscountCodeForm from '@components/checkout/AddDiscountCodeForm';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Checkout: React.FC = () => {
     const [orderStatus, setOrderStatus] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
     const [isAddDiscountCodeOpen, setIsAddDiscountCodeOpen] = useState(false);
+    const { t } = useTranslation();
 
     const openAddDiscountCode = () => setIsAddDiscountCodeOpen(true);
     const closeAddDiscountCode = () => setIsAddDiscountCodeOpen(false);
@@ -152,6 +155,16 @@ const Checkout: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps = async (context: { locale: any }) => {
+    const { locale } = context;
+
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default Checkout;

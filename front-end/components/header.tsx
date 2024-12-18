@@ -3,10 +3,13 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { Customer } from '@types';
+import { useTranslation } from 'next-i18next';
+import Language from './language/Language';
 
 const Header: React.FC = () => {
     const router = useRouter();
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
@@ -24,21 +27,21 @@ const Header: React.FC = () => {
                     href="/"
                     className="flex items-center text-3xl font-extrabold tracking-wide text-gray-900 dark:text-white uppercase"
                 >
-                    JB Clothing
+                    {t('app.title')}
                 </Link>
                 <div className="flex items-center space-x-4">
                     <Link
                         href="/"
                         className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                     >
-                        Home
+                        {t('header.nav.home')}
                     </Link>
                     {loggedInUser && (
                         <Link
                             href="/products"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                         >
-                            Products
+                            {t('header.nav.products')}
                         </Link>
                     )}
 
@@ -47,7 +50,7 @@ const Header: React.FC = () => {
                             href="/orders"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                         >
-                            Orders
+                            {t('header.nav.orders')}
                         </Link>
                     )}
 
@@ -56,7 +59,7 @@ const Header: React.FC = () => {
                             href="/discounts"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                         >
-                            Discounts
+                            {t('header.nav.discounts')}
                         </Link>
                     )}
 
@@ -65,7 +68,7 @@ const Header: React.FC = () => {
                             href="/login"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                         >
-                            Login
+                            - {t('header.nav.login')}
                         </Link>
                     )}
                     {loggedInUser && (
@@ -74,12 +77,12 @@ const Header: React.FC = () => {
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
                             onClick={handleClick}
                         >
-                            Logout
+                            {t('header.nav.logout')}
                         </a>
                     )}
                     {loggedInUser && (
                         <div className="block py-2 px-4 text-gray-900 dark:text-white">
-                            Welcome, {loggedInUser.fullname}!
+                            {t('header.welcome')}, {loggedInUser.fullname}!
                         </div>
                     )}
                     {loggedInUser && (
@@ -110,6 +113,7 @@ const Header: React.FC = () => {
                             />
                         </button>
                     )}
+                    <Language />
                 </div>
             </div>
         </nav>

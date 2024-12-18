@@ -9,6 +9,8 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 import ProductCreator from '@components/products/ProductCreator';
 import CustomerService from '@services/CustomerService';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Products: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
@@ -20,6 +22,7 @@ const Products: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [minPrice, setMinPrice] = useState<number>(0);
     const [maxPrice, setMaxPrice] = useState<number>(1000);
+    const { t } = useTranslation();
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -263,6 +266,16 @@ const Products: React.FC = () => {
             </main>
         </>
     );
+};
+
+export const getServerSideProps = async (context: { locale: any }) => {
+    const { locale } = context;
+
+    return {
+        props: {
+            ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+        },
+    };
 };
 
 export default Products;
