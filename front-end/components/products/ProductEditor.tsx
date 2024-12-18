@@ -17,7 +17,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
     const [stock, setStock] = useState<number>(0);
     const [categories, setCategories] = useState('');
     const [description, setDescription] = useState('');
-    //   const [images, setImages] = useState<string[]>([]);
+    const [image, setImage] = useState('');
     const [sizes, setSizes] = useState('');
     const [colors, setColors] = useState('');
 
@@ -26,14 +26,14 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
     const [stockError, setStockError] = useState<string | null>(null);
     const [categoriesError, setCategoriesError] = useState<string | null>(null);
     const [descriptionError, setDescriptionError] = useState<string | null>(null);
-    //   const [imagesError, setImagesError] = useState<string | null>(null);
     const [sizesError, setSizesError] = useState<string | null>(null);
     const [colorsError, setColorsError] = useState<string | null>(null);
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
     const [updatingProduct, setUpdatingProduct] = useState(false);
 
     const stringToList = (inputString: string) => {
-        return inputString.split(',').map((category) => category.trim());
+        return Array.from(new Set(inputString.split(',').map((category) => category.trim())));
+        //         return Array.from(new Set(data.filter((item) => item.trim() !== '')));
     };
 
     const clearErrors = () => {
@@ -42,7 +42,6 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         setStockError(null);
         setCategoriesError(null);
         setDescriptionError(null);
-        // setImagesError(null);
         setSizesError(null);
         setColorsError(null);
         setStatusMessages([]);
@@ -83,13 +82,6 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setDescriptionError('Description is required.');
             isValid = false;
         }
-        // if (!images || images.length===0) {
-        //     setImagesError('Images are required.');
-        //     isValid = false;
-        // } else if (!pattern.test(images)) {
-        //     setImagesError('Images must be seperated by commas without spacing in between.');
-        //     isValid = false;
-        // }
         const sizePattern = /^(XS|S|M|L|XL)(,(XS|S|M|L|XL))*$/;
         if (!sizes || sizes.trim() === '') {
             setSizesError('Sizes are required.');
@@ -108,10 +100,6 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             isValid = false;
         }
         return isValid;
-    };
-
-    const cleanData = (data: string[]) => {
-        return Array.from(new Set(data.filter((item) => item.trim() !== '')));
     };
 
     const handleUpdateProduct = async (request: Product) => {
@@ -167,13 +155,12 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             return;
         }
         const request: Product = {
-            //   id: product.id,
             name,
             price: price,
             stock: stock,
             categories: stringToList(categories),
             description,
-            images: ['unimplemented'],
+            images: image,
             sizes: stringToList(sizes),
             colors: stringToList(colors),
         };
@@ -193,7 +180,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setStock(productToUpdate.stock);
             setCategories(productToUpdate.categories.join(','));
             setDescription(productToUpdate.description);
-            //   setImages(productToUpdate.images)
+            setImage(productToUpdate.images);
             setSizes(productToUpdate.sizes.join(','));
             setColors(productToUpdate.colors.join(','));
             setUpdatingProduct(true);
@@ -204,7 +191,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setStock(0);
             setCategories('');
             setDescription('');
-            // setImages([])
+            setImage('none');
             setSizes('');
             setColors('');
             setUpdatingProduct(false);
@@ -320,6 +307,46 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
                             />
 
                             {colorsError && <p className="text-red-500 text-sm">{colorsError}</p>}
+                        </div>
+                        <div className="col-span-1">
+                            <label className="block mb-1 text-sm font-semibold text-yellow-500">
+                                Image
+                            </label>
+                            <select
+                                value={image}
+                                onChange={(e) => {
+                                    setImage(e.target.value);
+                                }}
+                                className="w-full p-2 border border-gray-300 rounded outline-none"
+                            >
+                                <option value={'none'} key={'none'}>
+                                    None
+                                </option>
+                                <option value={'shoes'} key={'shoes'}>
+                                    Shoes
+                                </option>
+                                <option value={'shirt'} key={'shirt'}>
+                                    Shirt
+                                </option>
+                                <option value={'hoodie'} key={'hoodie'}>
+                                    Hoodie
+                                </option>{' '}
+                                <option value={'watch'} key={'watch'}>
+                                    Watch
+                                </option>
+                                <option value={'jeans'} key={'jeans'}>
+                                    Jeans
+                                </option>
+                                <option value={'gloves'} key={'gloves'}>
+                                    Gloves
+                                </option>
+                                <option value={'cap'} key={'cap'}>
+                                    Cap
+                                </option>
+                                <option value={'socks'} key={'socks'}>
+                                    Socks
+                                </option>
+                            </select>
                         </div>
                         <button
                             className="mt-6 w-full p-2 bg-yellow-500 text-white font-semibold rounded"

@@ -86,6 +86,6 @@ test('given: no colors for product, when: product is created, then: an error is 
 
 test('given: invalid image for product, when: product is created, then: an error is thrown.', () => {
     expect(() => createProduct({ images: 'invalid' })).toThrow(
-        'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, toque, socks or placeholder.'
+        'Image must be one of the following: shoes, shirt, hoodie, watch, jeans, gloves, cap, socks or none.'
     );
 });
