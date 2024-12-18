@@ -18,7 +18,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
     const [categories, setCategories] = useState('');
     const [description, setDescription] = useState('');
     //   const [images, setImages] = useState<string[]>([]);
-    const [sizes, setSizes] = useState<string[]>([]);
+    const [sizes, setSizes] = useState('');
     const [colors, setColors] = useState('');
 
     const [nameError, setNameError] = useState<string | null>(null);
@@ -48,7 +48,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         setStatusMessages([]);
     };
 
-    const validate = (cleanedSizes: string[]) => {
+    const validate = () => {
         let isValid = true;
 
         if (!name || name.trim() === '') {
@@ -69,11 +69,11 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setStockError('Stock may not be negative.');
             isValid = false;
         }
-        const pattern = /^([a-zA-Z]+)(,[a-zA-Z]+)*$/;
-        if (!categories || categories.length === 0) {
+        const listPattern = /^([a-zA-Z]+)(,[a-zA-Z]+)*$/;
+        if (!categories || categories.trim() === '') {
             setCategoriesError('Categories are required.');
             isValid = false;
-        } else if (!pattern.test(categories)) {
+        } else if (!listPattern.test(categories.trim())) {
             setCategoriesError(
                 'Categories must be seperated by commas without spacing in between.'
             );
@@ -86,25 +86,24 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         // if (!images || images.length===0) {
         //     setImagesError('Images are required.');
         //     isValid = false;
+        // } else if (!pattern.test(images)) {
+        //     setImagesError('Images must be seperated by commas without spacing in between.');
+        //     isValid = false;
         // }
-        if (!cleanedSizes || cleanedSizes.length === 0) {
+        const sizePattern = /^(XS|S|M|L|XL)(,(XS|S|M|L|XL))*$/;
+        if (!sizes || sizes.trim() === '') {
             setSizesError('Sizes are required.');
             isValid = false;
-        } else if (
-            !cleanedSizes.every(
-                (size) =>
-                    size === 'XS' || size === 'S' || size === 'M' || size === 'L' || size === 'XL'
-            )
-        ) {
+        } else if (!sizePattern.test(sizes.trim())) {
             setSizesError(
                 'All sizes must be XS or S or M or L or XL seperated by commas without spacing in between.'
             );
             isValid = false;
         }
-        if (!colors || colors.length === 0) {
+        if (!colors || colors.trim() === '') {
             setColorsError('Colors are required.');
             isValid = false;
-        } else if (!pattern.test(colors)) {
+        } else if (!listPattern.test(colors.trim())) {
             setColorsError('Colors must be seperated by commas without spacing in between.');
             isValid = false;
         }
@@ -163,9 +162,8 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
         event.preventDefault();
 
         clearErrors();
-        const cleanedSizes = cleanData(sizes);
 
-        if (!validate(cleanedSizes)) {
+        if (!validate()) {
             return;
         }
         const request: Product = {
@@ -176,7 +174,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             categories: stringToList(categories),
             description,
             images: ['unimplemented'],
-            sizes: cleanedSizes,
+            sizes: stringToList(sizes),
             colors: stringToList(colors),
         };
 
@@ -196,7 +194,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setCategories(productToUpdate.categories.join(','));
             setDescription(productToUpdate.description);
             //   setImages(productToUpdate.images)
-            setSizes(productToUpdate.sizes);
+            setSizes(productToUpdate.sizes.join(','));
             setColors(productToUpdate.colors.join(','));
             setUpdatingProduct(true);
         } else {
@@ -207,7 +205,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setCategories('');
             setDescription('');
             // setImages([])
-            setSizes([]);
+            setSizes('');
             setColors('');
             setUpdatingProduct(false);
         }
@@ -303,8 +301,8 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
                             </label>
                             <input
                                 type="text"
-                                value={sizes.join(',')}
-                                onChange={(e) => setSizes(stringToList(e.target.value))}
+                                value={sizes}
+                                onChange={(e) => setSizes(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded outline-none"
                             />
 
