@@ -46,11 +46,24 @@ const deleteProduct = (productId: string) => {
     });
 };
 
+const addRatingToProduct = (productId: number, rating: number) => {
+    const token = JSON.parse(sessionStorage.getItem('loggedInUser')!).token;
+    return fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${productId}/rating`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ rating }),
+    });
+};
+
 const ProductService = {
     getAllProducts,
     createProduct,
     updateProduct,
     deleteProduct,
+    addRatingToProduct,
 };
 
 export default ProductService;

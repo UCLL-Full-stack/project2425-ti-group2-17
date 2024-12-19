@@ -65,7 +65,7 @@ type Product = {
     images: string;
     sizes: string[];
     colors: string[];
-    rating: number[];
+    rating?: number[];
 };
 
 type StatusMessage = {
