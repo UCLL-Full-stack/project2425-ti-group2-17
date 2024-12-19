@@ -32,10 +32,18 @@
  *           type: array
  *           items:
  *             type: string
+ *         rating:
+ *           type: array
+ *           items:
+ *             type: number
+ *             format: float
  *
  *     ProductInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         name:
  *           type: string
  *         price:
@@ -60,6 +68,11 @@
  *           type: array
  *           items:
  *             type: string
+ *         rating:
+ *           type: array
+ *           items:
+ *             type: integer
+ *             format: int64
  */
 
 import { NextFunction, Request, Response, Router } from 'express';

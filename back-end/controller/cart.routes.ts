@@ -5,6 +5,9 @@
  *     CartItem:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         product:
  *           $ref: '#/components/schemas/Product'
  *         quantity:
@@ -26,6 +29,9 @@
  *     CartInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         customer:
  *           $ref: '#/components/schemas/Customer'
  *         products:

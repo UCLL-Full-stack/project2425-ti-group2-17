@@ -21,6 +21,9 @@
  *     PaymentInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         amount:
  *           type: number
  *           format: float

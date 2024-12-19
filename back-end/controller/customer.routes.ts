@@ -49,6 +49,13 @@
  *           type: string
  *         password:
  *           type: string
+ *         role:
+ *           type: string
+ *           description: User role.
+ *           enum:
+ *             - customer
+ *             - salesman
+ *             - admin
  *         wishlist:
  *           type: array
  *           items:
@@ -56,6 +63,9 @@
  *     CustomerInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         firstName:
  *           type: string
  *         lastName:
@@ -66,6 +76,17 @@
  *         password:
  *           type: string
  *           default: "password"
+ *         role:
+ *           type: string
+ *           description: User role.
+ *           enum:
+ *             - customer
+ *             - salesman
+ *             - admin
+ *         wishlist:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Product'
  */
 
 import { NextFunction, Request, Response, Router } from 'express';

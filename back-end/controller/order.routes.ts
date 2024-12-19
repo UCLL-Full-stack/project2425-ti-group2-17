@@ -40,6 +40,9 @@
  *     OrderItemInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         order:
  *           $ref: '#/components/schemas/Order'
  *         product:
@@ -70,6 +73,9 @@
  *     OrderInput:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           format: int64
  *         customer:
  *           $ref: '#/components/schemas/Customer'
  *         items:
