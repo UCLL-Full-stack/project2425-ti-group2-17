@@ -300,4 +300,50 @@ productRouter.delete('/:id', async (req: Request, res: Response, next: NextFunct
     }
 });
 
+/**
+ * @swagger
+ * /products/{id}/rating:
+ *   post:
+ *     security:
+ *      - bearerAuth: []
+ *     summary: Add a rating to a product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product to rate
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               rating:
+ *                 type: integer
+ *                 description: Rating value between 1 and 5
+ *     responses:
+ *       200:
+ *         description: Rating added successfully
+ *       400:
+ *         description: Invalid rating value
+ *       404:
+ *         description: Product not found
+ *       500:
+ *         description: Internal server error
+ */
+productRouter.post('/:id/rating', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const productId = Number(req.params.id);
+        const { rating } = req.body;
+        const result = await productService.addRatingToProduct(productId, rating);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
 export { productRouter };

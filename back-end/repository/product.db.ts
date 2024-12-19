@@ -121,6 +121,23 @@ const deleteProduct = async ({ id }: { id: number }): Promise<string> => {
     }
 };
 
+const addRatingToProduct = async (productId: number, rating: number): Promise<Product | null> => {
+    try {
+        const updatedProductPrisma = await database.product.update({
+            where: { id: productId },
+            data: {
+                rating: {
+                    push: rating,
+                },
+            },
+        });
+        return Product.from(updatedProductPrisma);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
 export default {
     createProduct,
     getProducts,
@@ -129,4 +146,5 @@ export default {
     getProductsBySearch,
     updateProduct,
     deleteProduct,
+    addRatingToProduct,
 };

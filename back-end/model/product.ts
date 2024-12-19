@@ -10,7 +10,7 @@ export class Product {
     private images: string;
     private sizes: string[];
     private colors: string[];
-    private rating: number;
+    private rating: number[];
 
     constructor(product: {
         name: string;
@@ -21,7 +21,7 @@ export class Product {
         images: string;
         sizes: string[];
         colors: string[];
-        rating: number;
+        rating: number[];
         id?: number;
     }) {
         this.validate(product);
@@ -73,7 +73,7 @@ export class Product {
         return this.colors;
     }
 
-    getRating(): number {
+    getRating(): number[] {
         return this.rating;
     }
 
@@ -109,7 +109,7 @@ export class Product {
         this.colors = colors;
     }
 
-    setRating(rating: number): void {
+    setRating(rating: number[]): void {
         this.rating = rating;
     }
 
@@ -122,7 +122,7 @@ export class Product {
         images: string;
         sizes: string[];
         colors: string[];
-        rating: number;
+        rating: number[];
     }) {
         if (!product.name.trim()) throw new Error('The product name is required.');
 
@@ -178,6 +178,13 @@ export class Product {
 
         if (product.colors.length === 0) {
             throw new Error('Product must be available in at least one color.');
+        }
+
+        if (
+            !Array.isArray(product.rating) ||
+            !product.rating.every((r: number) => typeof r === 'number' && r >= 1 && r <= 5)
+        ) {
+            throw new Error('All ratings must be numbers between 1 and 5.');
         }
     }
 

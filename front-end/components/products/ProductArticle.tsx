@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
 import { Customer, Product, StatusMessage } from '@types';
@@ -29,6 +29,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
     deleteProduct,
     updateQuantity,
 }) => {
+    const [rating, setRating] = useState<number[]>([]);
+
+    useEffect(() => {
+        if (product.rating) {
+            setRating(product.rating);
+        }
+    }, [product.rating]);
+
     return (
         <article
             key={product.id}
@@ -77,7 +85,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         <strong>Colors:</strong> {product.colors.join(', ')}
                     </div>
                     <div className="text-left">
-                        <strong>Rating:</strong> {product.rating}
+                        <strong>Rating:</strong>{' '}
+                        {rating.length > 0
+                            ? rating.reduce((acc, curr) => acc + curr, 0) / rating.length
+                            : 'No ratings yet'}
                     </div>
                 </div>
             </div>
