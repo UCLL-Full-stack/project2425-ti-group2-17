@@ -203,41 +203,4 @@ orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunctio
     }
 });
 
-/**
- * @swagger
- * /orders:
- *   post:
- *     security:
- *      - bearerAuth: []
- *     summary: Create a new order
- *     tags: [Orders]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/OrderInput'
- *     responses:
- *       200:
- *         description: The order was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Order'
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal server error
- */
-
-orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const order = <OrderInput>req.body;
-        const result = await orderService.createOrder(order);
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
-
 export { orderRouter };
