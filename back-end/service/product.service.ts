@@ -89,6 +89,18 @@ const deleteProduct = async (productId: number): Promise<string> => {
     return await productDb.deleteProduct({ id: productId });
 };
 
+const addRatingToProduct = async (productId: number, rating: number): Promise<Product> => {
+    if (!productId) throw new Error('The product id is incorrect.');
+
+    if (rating < 1 || rating > 5) throw new Error('The rating must be between 1 and 5');
+
+    const updatedProduct = await productDb.addRatingToProduct(productId, rating);
+
+    if (!updatedProduct) throw new Error('Failed to add rating to product.');
+
+    return updatedProduct;
+};
+
 export default {
     createProduct,
     getProducts,
@@ -96,4 +108,5 @@ export default {
     getProductsBySearch,
     updateProduct,
     deleteProduct,
+    addRatingToProduct,
 };
