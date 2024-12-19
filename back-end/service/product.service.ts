@@ -11,6 +11,7 @@ const createProduct = async ({
     images,
     sizes,
     colors,
+    rating,
 }: ProductInput): Promise<Product> => {
     const existingProduct = await productDb.getProductByName({ name });
 
@@ -27,6 +28,7 @@ const createProduct = async ({
         images,
         sizes,
         colors,
+        rating,
         id: productId,
     });
 
@@ -64,6 +66,7 @@ const updateProduct = async (id: number, productData: Partial<ProductInput>): Pr
         images: productData.images || existingProduct.getImages(),
         sizes: productData.sizes || existingProduct.getSizes(),
         colors: productData.colors || existingProduct.getColors(),
+        rating: productData.rating || existingProduct.getRating(),
     });
 
     if (productData.name) existingProduct.setName(productData.name);

@@ -10,6 +10,7 @@ export class Product {
     private images: string;
     private sizes: string[];
     private colors: string[];
+    private rating: number;
 
     constructor(product: {
         name: string;
@@ -20,6 +21,7 @@ export class Product {
         images: string;
         sizes: string[];
         colors: string[];
+        rating: number;
         id?: number;
     }) {
         this.validate(product);
@@ -32,6 +34,7 @@ export class Product {
         this.images = product.images;
         this.sizes = product.sizes;
         this.colors = product.colors;
+        this.rating = product.rating;
     }
 
     getId(): number | undefined {
@@ -70,6 +73,10 @@ export class Product {
         return this.colors;
     }
 
+    getRating(): number {
+        return this.rating;
+    }
+
     setName(name: string): void {
         this.name = name;
     }
@@ -102,6 +109,10 @@ export class Product {
         this.colors = colors;
     }
 
+    setRating(rating: number): void {
+        this.rating = rating;
+    }
+
     validate(product: {
         name: string;
         price: number;
@@ -111,6 +122,7 @@ export class Product {
         images: string;
         sizes: string[];
         colors: string[];
+        rating: number;
     }) {
         if (!product.name.trim()) throw new Error('The product name is required.');
 
@@ -197,6 +209,7 @@ export class Product {
         images,
         sizes,
         colors,
+        rating,
     }: ProductPrisma) {
         return new Product({
             id,
@@ -208,6 +221,7 @@ export class Product {
             images,
             sizes,
             colors,
+            rating,
         });
     }
 }
