@@ -35,8 +35,8 @@
  *         rating:
  *           type: array
  *           items:
- *             type: number
- *             format: float
+ *             type: integer
+ *             format: int64
  *
  *     ProductInput:
  *       type: object
