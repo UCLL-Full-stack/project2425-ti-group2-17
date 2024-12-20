@@ -21,7 +21,14 @@ const getOrders = async ({ email, role }: { email: string; role: string }): Prom
 };
 
 const getOrderById = async (id: number, email: string, role: Role): Promise<Order> => {
-    if (role === 'admin' || role === 'salesman') {
+    const order = await orderDb.getOrderById({ id });
+
+    if (!order) throw new Error(`Order with id ${id} does not exist.`);
+    if (
+        role === 'admin' ||
+        role === 'salesman' ||
+        (role === 'customer' && email === order.getCustomer().getEmail())
+    ) {
         const order = await orderDb.getOrderById({ id });
 
         if (!order) throw new Error(`Order with id ${id} does not exist.`);
@@ -29,7 +36,8 @@ const getOrderById = async (id: number, email: string, role: Role): Promise<Orde
         return order;
     } else {
         throw new UnauthorizedError('credentials_required', {
-            message: 'You must be a salesman or admin to access an order by id.',
+            message:
+                'You must be a salesman,  admin or be logged in as the customer who the order belongs to to access an order by id.',
         });
     }
 };

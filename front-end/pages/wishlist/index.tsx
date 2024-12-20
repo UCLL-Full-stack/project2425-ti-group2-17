@@ -17,29 +17,9 @@ const Wishlist: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const { t } = useTranslation();
 
-    // const reloadWishlist = () => {
-    //     mutate('Wishlist', getWishlist());
-    // };
-
-    // const getWishlist = async () => {
-    //     if (loggedInUser) {
-    //         const response = await CustomerService.getWishlist(loggedInUser.email!);
-    //         if (response.ok) {
-    //             const Wishlist = await response.json();
-    //             return Wishlist;
-    //         }
-    //     }
-    // };
-
-    // const { data, isLoading, error } = useSWR('Wishlist', getWishlist);
-
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
     }, []);
-
-    // useInterval(() => {
-    //     mutate('Wishlist', getWishlist());
-    // }, 4000);
 
     return (
         <>

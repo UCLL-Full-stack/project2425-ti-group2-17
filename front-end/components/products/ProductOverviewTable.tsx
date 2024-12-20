@@ -177,7 +177,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                     <div>
                         {products.map((product) => (
                             <ProductArticle
-                                key={product.id}
+                                loggedInUser={loggedInUser}
                                 product={product}
                                 wishlist={wishlist ?? []}
                                 updateProduct={updateProduct}
@@ -194,7 +194,7 @@ const ProductOverviewTable: React.FC<Props> = ({
                     <div>
                         {wishlist.map((product: Product) => (
                             <ProductArticle
-                                key={product.id}
+                                loggedInUser={loggedInUser}
                                 product={product}
                                 wishlist={wishlist}
                                 addItemToCart={addItemToCart}

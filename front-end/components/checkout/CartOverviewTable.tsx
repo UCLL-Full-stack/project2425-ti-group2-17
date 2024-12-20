@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Cart } from '@types';
+import { Cart, Customer } from '@types';
 import ProductArticle from '@components/products/ProductArticle';
 
 type Props = {
+    loggedInUser: Customer;
     cart: Cart;
     convertCartToOrder: (paymentStatus: string) => void;
     updateQuantity: (id: number, quantity: number) => void;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const CartOverviewTable: React.FC<Props> = ({
+    loggedInUser,
     cart,
     convertCartToOrder,
     updateQuantity,
@@ -34,6 +36,7 @@ const CartOverviewTable: React.FC<Props> = ({
                         .map((cartItem) => (
                             <ProductArticle
                                 key={cartItem.product.id}
+                                loggedInUser={loggedInUser}
                                 product={cartItem.product}
                                 quantity={cartItem.quantity}
                                 updateQuantity={updateQuantity}

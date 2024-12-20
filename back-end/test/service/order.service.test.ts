@@ -110,7 +110,7 @@ test('given customer role, when getting an order by ID, then UnauthorizedError i
     };
 
     await expect(getOrderById).rejects.toThrowError(
-        'You must be a salesman or admin to access an order by id.'
+        'You must be a salesman,  admin or be logged in as the customer who the order belongs to to access an order by id.'
     );
 });
 

@@ -136,6 +136,7 @@ const Checkout: React.FC = () => {
                     )}
                     {cart && loggedInUser && (
                         <CartOverviewTable
+                            loggedInUser={loggedInUser}
                             cart={cart}
                             convertCartToOrder={convertCartToOrder}
                             updateQuantity={updateQuantity}

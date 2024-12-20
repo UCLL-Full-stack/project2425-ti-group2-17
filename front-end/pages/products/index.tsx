@@ -235,15 +235,17 @@ const Products: React.FC = () => {
                                 </label>
                             </div>
                         </div>
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                            <button
-                                type="button"
-                                onClick={() => openCreateProduct()}
-                                className="w-min bg-black text-white py-2 rounded px-1"
-                            >
-                                Create product
-                            </button>
-                        </div>
+                        {loggedInUser && loggedInUser.role === 'admin' && (
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <button
+                                    type="button"
+                                    onClick={() => openCreateProduct()}
+                                    className="w-min bg-black text-white py-2 rounded px-1"
+                                >
+                                    Create product
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="w-4/5 p-4">

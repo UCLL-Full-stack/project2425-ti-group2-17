@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
-import { Product } from '@types';
+import { Customer, Product } from '@types';
 import ProductService from '@services/ProductService';
 
 type ProductCardProps = {
+    loggedInUser: Customer;
     product: Product;
     quantity?: number;
     wishlist?: Product[];
@@ -17,6 +18,7 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
+    loggedInUser,
     product,
     quantity,
     wishlist,
@@ -138,7 +140,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </div>
             </div>
             <div className="flex flex-col justify-center items-center ml-4">
-                {addItemToCart && (
+                {addItemToCart && loggedInUser && loggedInUser.role === 'customer' && (
                     <button
                         onClick={() => {
                             addItemToCart(product.id!);
@@ -156,6 +158,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 )}
                 {wishlist &&
                     addToWishlist &&
+                    loggedInUser &&
+                    loggedInUser.role === 'customer' &&
                     !wishlist.some(
                         (productInWishlist: Product) => productInWishlist.id === product.id
                     ) && (
@@ -176,6 +180,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         </button>
                     )}
                 {wishlist &&
+                    loggedInUser &&
+                    loggedInUser.role === 'customer' &&
                     removeFromWishlist &&
                     wishlist.some(
                         (productInWishlist: Product) => productInWishlist.id === product.id
@@ -196,25 +202,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             </svg>
                         </button>
                     )}
-                {updateProduct && deleteProduct && (
-                    <div className="flex flex-col space-y-2">
-                        <button
-                            type="button"
-                            onClick={() => updateProduct(product)}
-                            className="bg-black text-white py-2 px-4 rounded h-10 mt-1"
-                        >
-                            Update
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => deleteProduct(product.id!)}
-                            className="bg-black text-white py-2 px-4 rounded h-10 mt-1"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                )}
-                {updateQuantity && (
+                {updateProduct &&
+                    deleteProduct &&
+                    loggedInUser &&
+                    loggedInUser.role === 'admin' && (
+                        <div className="flex flex-col space-y-2">
+                            <button
+                                type="button"
+                                onClick={() => updateProduct(product)}
+                                className="bg-black text-white py-2 px-4 rounded h-10 mt-1"
+                            >
+                                Update
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => deleteProduct(product.id!)}
+                                className="bg-black text-white py-2 px-4 rounded h-10 mt-1"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                {updateQuantity && loggedInUser && loggedInUser.role === 'customer' && (
                     <div className="flex flex-col space-y-2 w-full">
                         <button
                             onClick={() => updateQuantity(product.id!, 1)}
