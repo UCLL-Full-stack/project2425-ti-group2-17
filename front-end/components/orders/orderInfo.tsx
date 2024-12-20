@@ -1,11 +1,13 @@
 // components/orders/OrderInfo.tsx
 import { Order } from '@types';
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+import styles from '@styles/home.module.css';
 
-interface OrderInfoProps {
+type OrderInfoProps = {
     order: Order;
-}
+};
 
 const OrderInfo: React.FC<OrderInfoProps> = ({ order }) => {
     const router = useRouter();
@@ -68,10 +70,18 @@ const OrderInfo: React.FC<OrderInfoProps> = ({ order }) => {
                             >
                                 <div className="flex w-full lg:w-3/6 items-center mb-4 lg:mb-0">
                                     <div className="w-24 h-32 bg-gray-200 flex items-center justify-center mr-4">
-                                        <img
+                                        {/* <img
                                             src={item.product.images[0]}
                                             alt={item.product.name}
                                             className="object-contain h-full"
+                                        /> */}
+                                        <Image
+                                            src={`/images/${item.product.images}.png`}
+                                            alt="Product image"
+                                            className={`${styles.vercelLogo} object-contain h-full`}
+                                            width={300}
+                                            height={350}
+                                            style={{ objectFit: 'cover' }}
                                         />
                                     </div>
                                     <div>
