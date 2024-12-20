@@ -5,6 +5,7 @@ import styles from '@styles/home.module.css';
 import UserOverviewTable from '@components/login/UserOverviewTable';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import WelcomeToSite from '@components/home/Welcome';
 
 const Home: React.FC = () => {
     const { t } = useTranslation();
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
             </Head>
             <Header />
             <main className={styles.main}>
-                <UserOverviewTable />
+                <WelcomeToSite />
             </main>
         </>
     );
