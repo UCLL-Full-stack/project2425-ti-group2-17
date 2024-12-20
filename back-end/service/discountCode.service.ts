@@ -3,7 +3,7 @@ import { DiscountCode } from '../model/discountCode';
 import discountCodeDB from '../repository/discountCode.db';
 import { DiscountCodeInput, Role } from '../types';
 
-const getDiscountCodes = async (username: string, role: Role): Promise<DiscountCode[]> => {
+const getDiscountCodes = async (email: string, role: Role): Promise<DiscountCode[]> => {
     if (role === 'salesman') {
         return await discountCodeDB.getDiscountCodes();
     } else {
@@ -15,7 +15,7 @@ const getDiscountCodes = async (username: string, role: Role): Promise<DiscountC
 
 const getDiscountCodeByCode = async (
     code: string,
-    username: string,
+    email: string,
     role: Role
 ): Promise<DiscountCode | null> => {
     if (role === 'salesman') {
@@ -33,7 +33,7 @@ const getDiscountCodeByCode = async (
 
 const createDiscountCode = async (
     { code, type, value, expirationDate, isActive }: DiscountCodeInput,
-    username: string,
+    email: string,
     role: Role
 ): Promise<DiscountCode> => {
     if (role === 'salesman') {
@@ -60,7 +60,7 @@ const createDiscountCode = async (
 const updateDiscountCode = async (
     currentCode: string,
     { code, type, value, expirationDate, isActive }: DiscountCodeInput,
-    username: string,
+    email: string,
     role: Role
 ): Promise<DiscountCode> => {
     if (role === 'salesman') {
@@ -87,7 +87,7 @@ const updateDiscountCode = async (
     }
 };
 
-const deleteDiscountCode = async (code: string, username: string, role: Role): Promise<string> => {
+const deleteDiscountCode = async (code: string, email: string, role: Role): Promise<string> => {
     if (role === 'salesman') {
         const existingDiscountCode = await discountCodeDB.getDiscountCodeByCode({ code });
 
