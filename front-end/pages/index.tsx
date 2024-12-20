@@ -2,7 +2,7 @@ import Header from '@components/header';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '@styles/home.module.css';
-import UserOverviewTable from '@components/home/UserOverviewTable';
+import UserOverviewTable from '@components/login/UserOverviewTable';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 

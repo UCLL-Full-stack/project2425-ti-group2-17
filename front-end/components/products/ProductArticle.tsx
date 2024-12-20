@@ -215,18 +215,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     </div>
                 )}
                 {updateQuantity && (
-                    <div>
+                    <div className="flex flex-col space-y-2 w-full">
                         <button
                             onClick={() => updateQuantity(product.id!, 1)}
-                            className="w-min bg-black text-white py-2 rounded px-1"
+                            className="bg-black text-white py-2 px-4 rounded h-10 mt-1 w-full"
                         >
-                            Add one
+                            Increment
                         </button>
                         <button
                             onClick={() => updateQuantity(product.id!, -1)}
-                            className="w-min bg-black text-white py-2 rounded px-1"
+                            className="bg-black text-white py-2 px-4 rounded h-10 mt-1 w-full"
                         >
-                            Remove one
+                            Decrease
                         </button>
                     </div>
                 )}

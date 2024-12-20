@@ -56,7 +56,6 @@ const Checkout: React.FC = () => {
                 ]);
             }
         } else {
-            setOrderStatus('Your order has been placed and an invoice has been sent.');
             mutate('cart', getCartByEmail());
         }
     };
