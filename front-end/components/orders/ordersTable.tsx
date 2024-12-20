@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
+import router from 'next/router';
 
 const OrderTable = () => {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -207,9 +208,10 @@ const OrderTable = () => {
                             key={order.id}
                             className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
                             style={{ cursor: 'pointer' }}
+                            onClick={() => router.push(`/orders/${order.id}`)}
                         >
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                                <Link href={`/orders/${order.id}`}>{order.id}</Link>
+                                {order.id}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                                 {order.customer.firstName} {order.customer.lastName}
