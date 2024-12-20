@@ -110,9 +110,7 @@ const main = async () => {
             email: 'john.doe@example.com',
             password: await bcrypt.hash('password123', 12),
             role: 'customer',
-            wishlist: {
-                connect: [{ id: tShirt.id }],
-            },
+            wishlist: {},
         },
     });
 
@@ -123,9 +121,7 @@ const main = async () => {
             email: 'jane.smith@example.com',
             password: await bcrypt.hash('password456', 12),
             role: 'customer',
-            wishlist: {
-                connect: [{ id: runningShoes.id }],
-            },
+            wishlist: {},
         },
     });
 
@@ -136,9 +132,7 @@ const main = async () => {
             email: 'alice.johnson@example.com',
             password: await bcrypt.hash('password789', 12),
             role: 'customer',
-            wishlist: {
-                connect: [{ id: casualHoodie.id }],
-            },
+            wishlist: {},
         },
     });
 
