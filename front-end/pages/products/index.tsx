@@ -250,6 +250,7 @@ const Products: React.FC = () => {
                         {products && loggedInUser && (
                             <ProductOverviewTable
                                 products={products}
+                                forWishlistpage={false}
                                 loggedInUser={loggedInUser}
                                 updateProduct={openUpdateProduct}
                                 reloadProducts={reloadProducts}

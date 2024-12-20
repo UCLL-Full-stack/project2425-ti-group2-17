@@ -13,50 +13,46 @@ import ProductArticle from '@components/products/ProductArticle';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-const Products: React.FC = () => {
+const Wishlist: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<Customer | null>(null);
     const { t } = useTranslation();
 
-    const reloadProducts = () => {
-        mutate('products', getProducts());
-    };
+    // const reloadWishlist = () => {
+    //     mutate('Wishlist', getWishlist());
+    // };
 
-    const getProducts = async () => {
-        if (loggedInUser) {
-            const response = await CustomerService.getWishlist(loggedInUser.email!);
-            if (response.ok) {
-                const products = await response.json();
-                return products;
-            }
-        }
-    };
+    // const getWishlist = async () => {
+    //     if (loggedInUser) {
+    //         const response = await CustomerService.getWishlist(loggedInUser.email!);
+    //         if (response.ok) {
+    //             const Wishlist = await response.json();
+    //             return Wishlist;
+    //         }
+    //     }
+    // };
 
-    const { data, isLoading, error } = useSWR('products', getProducts);
+    // const { data, isLoading, error } = useSWR('Wishlist', getWishlist);
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
     }, []);
 
-    useInterval(() => {
-        mutate('products', getProducts());
-    }, 4000);
+    // useInterval(() => {
+    //     mutate('Wishlist', getWishlist());
+    // }, 4000);
 
     return (
         <>
             <Head>
-                <title>Products</title>
+                <title>Wishlist</title>
             </Head>
             <Header />
             <main className="d-flex flex-column justify-content-center align-items-center">
-                {error && <div className="text-red-800">{error}</div>}
-                {isLoading && <p className="text-green-800">Loading...</p>}
+                {/* {error && <div className="text-red-800">{error}</div>}
+                {isLoading && <p className="text-green-800">Loading...</p>} */}
                 <div className="w-4/5 p-4">
-                    {data && loggedInUser && (
-                        <ProductOverviewTable
-                            products={data}
-                            loggedInUser={loggedInUser}
-                            reloadProducts={reloadProducts}
-                        />
+                    {loggedInUser && (
+                        <ProductOverviewTable loggedInUser={loggedInUser} forWishlistpage={true} />
                     )}
                 </div>
             </main>
@@ -74,4 +70,4 @@ export const getServerSideProps = async (context: { locale: any }) => {
     };
 };
 
-export default Products;
+export default Wishlist;

@@ -10,14 +10,16 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 
 type Props = {
-    products: Array<Product>;
+    products?: Array<Product>;
+    forWishlistpage: boolean;
     loggedInUser: Customer;
     updateProduct?: (product: Product) => void;
-    reloadProducts: () => void;
+    reloadProducts?: () => void;
 };
 
 const ProductOverviewTable: React.FC<Props> = ({
     products,
+    forWishlistpage,
     loggedInUser,
     updateProduct,
     reloadProducts,
@@ -45,7 +47,9 @@ const ProductOverviewTable: React.FC<Props> = ({
                 ]);
             }
         }
-        reloadProducts();
+        if (reloadProducts) {
+            reloadProducts();
+        }
     };
 
     const addItemToCart = async (productId: number) => {
@@ -150,25 +154,26 @@ const ProductOverviewTable: React.FC<Props> = ({
 
     return (
         <>
-            {products && products.length > 0 ? (
+            {statusMessages && statusMessages.length > 0 && (
+                <div className="row">
+                    <ul className="list-none mb-3 mx-auto">
+                        {statusMessages.map(({ message, type }, index) => (
+                            <li
+                                key={index}
+                                className={classNames({
+                                    'text-red-800': type === 'error',
+                                    'text-green-800': type === 'success',
+                                })}
+                            >
+                                {message}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {!forWishlistpage && products && products.length > 0 ? (
                 <div className="container mx-auto px-4 flex flex-row flex-wrap">
-                    {statusMessages && (
-                        <div className="row">
-                            <ul className="list-none mb-3 mx-auto">
-                                {statusMessages.map(({ message, type }, index) => (
-                                    <li
-                                        key={index}
-                                        className={classNames({
-                                            'text-red-800': type === 'error',
-                                            'text-green-800': type === 'success',
-                                        })}
-                                    >
-                                        {message}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                     <div>
                         {products.map((product) => (
                             <ProductArticle
@@ -184,11 +189,25 @@ const ProductOverviewTable: React.FC<Props> = ({
                         ))}
                     </div>
                 </div>
+            ) : forWishlistpage && wishlist && wishlist.length > 0 ? (
+                <div className="container mx-auto px-4 flex flex-row flex-wrap">
+                    <div>
+                        {wishlist.map((product: Product) => (
+                            <ProductArticle
+                                key={product.id}
+                                product={product}
+                                wishlist={wishlist}
+                                addItemToCart={addItemToCart}
+                                addToWishlist={addToWishlist}
+                                removeFromWishlist={removeFromWishlist}
+                            ></ProductArticle>
+                        ))}
+                    </div>
+                </div>
             ) : (
-                <p className="text-center mt-8">No products available.</p>
+                <p className="text-center mt-8">No products or wishlist items available.</p>
             )}
         </>
     );
 };
-
 export default ProductOverviewTable;
