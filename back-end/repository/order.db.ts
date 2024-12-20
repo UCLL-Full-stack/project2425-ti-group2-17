@@ -71,27 +71,41 @@ const deleteOrder = async ({ id }: { id: number }): Promise<string> => {
 
 const createOrder = async (order: Order): Promise<Order> => {
     try {
-        const orderPrisma = await database.order.create({
-            data: {
-                customer: { connect: { id: order.getCustomer().getId() } },
-                items: {
-                    create: order.getItems().map((item) => ({
-                        product: { connect: { id: item.getProduct().getId() } },
-                        quantity: item.getQuantity(),
-                    })),
-                },
-                date: order.getDate(),
-                payment: {
-                    create: {
-                        amount: order.getPayment().getAmount(),
-                        date: order.getDate(),
-                        paymentStatus: order.getPayment().getPaymentStatus(),
+        return await database.$transaction(async (tx) => {
+            const orderPrisma = await tx.order.create({
+                data: {
+                    customer: { connect: { id: order.getCustomer().getId() } },
+                    items: {
+                        create: order.getItems().map((item) => ({
+                            product: { connect: { id: item.getProduct().getId() } },
+                            quantity: item.getQuantity(),
+                        })),
+                    },
+                    date: order.getDate(),
+                    payment: {
+                        create: {
+                            amount: order.getPayment().getAmount(),
+                            date: order.getDate(),
+                            paymentStatus: order.getPayment().getPaymentStatus(),
+                        },
                     },
                 },
-            },
-            include: { customer: true, items: { include: { product: true } }, payment: true },
+                include: { customer: true, items: { include: { product: true } }, payment: true },
+            });
+
+            for (const item of order.getItems()) {
+                await tx.product.update({
+                    where: { id: item.getProduct().getId() },
+                    data: {
+                        stock: {
+                            decrement: item.getQuantity(),
+                        },
+                    },
+                });
+            }
+
+            return Order.from(orderPrisma);
         });
-        return Order.from(orderPrisma);
     } catch (error) {
         console.error(error);
         throw new Error('Database error. See server log for details.');
