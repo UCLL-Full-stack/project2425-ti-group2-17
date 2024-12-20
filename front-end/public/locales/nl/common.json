@@ -12,7 +12,8 @@
             "language": "Taal",
             "languageOption1": "Engels",
             "languageOption2": "Nederlands"
-        }
+        },
+        "welcomeUser": "Welkom"
     },
     "home": {
         "title": "Thuis",

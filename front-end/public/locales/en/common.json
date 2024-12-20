@@ -12,7 +12,8 @@
             "language": "Language",
             "languageOption1": "English",
             "languageOption2": "Dutch"
-        }
+        },
+        "welcomeUser": "Welcome"
     },
     "home": {
         "title": "Home",

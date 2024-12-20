@@ -84,7 +84,7 @@ const Header: React.FC = () => {
                     )}
                     {loggedInUser && (
                         <div className="block py-2 px-4 text-gray-900 dark:text-white">
-                            {t('header.welcome')}, {loggedInUser.fullname}!
+                            {t('header.welcomeUser')}, {loggedInUser.fullname}!
                         </div>
                     )}
                     {loggedInUser && loggedInUser.role === 'customer' && (
