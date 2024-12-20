@@ -29,6 +29,7 @@ const orders: Order[] = [
                     images: 'shirt',
                     sizes: ['S', 'M', 'L', 'XL'],
                     colors: ['Red', 'Blue', 'Black'],
+                    rating: [1, 3, 5],
                 }),
                 quantity: 2,
             }),

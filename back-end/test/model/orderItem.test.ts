@@ -10,6 +10,7 @@ const validProductTestData = {
     images: 'shirt',
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Black', 'White', 'Green'],
+    rating: [1, 3, 5],
 };
 
 let product: Product;

@@ -50,6 +50,7 @@ const product1 = new Product({
     images: 'shirt',
     sizes: ['S', 'M', 'L', 'XL'],
     colors: ['Red', 'Blue', 'Green'],
+    rating: [1, 3, 5],
     id: 1,
 });
 
@@ -62,6 +63,7 @@ const product2 = new Product({
     images: 'shoes',
     sizes: ['M', 'L'],
     colors: ['Black', 'White'],
+    rating: [1, 3, 5],
     id: 2,
 });
 
