@@ -56,7 +56,7 @@ const Header: React.FC = () => {
                         </Link>
                     )}
 
-                    {loggedInUser && (
+                    {loggedInUser && loggedInUser.role === 'salesman' && (
                         <Link
                             href="/discounts"
                             className="block py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
@@ -87,7 +87,7 @@ const Header: React.FC = () => {
                             {t('header.welcome')}, {loggedInUser.fullname}!
                         </div>
                     )}
-                    {loggedInUser && (
+                    {loggedInUser && loggedInUser.role === 'customer' && (
                         <button
                             onClick={() => router.push('/checkout')}
                             className="flex items-center py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"
@@ -101,7 +101,7 @@ const Header: React.FC = () => {
                             />
                         </button>
                     )}
-                    {loggedInUser && (
+                    {loggedInUser && loggedInUser.role === 'customer' && (
                         <button
                             onClick={() => router.push('/wishlist')}
                             className="flex items-center py-2 px-4 text-gray-900 dark:text-white border-2 border-transparent rounded hover:border-white"

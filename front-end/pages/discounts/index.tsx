@@ -72,15 +72,6 @@ const Discounts: React.FC = () => {
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
                 <div className="p-4">
-                    {/* <div className="d-flex flex-column justify-content-center align-items-center">
-                        <button
-                            type="button"
-                            onClick={() => openCreateDiscountCode()}
-                            className="w-min bg-black text-white py-2 rounded px-1"
-                        >
-                            Create discount code
-                        </button>
-                    </div> */}
                     {discounts && loggedInUser && (
                         <DiscountOverviewTable
                             discounts={discounts}
@@ -94,15 +85,6 @@ const Discounts: React.FC = () => {
                         onSave={handleSaveDiscountCode}
                         discountToUpdate={selectedDiscountcode}
                     />
-                    {/* <div className="d-flex flex-column justify-content-center align-items-center">
-                        <button
-                            type="button"
-                            onClick={() => openCreateDiscountCode()}
-                            className="w-min bg-black text-white py-2 rounded px-1"
-                        >
-                            Create discount
-                        </button>
-                    </div> */}
                 </div>
             </main>
         </>
