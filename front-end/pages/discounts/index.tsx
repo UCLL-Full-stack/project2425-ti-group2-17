@@ -76,6 +76,7 @@ const Discounts: React.FC = () => {
                         <DiscountOverviewTable
                             discounts={discounts}
                             reloadDiscounts={reloadDiscounts}
+                            openCreateDiscountCode={openCreateDiscountCode}
                             openUpdateDiscountCode={openUpdateDiscountCode}
                         />
                     )}

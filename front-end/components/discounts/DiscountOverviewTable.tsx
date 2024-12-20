@@ -8,12 +8,14 @@ import classNames from 'classnames';
 type Props = {
     discounts: Array<DiscountCode>;
     reloadDiscounts: () => void;
+    openCreateDiscountCode: () => void;
     openUpdateDiscountCode: (discountCode: DiscountCode) => void;
 };
 
 const DiscountOverviewTable: React.FC<Props> = ({
     discounts,
     reloadDiscounts,
+    openCreateDiscountCode,
     openUpdateDiscountCode,
 }) => {
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
@@ -135,7 +137,7 @@ const DiscountOverviewTable: React.FC<Props> = ({
                     <div className="flex justify-center mt-4">
                         <button
                             type="button"
-                            // onClick={() => openCreateDiscountCode()}
+                            onClick={() => openCreateDiscountCode()}
                             className="w-min bg-black text-white py-2 rounded px-4"
                         >
                             Create discount code
