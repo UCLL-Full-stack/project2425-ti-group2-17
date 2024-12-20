@@ -58,7 +58,7 @@
  */
 
 import { NextFunction, Request, Response, Router } from 'express';
-import { DiscountCodeInput } from '../types';
+import { DiscountCodeInput, Role } from '../types';
 import discountCodeService from '../service/discountCode.service';
 
 const discountCodeRouter = Router();
@@ -84,7 +84,9 @@ const discountCodeRouter = Router();
 
 discountCodeRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const discountCodes = await discountCodeService.getDiscountCodes();
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const discountCodes = await discountCodeService.getDiscountCodes(email, role);
         res.status(200).json(discountCodes);
     } catch (error) {
         next(error);
@@ -117,7 +119,13 @@ discountCodeRouter.get('/', async (req: Request, res: Response, next: NextFuncti
 
 discountCodeRouter.get('/:code', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const discountCode = await discountCodeService.getDiscountCodeByCode(req.params.code);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const discountCode = await discountCodeService.getDiscountCodeByCode(
+            req.params.code,
+            email,
+            role
+        );
         res.status(200).json(discountCode);
     } catch (error) {
         next(error);
@@ -149,8 +157,14 @@ discountCodeRouter.get('/:code', async (req: Request, res: Response, next: NextF
 
 discountCodeRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const discountCodeInput = <DiscountCodeInput>req.body;
-        const discountCodeOutput = await discountCodeService.createDiscountCode(discountCodeInput);
+        const discountCodeOutput = await discountCodeService.createDiscountCode(
+            discountCodeInput,
+            email,
+            role
+        );
         res.status(200).json(discountCodeOutput);
     } catch (error) {
         next(error);
@@ -189,10 +203,14 @@ discountCodeRouter.post('/', async (req: Request, res: Response, next: NextFunct
 
 discountCodeRouter.put('/:code', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const discountCodeInput = <DiscountCodeInput>req.body;
         const discountCodeOutput = await discountCodeService.updateDiscountCode(
             req.params.code,
-            discountCodeInput
+            discountCodeInput,
+            email,
+            role
         );
         res.status(200).json(discountCodeOutput);
     } catch (error) {
@@ -230,7 +248,9 @@ discountCodeRouter.put('/:code', async (req: Request, res: Response, next: NextF
 
 discountCodeRouter.delete('/:code', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await discountCodeService.deleteDiscountCode(req.params.code);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const result = await discountCodeService.deleteDiscountCode(req.params.code, email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);
