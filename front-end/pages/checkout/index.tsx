@@ -100,6 +100,7 @@ const Checkout: React.FC = () => {
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
+        mutate('cart', getCartByEmail());
     }, []);
 
     const { data: cart, isLoading, error } = useSWR('cart', getCartByEmail);
