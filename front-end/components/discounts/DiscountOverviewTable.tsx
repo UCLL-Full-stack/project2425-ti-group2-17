@@ -7,14 +7,12 @@ import classNames from 'classnames';
 
 type Props = {
     discounts: Array<DiscountCode>;
-    loggedInUser: Customer;
     reloadDiscounts: () => void;
     openUpdateDiscountCode: (discountCode: DiscountCode) => void;
 };
 
 const DiscountOverviewTable: React.FC<Props> = ({
     discounts,
-    loggedInUser,
     reloadDiscounts,
     openUpdateDiscountCode,
 }) => {
@@ -46,7 +44,7 @@ const DiscountOverviewTable: React.FC<Props> = ({
     return (
         <>
             {discounts && (
-                <div className="container mx-auto px-4 flex flex-row flex-wrap">
+                <div className="container mx-auto px-4 flex flex-col items-center">
                     {statusMessages && (
                         <div className="row">
                             <ul className="list-none mb-3 mx-auto">
@@ -64,7 +62,7 @@ const DiscountOverviewTable: React.FC<Props> = ({
                             </ul>
                         </div>
                     )}
-                    <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mb-4">
                         <thead className="bg-yellow-300">
                             <tr>
                                 <th scope="col" className="py-2 px-4 text-left">
@@ -134,6 +132,15 @@ const DiscountOverviewTable: React.FC<Props> = ({
                             ))}
                         </tbody>
                     </table>
+                    <div className="flex justify-center mt-4">
+                        <button
+                            type="button"
+                            // onClick={() => openCreateDiscountCode()}
+                            className="w-min bg-black text-white py-2 rounded px-4"
+                        >
+                            Create discount code
+                        </button>
+                    </div>
                 </div>
             )}
         </>

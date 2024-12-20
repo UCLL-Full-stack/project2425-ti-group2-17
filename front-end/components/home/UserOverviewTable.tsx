@@ -20,7 +20,7 @@ const UserOverviewTable: React.FC<Props> = ({}: Props) => {
     return (
         <>
             {users && (
-                <div className="container mx-auto px-4 flex flex-row flex-wrap">
+                <div className="container mx-auto p-4 flex flex-row flex-wrap">
                     <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                         <thead className="bg-yellow-300">
                             <tr>

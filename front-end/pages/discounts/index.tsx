@@ -51,10 +51,11 @@ const Discounts: React.FC = () => {
         mutate('discounts', getDiscounts());
     };
 
-    const { data, isLoading, error } = useSWR('discounts', getDiscounts);
+    const { data: discounts, isLoading, error } = useSWR('discounts', getDiscounts);
 
     useEffect(() => {
         setLoggedInUser(JSON.parse(sessionStorage.getItem('loggedInUser')!));
+        mutate('discounts', getDiscounts());
     }, []);
 
     useInterval(() => {
@@ -70,8 +71,8 @@ const Discounts: React.FC = () => {
             <main className="d-flex flex-column justify-content-center align-items-center">
                 {error && <div className="text-red-800">{error}</div>}
                 {isLoading && <p className="text-green-800">Loading...</p>}
-                <div className="w-4/5 p-4">
-                    <div className="d-flex flex-column justify-content-center align-items-center">
+                <div className="p-4">
+                    {/* <div className="d-flex flex-column justify-content-center align-items-center">
                         <button
                             type="button"
                             onClick={() => openCreateDiscountCode()}
@@ -79,11 +80,10 @@ const Discounts: React.FC = () => {
                         >
                             Create discount code
                         </button>
-                    </div>
-                    {data && loggedInUser && (
+                    </div> */}
+                    {discounts && loggedInUser && (
                         <DiscountOverviewTable
-                            discounts={data}
-                            loggedInUser={loggedInUser}
+                            discounts={discounts}
                             reloadDiscounts={reloadDiscounts}
                             openUpdateDiscountCode={openUpdateDiscountCode}
                         />
@@ -94,6 +94,15 @@ const Discounts: React.FC = () => {
                         onSave={handleSaveDiscountCode}
                         discountToUpdate={selectedDiscountcode}
                     />
+                    {/* <div className="d-flex flex-column justify-content-center align-items-center">
+                        <button
+                            type="button"
+                            onClick={() => openCreateDiscountCode()}
+                            className="w-min bg-black text-white py-2 rounded px-1"
+                        >
+                            Create discount
+                        </button>
+                    </div> */}
                 </div>
             </main>
         </>
