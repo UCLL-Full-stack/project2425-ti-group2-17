@@ -52,7 +52,7 @@ test('given discount codes in the DB, when getting all discount codes, then all 
         fixedDiscountCode,
     ]);
 
-    const result = await discountCodeService.getDiscountCodes();
+    const result = await discountCodeService.getDiscountCodes('salesman@example.com', 'salesman');
 
     expect(result).toEqual([percentageDiscountCode, fixedDiscountCode]);
     expect(mockDiscountCodeDbGetDiscountCodes).toHaveBeenCalled();
@@ -62,7 +62,11 @@ test('given a discount code exists in the DB, when getting a discount code by co
     discountCodeDb.getDiscountCodeByCode =
         mockDiscountCodeDbGetDiscountCodeByCode.mockResolvedValue(percentageDiscountCode);
 
-    const result = await discountCodeService.getDiscountCodeByCode('SAVE10');
+    const result = await discountCodeService.getDiscountCodeByCode(
+        'SAVE10',
+        'salesman@example.com',
+        'salesman'
+    );
 
     expect(result).toEqual(percentageDiscountCode);
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE10' });
@@ -73,7 +77,11 @@ test('given discount codes in the DB, when getting an invalid discount code by c
         mockDiscountCodeDbGetDiscountCodeByCode.mockResolvedValue(null);
 
     const getDiscountCode = async () =>
-        await discountCodeService.getDiscountCodeByCode('INVALIDCODE');
+        await discountCodeService.getDiscountCodeByCode(
+            'INVALIDCODE',
+            'salesman@example.com',
+            'salesman'
+        );
 
     await expect(getDiscountCode).rejects.toThrow(
         'Discountcode with code INVALIDCODE does not exist.'
@@ -96,7 +104,11 @@ test('given no existing discount code with the same code, when creating a new di
     discountCodeDb.createDiscountCode =
         mockDiscountCodeDbCreateDiscountCode.mockResolvedValue(newDiscountCode);
 
-    const result = await discountCodeService.createDiscountCode(newDiscountCodeData);
+    const result = await discountCodeService.createDiscountCode(
+        newDiscountCodeData,
+        'salesman@example.com',
+        'salesman'
+    );
 
     expect(result).toEqual(newDiscountCode);
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE15' });
@@ -108,7 +120,11 @@ test('given an existing discount code, when creating a discount code with the sa
         mockDiscountCodeDbGetDiscountCodeByCode.mockResolvedValue(percentageDiscountCode);
 
     const createDiscountCode = async () => {
-        await discountCodeService.createDiscountCode(percentageDiscountTestData);
+        await discountCodeService.createDiscountCode(
+            percentageDiscountTestData,
+            'salesman@example.com',
+            'salesman'
+        );
     };
 
     await expect(createDiscountCode).rejects.toThrow(
@@ -133,7 +149,12 @@ test('given an existing discount code, when updating it with valid data, then th
     discountCodeDb.updateDiscountCode =
         mockDiscountCodeDbUpdateDiscountCode.mockResolvedValue(updatedDiscountCode);
 
-    const result = await discountCodeService.updateDiscountCode('SAVE10', updatedDiscountCodeData);
+    const result = await discountCodeService.updateDiscountCode(
+        'SAVE10',
+        updatedDiscountCodeData,
+        'salesman@example.com',
+        'salesman'
+    );
 
     expect(result).toEqual(updatedDiscountCode);
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE10' });
@@ -153,7 +174,12 @@ test('given no discount code with the current code, when updating a discount cod
         mockDiscountCodeDbGetDiscountCodeByCode.mockResolvedValue(null);
 
     const updateDiscountCode = async () => {
-        await discountCodeService.updateDiscountCode('INVALIDCODE', updatedDiscountCodeData);
+        await discountCodeService.updateDiscountCode(
+            'INVALIDCODE',
+            updatedDiscountCodeData,
+            'salesman@example.com',
+            'salesman'
+        );
     };
 
     await expect(updateDiscountCode).rejects.toThrow('This discountcode does not exist.');
@@ -167,7 +193,11 @@ test('given an existing discount code, when deleting it, then the discount code 
         'DiscountCode has been deleted.'
     );
 
-    const result = await discountCodeService.deleteDiscountCode('SAVE10');
+    const result = await discountCodeService.deleteDiscountCode(
+        'SAVE10',
+        'salesman@example.com',
+        'salesman'
+    );
 
     expect(result).toBe('DiscountCode has been deleted.');
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE10' });
@@ -179,9 +209,88 @@ test('given no discount code with the specified code, when deleting a discount c
         mockDiscountCodeDbGetDiscountCodeByCode.mockResolvedValue(null);
 
     const deleteDiscountCode = async () => {
-        await discountCodeService.deleteDiscountCode('INVALIDCODE');
+        await discountCodeService.deleteDiscountCode(
+            'INVALIDCODE',
+            'salesman@example.com',
+            'salesman'
+        );
     };
 
     await expect(deleteDiscountCode).rejects.toThrow('This discountcode does not exist.');
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'INVALIDCODE' });
+});
+
+test('given non-salesman role, when getting all discount codes, then UnauthorizedError is thrown', async () => {
+    const getDiscountCodes = async () => {
+        await discountCodeService.getDiscountCodes('user@example.com', 'customer');
+    };
+
+    await expect(getDiscountCodes).rejects.toThrowError(
+        'You must be a salesman to access discount codes.'
+    );
+});
+
+test('given non-salesman role, when getting a discount code by code, then UnauthorizedError is thrown', async () => {
+    const getDiscountCodeByCode = async () => {
+        await discountCodeService.getDiscountCodeByCode('SAVE10', 'user@example.com', 'customer');
+    };
+
+    await expect(getDiscountCodeByCode).rejects.toThrowError(
+        'You must be a salesman to access discount codes.'
+    );
+});
+
+test('given non-salesman role, when creating a discount code, then UnauthorizedError is thrown', async () => {
+    const newDiscountCodeData = {
+        code: 'SAVE15',
+        type: 'percentage',
+        value: 15,
+        expirationDate: new Date(new Date().getTime() + 48 * 60 * 60 * 1000),
+        isActive: true,
+    };
+
+    const createDiscountCode = async () => {
+        await discountCodeService.createDiscountCode(
+            newDiscountCodeData,
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(createDiscountCode).rejects.toThrowError(
+        'You must be a salesman to access discount codes.'
+    );
+});
+
+test('given non-salesman role, when updating a discount code, then UnauthorizedError is thrown', async () => {
+    const updatedDiscountCodeData = {
+        code: 'SAVE20',
+        type: 'percentage',
+        value: 20,
+        expirationDate: new Date(new Date().getTime() + 48 * 60 * 60 * 1000),
+        isActive: true,
+    };
+
+    const updateDiscountCode = async () => {
+        await discountCodeService.updateDiscountCode(
+            'SAVE10',
+            updatedDiscountCodeData,
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(updateDiscountCode).rejects.toThrowError(
+        'You must be a salesman to access discount codes.'
+    );
+});
+
+test('given non-salesman role, when deleting a discount code, then UnauthorizedError is thrown', async () => {
+    const deleteDiscountCode = async () => {
+        await discountCodeService.deleteDiscountCode('SAVE10', 'user@example.com', 'customer');
+    };
+
+    await expect(deleteDiscountCode).rejects.toThrowError(
+        'You must be a salesman to access discount codes.'
+    );
 });
