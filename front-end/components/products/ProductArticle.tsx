@@ -39,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }, [product.rating]);
 
     const handleAddRating = async () => {
+        setRatingError('');
         if (newRating && newRating >= 1 && newRating <= 5) {
             if (product.id !== undefined) {
                 await ProductService.addRatingToProduct(product.id, newRating);
@@ -101,8 +102,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     <div className="text-left">
                         <strong>Average rating:</strong>{' '}
                         {rating.length > 0
-                            ? rating.reduce((acc, curr) => acc + curr, 0) / rating.length
+                            ? Math.round(
+                                  (rating.reduce((acc, curr) => acc + curr, 0) / rating.length) *
+                                      100
+                              ) / 100
                             : 'No ratings yet'}
+                        /5
                     </div>
                     {isRatingInputVisible ? (
                         <div className="flex items-center mt-2">
@@ -120,7 +125,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             >
                                 Submit Rating
                             </button>
-                            {ratingError && <p className="text-red-500 text-sm">{ratingError}</p>}
                         </div>
                     ) : (
                         <button
@@ -130,6 +134,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             Add Rating
                         </button>
                     )}
+                    {ratingError && <p className="text-red-500 text-sm">{ratingError}</p>}
                 </div>
             </div>
             <div className="flex flex-col justify-center items-center ml-4">
