@@ -96,7 +96,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import orderService from '../service/order.service';
-import { OrderInput, OrderItemInput } from '../types';
+import { OrderInput, OrderItemInput, Role } from '../types';
 
 interface AuthenticatedRequest extends Request {
     auth: any;
@@ -165,8 +165,9 @@ orderRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
 
 orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const orders = await orderService.getOrderById(Number(req.params.id));
-
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const orders = await orderService.getOrderById(Number(req.params.id), email, role);
         res.status(200).json(orders);
     } catch (error) {
         next(error);
@@ -207,7 +208,9 @@ orderRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) 
 
 orderRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await orderService.deleteOrder(Number(req.params.id));
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const result = await orderService.deleteOrder(Number(req.params.id), email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);

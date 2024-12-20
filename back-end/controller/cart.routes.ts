@@ -47,7 +47,7 @@
 
 import { NextFunction, Request, Response, Router } from 'express';
 import cartService from '../service/cart.service';
-import { CartInput, CartItemInput, DiscountCodeInput } from '../types';
+import { CartInput, CartItemInput, DiscountCodeInput, Role } from '../types';
 
 const cartRouter = Router();
 
@@ -74,7 +74,9 @@ const cartRouter = Router();
 
 cartRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const carts = await cartService.getCarts();
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const carts = await cartService.getCarts(email, role);
         res.status(200).json(carts);
     } catch (error) {
         next(error);
@@ -111,7 +113,9 @@ cartRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cart = await cartService.getCartById(Number(req.params.id));
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const cart = await cartService.getCartById(Number(req.params.id), email, role);
         res.status(200).json(cart);
     } catch (error) {
         next(error);
@@ -148,7 +152,9 @@ cartRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
 
 cartRouter.get('/email/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cart = await cartService.getCartByEmail(req.params.email);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const cart = await cartService.getCartByEmail(req.params.email, email, role);
         res.status(200).json(cart);
     } catch (error) {
         next(error);
@@ -196,10 +202,14 @@ cartRouter.put(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, productId, quantity } = req.params;
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
             const result = await cartService.addCartItem(
                 email,
                 Number(productId),
-                Number(quantity)
+                Number(quantity),
+                authEmail,
+                role
             );
             res.status(200).json(result);
         } catch (error) {
@@ -252,10 +262,14 @@ cartRouter.put(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, productId, quantity } = req.params;
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
             const result = await cartService.removeCartItem(
                 email,
                 Number(productId),
-                Number(quantity)
+                Number(quantity),
+                authEmail,
+                role
             );
             res.status(200).json(result);
         } catch (error) {
@@ -299,7 +313,9 @@ cartRouter.put(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, code } = req.params;
-            const discountCode = await cartService.addDiscountCode(email, code);
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
+            const discountCode = await cartService.addDiscountCode(email, code, authEmail, role);
             res.status(200).json(discountCode);
         } catch (error) {
             next(error);
@@ -343,7 +359,9 @@ cartRouter.put(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, code } = req.params;
-            const message = await cartService.removeDiscountCode(email, code);
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
+            const message = await cartService.removeDiscountCode(email, code, authEmail, role);
             res.status(200).json(message);
         } catch (error) {
             next(error);
@@ -394,7 +412,14 @@ cartRouter.post(
         try {
             const { email } = req.params;
             const { paymentStatus } = req.query as { paymentStatus: string };
-            const order = await cartService.convertCartToOrder(email, paymentStatus);
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
+            const order = await cartService.convertCartToOrder(
+                email,
+                paymentStatus,
+                authEmail,
+                role
+            );
             res.status(200).json(order);
         } catch (error) {
             next(error);

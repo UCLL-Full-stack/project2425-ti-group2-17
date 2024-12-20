@@ -42,7 +42,7 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import paymentService from '../service/payment.service';
-import { PaymentInput } from '../types';
+import { PaymentInput, Role } from '../types';
 
 const paymentRouter = Router();
 
@@ -75,13 +75,15 @@ const paymentRouter = Router();
 
 paymentRouter.put('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const { orderId, amount } = req.body;
         const paymentInput: PaymentInput = {
             amount,
             date: new Date(),
             paymentStatus: 'paid',
         };
-        const payment = await paymentService.makePayment(orderId, paymentInput);
+        const payment = await paymentService.makePayment(orderId, paymentInput, email, role);
         res.status(200).json(payment);
     } catch (error) {
         next(error);
@@ -111,7 +113,9 @@ paymentRouter.put('/', async (req: Request, res: Response, next: NextFunction) =
 
 paymentRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const payments = await paymentService.getPayments();
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const payments = await paymentService.getPayments(email, role);
         res.status(200).json(payments);
     } catch (error) {
         next(error);
@@ -148,7 +152,9 @@ paymentRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
 
 paymentRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const order = await paymentService.getPaymentById(Number(req.params.id));
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const order = await paymentService.getPaymentById(Number(req.params.id), email, role);
         res.status(200).json(order);
     } catch (error) {
         next(error);

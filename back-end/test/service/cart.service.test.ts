@@ -162,7 +162,7 @@ afterEach(() => {
 test('given carts in the DB, when getting all carts, then all carts are returned', async () => {
     cartDb.getCarts = mockCartDbGetCarts.mockReturnValue(carts);
 
-    const result = await cartService.getCarts();
+    const result = await cartService.getCarts('admin@example.com', 'admin');
 
     expect(result).toEqual(carts);
     expect(mockCartDbGetCarts).toHaveBeenCalled();
@@ -171,7 +171,7 @@ test('given carts in the DB, when getting all carts, then all carts are returned
 test('given carts in the DB, when getting cart by id, then that cart is returned', async () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(carts[0]);
 
-    const result = await cartService.getCartById(1);
+    const result = await cartService.getCartById(1, 'admin@example.com', 'admin');
 
     expect(result).toEqual(carts[0]);
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 1 });
@@ -180,7 +180,7 @@ test('given carts in the DB, when getting cart by id, then that cart is returned
 test('given carts in the DB, when getting a cart by incorrect id, then an error is thrown', async () => {
     cartDb.getCartById = mockCartDbGetCartById.mockReturnValue(null);
 
-    const getCartById = async () => await cartService.getCartById(3);
+    const getCartById = async () => await cartService.getCartById(3, 'admin@example.com', 'admin');
 
     await expect(getCartById).rejects.toThrow('Cart with id 3 does not exist.');
     expect(mockCartDbGetCartById).toHaveBeenCalledWith({ id: 3 });
@@ -189,7 +189,11 @@ test('given carts in the DB, when getting a cart by incorrect id, then an error 
 test('given carts in the DB, when getting cart by email, then that cart is returned', async () => {
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(carts[0]);
 
-    const result = await cartService.getCartByEmail('john.doe@example.com');
+    const result = await cartService.getCartByEmail(
+        'john.doe@example.com',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(carts[0]);
     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
@@ -200,7 +204,8 @@ test('given carts in the DB, when getting cart by email, then that cart is retur
 test('given carts in the DB, when getting a cart by incorrect email, then an error is thrown', async () => {
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
 
-    const getCartByEmail = async () => await cartService.getCartByEmail('wrong@email.com');
+    const getCartByEmail = async () =>
+        await cartService.getCartByEmail('wrong@email.com', 'wrong@email.com', 'customer');
 
     await expect(getCartByEmail).rejects.toThrow('Cart with email wrong@email.com does not exist.');
     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({ email: 'wrong@email.com' });
@@ -213,7 +218,13 @@ test('given valid cart and product, when adding an item to cart, then the item i
         new CartItem({ product: product2, quantity: 1 })
     );
 
-    const result = await cartService.addCartItem('john.doe@example.com', 2, 1);
+    const result = await cartService.addCartItem(
+        'john.doe@example.com',
+        2,
+        1,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(new CartItem({ product: product2, quantity: 1 }));
     expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product2, 1);
@@ -226,7 +237,13 @@ test('given valid cart with existing product, when adding quantity to existing p
         new CartItem({ product: product1, quantity: 3 })
     );
 
-    const result = await cartService.addCartItem('john.doe@example.com', 1, 1);
+    const result = await cartService.addCartItem(
+        'john.doe@example.com',
+        1,
+        1,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result.getQuantity()).toEqual(3);
     expect(mockCartDbAddCartItem).toHaveBeenCalledWith(cartJohn, product1, 1);
@@ -236,7 +253,14 @@ test('given non-existent product, when adding item to cart, then an error is thr
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
-    const addCartItem = async () => await cartService.addCartItem('john.doe@example.com', 3, 1);
+    const addCartItem = async () =>
+        await cartService.addCartItem(
+            'john.doe@example.com',
+            3,
+            1,
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(addCartItem).rejects.toThrow('Product with id 3 does not exist.');
 });
@@ -248,7 +272,13 @@ test('given product in cart, when decreasing quantity, then quantity is decrease
         new CartItem({ product: product1, quantity: 1 })
     );
 
-    const result = await cartService.removeCartItem('john.doe@example.com', 1, 1);
+    const result = await cartService.removeCartItem(
+        'john.doe@example.com',
+        1,
+        1,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toBeInstanceOf(CartItem);
     expect((result as CartItem).getQuantity()).toEqual(1);
@@ -261,7 +291,13 @@ test('given product in cart, when removing entire quantity, then item is removed
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(product1);
     cartDb.removeCartItem = mockCartDbRemoveCartItem.mockReturnValue('Item removed from cart.');
 
-    const result = await cartService.removeCartItem('john.doe@example.com', 1, 2);
+    const result = await cartService.removeCartItem(
+        'john.doe@example.com',
+        1,
+        2,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual('Item removed from cart.');
     expect(mockCartDbRemoveCartItem).toHaveBeenCalledWith(cartJohn, product1, 2);
@@ -272,7 +308,13 @@ test('given non-existent product, when removing item from cart, then an error is
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
     const removeCartItem = async () =>
-        await cartService.removeCartItem('john.doe@example.com', 3, 1);
+        await cartService.removeCartItem(
+            'john.doe@example.com',
+            3,
+            1,
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(removeCartItem).rejects.toThrow('Product with id 3 does not exist.');
 });
@@ -282,7 +324,12 @@ test('given valid cart and payment info, when converting cart to order, then ord
     orderDb.createOrder = mockOrderDbCreateOrder.mockReturnValue(order1);
     cartDb.emptyCart = mockCartDbEmptyCart.mockReturnValue('cart successfully emptied.');
 
-    const result = await cartService.convertCartToOrder('john.doe@example.com', 'paid');
+    const result = await cartService.convertCartToOrder(
+        'john.doe@example.com',
+        'paid',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result.getCustomer()).toEqual(order1.getCustomer());
     expect(result.getItems()).toEqual(order1.getItems());
@@ -308,7 +355,12 @@ test('given non-existent cart, when converting cart to order, then an error is t
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(null);
 
     const convertCartToOrder = async () =>
-        cartService.convertCartToOrder('bob.smith@example.com', 'paid');
+        cartService.convertCartToOrder(
+            'bob.smith@example.com',
+            'paid',
+            'bob.smith@example.com',
+            'customer'
+        );
 
     await expect(convertCartToOrder).rejects.toThrow(
         'Cart with email bob.smith@example.com does not exist.'
@@ -323,7 +375,12 @@ test('given missing payment info, when converting cart to order, then an error i
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
 
     const convertCartToOrder = async () =>
-        cartService.convertCartToOrder('john.doe@example.com', '');
+        cartService.convertCartToOrder(
+            'john.doe@example.com',
+            '',
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(convertCartToOrder).rejects.toThrow('Payment status is required.');
 
@@ -336,7 +393,12 @@ test('given invalid payment info, when converting cart to order, then an error i
     cartDb.getCartByCustomerEmail = mockCartDbGetCartByCustomerEmail.mockReturnValue(cartJohn);
 
     const convertCartToOrder = async () =>
-        cartService.convertCartToOrder('john.doe@example.com', 'invalid');
+        cartService.convertCartToOrder(
+            'john.doe@example.com',
+            'invalid',
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(convertCartToOrder).rejects.toThrow('Payment status must be paid or unpaid.');
 
@@ -353,7 +415,12 @@ test('given a valid discount code and cart, when adding a discount code to the c
         'Discount applied successfully'
     );
 
-    const result = await cartService.addDiscountCode('john.doe@example.com', 'SAVE10');
+    const result = await cartService.addDiscountCode(
+        'john.doe@example.com',
+        'SAVE10',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual('Discount applied successfully');
     expect(mockDiscountCodeDbGetDiscountCodeByCode).toHaveBeenCalledWith({ code: 'SAVE10' });
@@ -366,7 +433,12 @@ test('given a non-existing discount code, when adding a discount code to the car
         mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(null);
 
     const addDiscountCode = async () =>
-        await cartService.addDiscountCode('john.doe@example.com', 'INVALIDCODE');
+        await cartService.addDiscountCode(
+            'john.doe@example.com',
+            'INVALIDCODE',
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(addDiscountCode).rejects.toThrow(
         'Discountcode with code INVALIDCODE does not exist.'
@@ -386,9 +458,19 @@ test('given an active discount code on the cart, when removing a discount code, 
         'Discount applied successfully'
     );
 
-    await cartService.addDiscountCode('john.doe@example.com', 'SAVE10');
+    await cartService.addDiscountCode(
+        'john.doe@example.com',
+        'SAVE10',
+        'john.doe@example.com',
+        'customer'
+    );
 
-    const result = await cartService.removeDiscountCode('john.doe@example.com', 'SAVE10');
+    const result = await cartService.removeDiscountCode(
+        'john.doe@example.com',
+        'SAVE10',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual('Discount removed successfully');
     expect(mockCartDbRemoveDiscountCode).toHaveBeenCalledWith(cartJohn, 'SAVE10');
@@ -401,7 +483,12 @@ test('given valid, when removing a discount code not in the cart, then an error 
         mockDiscountCodeDbGetDiscountCodeByCode.mockReturnValue(discount);
 
     const removeDiscountCode = async () =>
-        await cartService.removeDiscountCode('john.doe@example.com', 'SAVE10');
+        await cartService.removeDiscountCode(
+            'john.doe@example.com',
+            'SAVE10',
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(removeDiscountCode).rejects.toThrow(
         'That discount code had not been applied to your cart.'
@@ -409,4 +496,104 @@ test('given valid, when removing a discount code not in the cart, then an error 
     expect(mockCartDbGetCartByCustomerEmail).toHaveBeenCalledWith({
         email: 'john.doe@example.com',
     });
+});
+
+test('given non-salesman/admin role, when getting all carts, then UnauthorizedError is thrown', async () => {
+    const getCarts = async () => await cartService.getCarts('john.doe@example.com', 'customer');
+
+    await expect(getCarts).rejects.toThrow('You must be a salesman or admin to access all carts.');
+});
+
+test('given non-salesman/admin role, when getting cart by id, then UnauthorizedError is thrown', async () => {
+    const getCartById = async () =>
+        await cartService.getCartById(1, 'john.doe@example.com', 'customer');
+
+    await expect(getCartById).rejects.toThrow(
+        'You must be a salesman or admin to access a cart by Id.'
+    );
+});
+
+test('given non-salesman/admin role and mismatched email, when getting cart by email, then UnauthorizedError is thrown', async () => {
+    const getCartByEmail = async () =>
+        await cartService.getCartByEmail(
+            'jane.smith@example.com',
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(getCartByEmail).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
+});
+
+test('given non-salesman/admin role, when adding cart item for another user, then UnauthorizedError is thrown', async () => {
+    const addCartItem = async () =>
+        await cartService.addCartItem(
+            'jane.smith@example.com',
+            1,
+            1,
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(addCartItem).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
+});
+
+test('given non-salesman/admin role, when removing cart item for another user, then UnauthorizedError is thrown', async () => {
+    const removeCartItem = async () =>
+        await cartService.removeCartItem(
+            'jane.smith@example.com',
+            1,
+            1,
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(removeCartItem).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
+});
+
+test('given non-salesman/admin role, when adding discount code for another user, then UnauthorizedError is thrown', async () => {
+    const addDiscountCode = async () =>
+        await cartService.addDiscountCode(
+            'jane.smith@example.com',
+            'SAVE10',
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(addDiscountCode).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
+});
+
+test('given non-salesman/admin role, when removing discount code for another user, then UnauthorizedError is thrown', async () => {
+    const removeDiscountCode = async () =>
+        await cartService.removeDiscountCode(
+            'jane.smith@example.com',
+            'SAVE10',
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(removeDiscountCode).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
+});
+
+test('given non-salesman/admin role, when converting cart to order for another user, then UnauthorizedError is thrown', async () => {
+    const convertCartToOrder = async () =>
+        await cartService.convertCartToOrder(
+            'jane.smith@example.com',
+            'paid',
+            'john.doe@example.com',
+            'customer'
+        );
+
+    await expect(convertCartToOrder).rejects.toThrow(
+        'You must be a salesman, admin or logged in as the user who own this cart.'
+    );
 });

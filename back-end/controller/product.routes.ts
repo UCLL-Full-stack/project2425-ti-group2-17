@@ -81,7 +81,7 @@
  */
 
 import { NextFunction, Request, Response, Router } from 'express';
-import { ProductInput } from '../types';
+import { ProductInput, Role } from '../types';
 import productService from '../service/product.service';
 
 const productRouter = Router();
@@ -115,8 +115,10 @@ const productRouter = Router();
 
 productRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const product = <ProductInput>req.body;
-        const result = await productService.createProduct(product);
+        const result = await productService.createProduct(product, email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -155,46 +157,6 @@ productRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
 
 /**
  * @swagger
- * /products/search:
- *   get:
- *     security:
- *      - bearerAuth: []
- *     summary: Search for products by a query string
- *     tags: [Products]
- *     parameters:
- *       - in: query
- *         name: query
- *         schema:
- *           type: string
- *         required: true
- *         description: Query string to search products by name, category, etc.
- *     responses:
- *       200:
- *         description: A list of products matching the search query
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
- *       400:
- *         description: Search query is required
- *       500:
- *         description: Internal server error
- */
-
-productRouter.get('/search', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { query } = req.query as { query: string };
-        const result = await productService.getProductsBySearch(query);
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @swagger
  * /products/{id}:
  *   get:
  *     security:
@@ -223,8 +185,8 @@ productRouter.get('/search', async (req: Request, res: Response, next: NextFunct
 
 productRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await productService.getProductById(Number(req.params.id));
-        res.status(200).json(customer);
+        const product = await productService.getProductById(Number(req.params.id));
+        res.status(200).json(product);
     } catch (error) {
         next(error);
     }
@@ -268,9 +230,11 @@ productRouter.get('/:id', async (req: Request, res: Response, next: NextFunction
 
 productRouter.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const productId = Number(req.params.id);
         const productData = <ProductInput>req.body;
-        const result = await productService.updateProduct(productId, productData);
+        const result = await productService.updateProduct(productId, productData, email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -311,7 +275,9 @@ productRouter.put('/:id', async (req: Request, res: Response, next: NextFunction
 
 productRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await productService.deleteProduct(Number(req.params.id));
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const result = await productService.deleteProduct(Number(req.params.id), email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);

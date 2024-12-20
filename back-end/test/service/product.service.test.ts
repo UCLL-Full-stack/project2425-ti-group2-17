@@ -53,7 +53,6 @@ beforeEach(() => {
     productDb.getProductByName = mockProductDbGetProductByName;
     productDb.updateProduct = mockProductDbUpdateProduct;
     productDb.deleteProduct = mockProductDbDeleteProduct;
-    productDb.getProductsBySearch = mockProductDbGetProductsBySearch;
 });
 
 afterEach(() => {
@@ -106,7 +105,11 @@ test('given a valid product input, when creating a product, then the product is 
     mockProductDbGetProducts.mockResolvedValue(products);
     mockProductDbCreateProduct.mockResolvedValue(newProduct);
 
-    const result = await productService.createProduct(newProductInput);
+    const result = await productService.createProduct(
+        newProductInput,
+        'admin@example.com',
+        'admin'
+    );
 
     expect(result).toEqual(newProduct);
     expect(mockProductDbGetProductByName).toHaveBeenCalledWith({ name: newProductInput.name });
@@ -128,9 +131,9 @@ test('given an existing product, when creating it again, then an error is thrown
         rating: [1, 3, 5],
     };
 
-    await expect(productService.createProduct(duplicateProductInput)).rejects.toThrow(
-        'A product with this name already exists.'
-    );
+    await expect(
+        productService.createProduct(duplicateProductInput, 'admin@example.com', 'admin')
+    ).rejects.toThrow('A product with this name already exists.');
     expect(mockProductDbGetProductByName).toHaveBeenCalledWith({
         name: duplicateProductInput.name,
     });
@@ -155,7 +158,12 @@ test('given a valid product update, when updating a product, then the product is
     mockProductDbGetProductById.mockResolvedValue(products[0]);
     mockProductDbUpdateProduct.mockResolvedValue(updatedProduct);
 
-    const result = await productService.updateProduct(1, updatedProductData);
+    const result = await productService.updateProduct(
+        1,
+        updatedProductData,
+        'admin@example.com',
+        'admin'
+    );
 
     expect(result).toEqual(updatedProduct);
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 1 });
@@ -177,9 +185,9 @@ test('given a non-existent product ID, when updating the product, then an error 
         rating: [1, 3, 5],
     };
 
-    await expect(productService.updateProduct(3, updatedProductData)).rejects.toThrow(
-        'Product with id 3 does not exist.'
-    );
+    await expect(
+        productService.updateProduct(3, updatedProductData, 'admin@example.com', 'admin')
+    ).rejects.toThrow('Product with id 3 does not exist.');
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 3 });
 });
 
@@ -187,7 +195,7 @@ test('given a valid product ID, when deleting the product, then the product is d
     mockProductDbGetProductById.mockResolvedValue(products[0]);
     mockProductDbDeleteProduct.mockResolvedValue('Product has been deleted.');
 
-    const result = await productService.deleteProduct(1);
+    const result = await productService.deleteProduct(1, 'admin@example.com', 'admin');
 
     expect(result).toEqual('Product has been deleted.');
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 1 });
@@ -197,6 +205,54 @@ test('given a valid product ID, when deleting the product, then the product is d
 test('given a non-existent product ID, when deleting the product, then an error is thrown', async () => {
     mockProductDbGetProductById.mockResolvedValue(null);
 
-    await expect(productService.deleteProduct(3)).rejects.toThrow('This product does not exist.');
+    await expect(productService.deleteProduct(3, 'admin@example.com', 'admin')).rejects.toThrow(
+        'This product does not exist.'
+    );
     expect(mockProductDbGetProductById).toHaveBeenCalledWith({ id: 3 });
+});
+
+test('given non-admin role, when creating a product, then UnauthorizedError is thrown', async () => {
+    const createProduct = async () => {
+        await productService.createProduct(
+            {
+                name: 'New Product',
+                price: 19.99,
+                stock: 100,
+                categories: ['Test'],
+                description: 'Test Description',
+                images: 'test-image',
+                sizes: ['S', 'M'],
+                colors: ['Red'],
+                rating: [4],
+            },
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(createProduct).rejects.toThrowError('You must be an admin to manage products.');
+});
+
+test('given non-admin role, when updating a product, then UnauthorizedError is thrown', async () => {
+    const updateProduct = async () => {
+        await productService.updateProduct(
+            1,
+            {
+                name: 'Updated Product',
+                price: 29.99,
+            },
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(updateProduct).rejects.toThrowError('You must be an admin to manage products.');
+});
+
+test('given non-admin role, when deleting a product, then UnauthorizedError is thrown', async () => {
+    const deleteProduct = async () => {
+        await productService.deleteProduct(1, 'user@example.com', 'customer');
+    };
+
+    await expect(deleteProduct).rejects.toThrowError('You must be an admin to manage products.');
 });

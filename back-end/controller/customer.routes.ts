@@ -91,7 +91,7 @@
 
 import { NextFunction, Request, Response, Router } from 'express';
 import customerService from '../service/customer.service';
-import { CustomerInput } from '../types';
+import { CustomerInput, Role } from '../types';
 
 const customerRouter = Router();
 
@@ -118,7 +118,9 @@ const customerRouter = Router();
 
 customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customers = await customerService.getCustomers();
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const customers = await customerService.getCustomers(email, role);
         res.status(200).json(customers);
     } catch (error) {
         next(error);
@@ -155,7 +157,9 @@ customerRouter.get('/', async (req: Request, res: Response, next: NextFunction) 
 
 customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = await customerService.getCustomerByEmail(req.params.email);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const customer = await customerService.getCustomerByEmail(req.params.email, email, role);
         res.status(200).json(customer);
     } catch (error) {
         next(error);
@@ -194,7 +198,9 @@ customerRouter.get('/:email', async (req: Request, res: Response, next: NextFunc
 
 customerRouter.get('/wishlist/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const wishlist = await customerService.getWishlistByEmail(req.params.email);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const wishlist = await customerService.getWishlistByEmail(req.params.email, email, role);
         res.status(200).json(wishlist);
     } catch (error) {
         next(error);
@@ -273,8 +279,15 @@ customerRouter.post('/signup', async (req: Request, res: Response, next: NextFun
 
 customerRouter.put('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
         const customer = <CustomerInput>req.body;
-        const result = await customerService.updateCustomer(req.params.email, customer);
+        const result = await customerService.updateCustomer(
+            req.params.email,
+            customer,
+            email,
+            role
+        );
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -315,7 +328,9 @@ customerRouter.put('/:email', async (req: Request, res: Response, next: NextFunc
 
 customerRouter.delete('/:email', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await customerService.deleteCustomer(req.params.email);
+        const request = req as Request & { auth: { email: string; role: Role } };
+        const { email, role } = request.auth;
+        const result = await customerService.deleteCustomer(req.params.email, email, role);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -356,9 +371,16 @@ customerRouter.put(
     '/addWishlist/:email/:productId',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
             const email = req.params.email;
             const productId = Number(req.params.productId);
-            const result = await customerService.addProductToWishlist(email, productId);
+            const result = await customerService.addProductToWishlist(
+                email,
+                productId,
+                email,
+                role
+            );
             res.status(200).json(result);
         } catch (error) {
             next(error);
@@ -404,9 +426,16 @@ customerRouter.put(
     '/removeWishlist/:email/:productId',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const request = req as Request & { auth: { email: string; role: Role } };
+            const { email: authEmail, role } = request.auth;
             const email = req.params.email;
             const productId = Number(req.params.productId);
-            const result = await customerService.removeProductFromWishlist(email, productId);
+            const result = await customerService.removeProductFromWishlist(
+                email,
+                productId,
+                email,
+                role
+            );
             res.status(200).json(result);
         } catch (error) {
             next(error);

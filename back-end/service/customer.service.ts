@@ -6,24 +6,47 @@ import cartDb from '../repository/cart.db';
 // import cartDb from '../repository/cart.db';
 import customerDB from '../repository/customer.db';
 import productDb from '../repository/product.db';
-import { AuthenticationResponse, CustomerInput } from '../types';
+import { AuthenticationResponse, CustomerInput, Role } from '../types';
 // import cartService from './cart.service';
 // import bcrypt from 'bcrypt';
 import * as bcrypt from 'bcrypt';
 import { generateJwtToken } from '../util/jwt';
+import { UnauthorizedError } from 'express-jwt';
 
-const getCustomers = async (): Promise<Customer[]> => await customerDB.getCustomers();
-
-const getCustomerByEmail = async (email: string): Promise<Customer | null> => {
-    const customer = await customerDB.getCustomerByEmail({ email });
-
-    if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
-
-    return customer;
+const getCustomers = async (email: string, role: Role): Promise<Customer[]> => {
+    if (role === 'admin') {
+        return await customerDB.getCustomers();
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin to access all users.',
+        });
+    }
 };
 
-const getWishlistByEmail = async (email: string): Promise<Product[] | null> => {
-    const customer = await getCustomerByEmail(email);
+const getCustomerByEmail = async (
+    email: string,
+    authEmail: string,
+    role: Role
+): Promise<Customer | null> => {
+    if (role === 'admin' || role === 'salesman' || (role === 'customer' && email === authEmail)) {
+        const customer = await customerDB.getCustomerByEmail({ email });
+
+        if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
+
+        return customer;
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin, salesman or be logged in as the same user.',
+        });
+    }
+};
+
+const getWishlistByEmail = async (
+    email: string,
+    authEmail: string,
+    role: Role
+): Promise<Product[] | null> => {
+    const customer = await getCustomerByEmail(email, authEmail, role);
     return customer!.getWishlist();
 };
 
@@ -63,63 +86,100 @@ const createCustomer = async ({
 
 const updateCustomer = async (
     currentEmail: string,
-    { firstName, lastName, email, password }: CustomerInput
+    { firstName, lastName, email, password }: CustomerInput,
+    authEmail: string,
+    role: Role
 ): Promise<Customer> => {
-    const existingCustomer = await customerDB.getCustomerByEmail({ email: currentEmail });
-    if (!existingCustomer) throw new Error('This customer does not exist.');
+    if (
+        role === 'admin' ||
+        role === 'salesman' ||
+        (role === 'customer' && currentEmail === authEmail)
+    ) {
+        const existingCustomer = await customerDB.getCustomerByEmail({ email: currentEmail });
+        if (!existingCustomer) throw new Error('This customer does not exist.');
 
-    const newUserData = { firstName, lastName, email, password, role: existingCustomer.getRole() };
+        const newUserData = {
+            firstName,
+            lastName,
+            email,
+            password,
+            role: existingCustomer.getRole(),
+        };
 
-    existingCustomer.updateUser(newUserData);
+        existingCustomer.updateUser(newUserData);
 
-    return await customerDB.updateCustomer(existingCustomer);
-};
-
-const deleteCustomer = async (email: string): Promise<string> => {
-    const existingCustomer = await customerDB.getCustomerByEmail({ email });
-
-    if (!existingCustomer) throw new Error('This customer does not exist.');
-
-    const existingCart = await cartDb.getCartByCustomerEmail({ email });
-
-    if (!existingCart) {
-        throw new Error('That customer does not have a cart.');
+        return await customerDB.updateCustomer(existingCustomer);
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin, salesman or be logged in as the same user.',
+        });
     }
-
-    await cartDb.deleteCart({ id: existingCart.getId()! });
-
-    return await customerDB.deleteCustomer({ email });
 };
 
-const addProductToWishlist = async (email: string, productId: number): Promise<Product> => {
-    const customer = await getCustomerByEmail(email);
-    const product = await productDb.getProductById({ id: productId });
-    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+const deleteCustomer = async (email: string, authEmail: string, role: Role): Promise<string> => {
+    if (role === 'admin' || role === 'salesman' || (role === 'customer' && email === authEmail)) {
+        const existingCustomer = await customerDB.getCustomerByEmail({ email });
 
-    if (customer!.getWishlist().some((item) => item.getId() === productId)) {
-        throw new Error(`Product with id ${productId} is already in the wishlist.`);
+        if (!existingCustomer) throw new Error('This customer does not exist.');
+
+        const existingCart = await cartDb.getCartByCustomerEmail({ email });
+
+        if (!existingCart) {
+            throw new Error('That customer does not have a cart.');
+        }
+
+        await cartDb.deleteCart({ id: existingCart.getId()! });
+
+        return await customerDB.deleteCustomer({ email });
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin, salesman or be logged in as the same user.',
+        });
     }
-    return await customerDB.addProductToWishlist(customer!, product);
 };
 
-const removeProductFromWishlist = async (email: string, productId: number): Promise<string> => {
-    const customer = await getCustomerByEmail(email);
-    const product = await productDb.getProductById({ id: productId });
-    if (!product) throw new Error(`Product with id ${productId} does not exist.`);
-    if (!customer!.getWishlist().some((item) => item.getId() === productId)) {
-        throw new Error(`Product with id ${productId} is not in the wishlist.`);
+const addProductToWishlist = async (
+    email: string,
+    productId: number,
+    authEmail: string,
+    role: Role
+): Promise<Product> => {
+    if (role === 'admin' || role === 'salesman' || (role === 'customer' && email === authEmail)) {
+        const customer = await getCustomerByEmail(email, authEmail, role);
+        const product = await productDb.getProductById({ id: productId });
+        if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+
+        if (customer!.getWishlist().some((item) => item.getId() === productId)) {
+            throw new Error(`Product with id ${productId} is already in the wishlist.`);
+        }
+        return await customerDB.addProductToWishlist(customer!, product);
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin, salesman or be logged in as the same user.',
+        });
     }
-    return await customerDB.removeProductFromWishlist(customer!, product);
 };
 
-// const loginCustomer = async (email: string, password: string): Promise<Customer | null> => {
-//     const customer = await customerDB.getCustomerByEmail({ email });
-
-//     if (!customer) throw new Error(`Customer with email ${email} does not exist.`);
-//     if (customer.getPassword() !== password) throw new Error('Wrong password');
-
-//     return customer;
-// };
+const removeProductFromWishlist = async (
+    email: string,
+    productId: number,
+    authEmail: string,
+    role: Role
+): Promise<string> => {
+    if (role === 'admin' || role === 'salesman' || (role === 'customer' && email === authEmail)) {
+        const customer = await getCustomerByEmail(email, authEmail, role);
+        const product = await productDb.getProductById({ id: productId });
+        if (!product) throw new Error(`Product with id ${productId} does not exist.`);
+        if (!customer!.getWishlist().some((item) => item.getId() === productId)) {
+            throw new Error(`Product with id ${productId} is not in the wishlist.`);
+        }
+        return await customerDB.removeProductFromWishlist(customer!, product);
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be an admin, salesman or be logged in as the same user.',
+        });
+    }
+};
 
 const authenticate = async ({
     email,

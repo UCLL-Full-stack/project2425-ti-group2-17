@@ -94,7 +94,7 @@ afterEach(() => {
 test('given customers in the DB, when getting all customers, then all customers are returned', async () => {
     customerDb.getCustomers = mockCustomerDbGetCustomers.mockResolvedValue(customers);
 
-    const result = await customerService.getCustomers();
+    const result = await customerService.getCustomers('admin@example.com', 'admin');
 
     expect(result).toEqual(customers);
     expect(mockCustomerDbGetCustomers).toHaveBeenCalled();
@@ -103,7 +103,11 @@ test('given customers in the DB, when getting all customers, then all customers 
 test('given customers in the DB, when getting customer by email, then customer with that id is returned', async () => {
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
 
-    const result = await customerService.getCustomerByEmail('john.doe@example.com');
+    const result = await customerService.getCustomerByEmail(
+        'john.doe@example.com',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(customers[0]);
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
@@ -115,7 +119,8 @@ test('given customers in the DB, when getting customer by incorrect email, then 
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
     const email = 'invalid@example.com';
-    const getCustomerByEmail = async () => await customerService.getCustomerByEmail(email);
+    const getCustomerByEmail = async () =>
+        await customerService.getCustomerByEmail(email, 'invalid@example.com', 'customer');
 
     await expect(getCustomerByEmail()).rejects.toThrow(
         `Customer with email ${email} does not exist.`
@@ -126,7 +131,11 @@ test('given customers in the DB, when getting customer by incorrect email, then 
 test('given customers in the DB, when getting wishlist by customer email, then that wishlist is returned', async () => {
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(customers[0]);
 
-    const result = await customerService.getWishlistByEmail('john.doe@example.com');
+    const result = await customerService.getWishlistByEmail(
+        'john.doe@example.com',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(customers[0].getWishlist());
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
@@ -138,7 +147,8 @@ test('given customers in the DB, when getting wishlist by incorrect customer ema
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
     const email = 'invalid@example.com';
-    const getWishlistByEmail = async () => await customerService.getWishlistByEmail(email);
+    const getWishlistByEmail = async () =>
+        await customerService.getWishlistByEmail(email, 'invalid@example.com', 'customer');
 
     await expect(getWishlistByEmail()).rejects.toThrow(
         `Customer with email ${email} does not exist.`
@@ -226,7 +236,9 @@ test('given an existing customer, when updating customer details, then customer 
 
     const result = await customerService.updateCustomer(
         'john.smith@example.com',
-        updatedCustomerData
+        updatedCustomerData,
+        'john.smith@example.com',
+        'customer'
     );
 
     expect(result.getFirstName()).toEqual(updatedCustomerData.firstName);
@@ -254,11 +266,16 @@ test('given a non-existent customer, when updating customer, then an error is th
     };
 
     const updateCustomer = async () =>
-        await customerService.updateCustomer('imInvalid@example.com', updatedCustomerData);
+        await customerService.updateCustomer(
+            'invalid@example.com',
+            updatedCustomerData,
+            'invalid@example.com',
+            'customer'
+        );
 
     await expect(updateCustomer).rejects.toThrow('This customer does not exist.');
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
-        email: 'imInvalid@example.com',
+        email: 'invalid@example.com',
     });
 });
 
@@ -273,7 +290,11 @@ test('given an existing customer, when deleting the customer, then the customer 
     );
     cartDb.deleteCart = mockCartDbDeleteCart.mockReturnValue('Cart deleted');
 
-    const result = await customerService.deleteCustomer('john.doe@example.com');
+    const result = await customerService.deleteCustomer(
+        'john.doe@example.com',
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual('Customer has been deleted.');
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
@@ -287,7 +308,11 @@ test('given a non-existent customer, when deleting the customer, then an error i
     customerDb.getCustomerByEmail = mockCustomerDbGetCustomerByEmail.mockReturnValue(null);
 
     const deleteCustomer = async () =>
-        await customerService.deleteCustomer('nonExisting@example.com');
+        await customerService.deleteCustomer(
+            'nonExisting@example.com',
+            'nonExisting@example.com',
+            'customer'
+        );
 
     await expect(deleteCustomer).rejects.toThrow('This customer does not exist.');
     expect(mockCustomerDbGetCustomerByEmail).toHaveBeenCalledWith({
@@ -302,7 +327,12 @@ test('given a customer, when adding a product to wishlist, then the product is a
         products[1]
     );
 
-    const result = await customerService.addProductToWishlist('john.doe@example.com', 2);
+    const result = await customerService.addProductToWishlist(
+        'john.doe@example.com',
+        2,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(products[1]);
     expect(mockCustomerDbAddProductToWishlist).toHaveBeenCalledWith(customers[0], products[1]);
@@ -313,7 +343,12 @@ test('given a customer with existing wishlist, when adding a duplicate product t
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[0]);
 
     const addProductToWishlist = async () =>
-        await customerService.addProductToWishlist('john.doe@example.com', 1);
+        await customerService.addProductToWishlist(
+            'john.doe@example.com',
+            1,
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(addProductToWishlist).rejects.toThrow(
         'Product with id 1 is already in the wishlist.'
@@ -327,7 +362,12 @@ test('given a customer, when removing a product from wishlist, then the product 
         'Product removed from wishlist.'
     );
 
-    const result = await customerService.removeProductFromWishlist('john.doe@example.com', 1);
+    const result = await customerService.removeProductFromWishlist(
+        'john.doe@example.com',
+        1,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual('Product removed from wishlist.');
     expect(mockCustomerDbRemoveProductFromWishlist).toHaveBeenCalledWith(customers[0], products[0]);
@@ -338,7 +378,12 @@ test('given a customer, when removing a product not in the wishlist, then an err
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(products[1]);
 
     const removeProductFromWishlist = async () =>
-        await customerService.removeProductFromWishlist('john.doe@example.com', 2);
+        await customerService.removeProductFromWishlist(
+            'john.doe@example.com',
+            2,
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(removeProductFromWishlist).rejects.toThrow(
         'Product with id 2 is not in the wishlist.'
@@ -350,7 +395,114 @@ test('given a non-existent product, when adding to wishlist, then an error is th
     productDb.getProductById = mockProductDbGetProductById.mockReturnValue(null);
 
     const addProductToWishlist = async () =>
-        await customerService.addProductToWishlist('john.doe@example.com', 3);
+        await customerService.addProductToWishlist(
+            'john.doe@example.com',
+            3,
+            'john.doe@example.com',
+            'customer'
+        );
 
     await expect(addProductToWishlist).rejects.toThrow('Product with id 3 does not exist.');
+});
+
+test('given non-admin role, when getting all customers, then UnauthorizedError is thrown', async () => {
+    const getCustomers = async () => {
+        await customerService.getCustomers('user@example.com', 'customer');
+    };
+
+    await expect(getCustomers).rejects.toThrowError('You must be an admin to access all users.');
+});
+
+test('given non-admin role, when getting customer by email, then UnauthorizedError is thrown', async () => {
+    const getCustomerByEmail = async () => {
+        await customerService.getCustomerByEmail(
+            'john.doe@example.com',
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(getCustomerByEmail).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
+});
+
+test('given non-admin role, when getting wishlist by email, then UnauthorizedError is thrown', async () => {
+    const getWishlistByEmail = async () => {
+        await customerService.getWishlistByEmail(
+            'john.doe@example.com',
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(getWishlistByEmail).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
+});
+
+test('given non-admin role, when updating a customer, then UnauthorizedError is thrown', async () => {
+    const updatedCustomerData: CustomerInput = {
+        firstName: 'Updated',
+        lastName: 'User',
+        email: 'updated@example.com',
+        password: 'password',
+        role: 'customer',
+    };
+    const updateCustomer = async () => {
+        await customerService.updateCustomer(
+            'john.doe@example.com',
+            updatedCustomerData,
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(updateCustomer).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
+});
+
+test('given non-admin role, when deleting a customer, then UnauthorizedError is thrown', async () => {
+    const deleteCustomer = async () => {
+        await customerService.deleteCustomer(
+            'john.doe@example.com',
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(deleteCustomer).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
+});
+
+test('given non-admin role, when adding a product to wishlist, then UnauthorizedError is thrown', async () => {
+    const addProductToWishlist = async () => {
+        await customerService.addProductToWishlist(
+            'john.doe@example.com',
+            1,
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(addProductToWishlist).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
+});
+
+test('given non-admin role, when removing a product from wishlist, then UnauthorizedError is thrown', async () => {
+    const removeProductFromWishlist = async () => {
+        await customerService.removeProductFromWishlist(
+            'john.doe@example.com',
+            1,
+            'user@example.com',
+            'customer'
+        );
+    };
+
+    await expect(removeProductFromWishlist).rejects.toThrowError(
+        'You must be an admin, salesman or be logged in as the same user.'
+    );
 });

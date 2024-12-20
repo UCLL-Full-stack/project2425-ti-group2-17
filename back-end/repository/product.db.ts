@@ -65,24 +65,6 @@ const getProductByName = async ({ name }: { name: string }): Promise<Product | n
     }
 };
 
-const getProductsBySearch = async (query: string): Promise<Product[]> => {
-    try {
-        const productsPrisma = await database.product.findMany({
-            where: {
-                OR: [
-                    { name: { contains: query } },
-                    { categories: { hasSome: [query] } },
-                    { description: { contains: query } },
-                ],
-            },
-        });
-        return productsPrisma.map(Product.from);
-    } catch (error) {
-        console.error(error);
-        throw new Error('Database error. See server log for details.');
-    }
-};
-
 const updateProduct = async (updatedProduct: Product): Promise<Product> => {
     try {
         const productPrisma = await database.product.update({
@@ -143,7 +125,6 @@ export default {
     getProducts,
     getProductById,
     getProductByName,
-    getProductsBySearch,
     updateProduct,
     deleteProduct,
     addRatingToProduct,

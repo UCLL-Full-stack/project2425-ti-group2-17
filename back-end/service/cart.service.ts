@@ -6,30 +6,57 @@ import { Payment } from '../model/payment';
 import { OrderItem } from '../model/orderItem';
 import { Order } from '../model/order';
 import orderDb from '../repository/order.db';
-import { DiscountCodeInput } from '../types';
+import { DiscountCodeInput, Role } from '../types';
 import discountCodeDb from '../repository/discountCode.db';
 import { DiscountCode } from '../model/discountCode';
+import { UnauthorizedError } from 'express-jwt';
 
-const getCarts = async (): Promise<Cart[]> => await cartDB.getCarts();
-
-const getCartById = async (id: number): Promise<Cart | null> => {
-    const cart = await cartDB.getCartById({ id });
-    if (!cart) throw new Error(`Cart with id ${id} does not exist.`);
-    return cart;
+const getCarts = async (email: string, role: Role): Promise<Cart[]> => {
+    if (role === 'salesman' || role === 'admin') {
+        return await cartDB.getCarts();
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be a salesman or admin to access all carts.',
+        });
+    }
 };
 
-const getCartByEmail = async (email: string): Promise<Cart | null> => {
-    const cart = await cartDB.getCartByCustomerEmail({ email });
-    if (!cart) throw new Error(`Cart with email ${email} does not exist.`);
-    return cart;
+const getCartById = async (id: number, email: string, role: Role): Promise<Cart | null> => {
+    if (role === 'salesman' || role === 'admin') {
+        const cart = await cartDB.getCartById({ id });
+        if (!cart) throw new Error(`Cart with id ${id} does not exist.`);
+        return cart;
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be a salesman or admin to access a cart by Id.',
+        });
+    }
+};
+
+const getCartByEmail = async (
+    email: string,
+    authEmail: string,
+    role: Role
+): Promise<Cart | null> => {
+    if (role === 'salesman' || role === 'admin' || (role === 'customer' && email === authEmail)) {
+        const cart = await cartDB.getCartByCustomerEmail({ email });
+        if (!cart) throw new Error(`Cart with email ${email} does not exist.`);
+        return cart;
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You must be a salesman, admin or logged in as the user who own this cart.',
+        });
+    }
 };
 
 const addCartItem = async (
     email: string,
     productId: number,
-    quantity: number
+    quantity: number,
+    authEmail: string,
+    role: Role
 ): Promise<CartItem> => {
-    const existingCart = await getCartByEmail(email);
+    const existingCart = await getCartByEmail(email, authEmail, role);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
@@ -39,17 +66,24 @@ const addCartItem = async (
 const removeCartItem = async (
     email: string,
     productId: number,
-    quantity: number
+    quantity: number,
+    authEmail: string,
+    role: Role
 ): Promise<CartItem | string> => {
-    const existingCart = await getCartByEmail(email);
+    const existingCart = await getCartByEmail(email, authEmail, role);
     const product = await productDb.getProductById({ id: productId });
     if (!product) throw new Error(`Product with id ${productId} does not exist.`);
 
     return await cartDB.removeCartItem(existingCart!, product, quantity);
 };
 
-const addDiscountCode = async (email: string, code: string): Promise<DiscountCode | null> => {
-    const existingCart = await getCartByEmail(email);
+const addDiscountCode = async (
+    email: string,
+    code: string,
+    authEmail: string,
+    role: Role
+): Promise<DiscountCode | null> => {
+    const existingCart = await getCartByEmail(email, authEmail, role);
     const existingDiscountCode = await discountCodeDb.getDiscountCodeByCode({ code: code });
     if (!existingDiscountCode) throw new Error(`Discountcode with code ${code} does not exist.`);
 
@@ -58,8 +92,13 @@ const addDiscountCode = async (email: string, code: string): Promise<DiscountCod
     return await cartDB.addDiscountCode(existingCart!, appliedDiscountCode);
 };
 
-const removeDiscountCode = async (email: string, code: string): Promise<string> => {
-    const existingCart = await getCartByEmail(email);
+const removeDiscountCode = async (
+    email: string,
+    code: string,
+    authEmail: string,
+    role: Role
+): Promise<string> => {
+    const existingCart = await getCartByEmail(email, authEmail, role);
     const existingDiscountCode = await discountCodeDb.getDiscountCodeByCode({ code: code });
     if (!existingDiscountCode) throw new Error(`DiscountCode with code ${code} does not exist.`);
 
@@ -68,8 +107,13 @@ const removeDiscountCode = async (email: string, code: string): Promise<string> 
     return await cartDB.removeDiscountCode(existingCart!, code);
 };
 
-const convertCartToOrder = async (email: string, paymentStatus: string): Promise<Order> => {
-    const cart = await getCartByEmail(email);
+const convertCartToOrder = async (
+    email: string,
+    paymentStatus: string,
+    authEmail: string,
+    role: Role
+): Promise<Order> => {
+    const cart = await getCartByEmail(email, authEmail, role);
 
     if (!cart) throw new Error(`Cart with user email ${email} does not exist.`);
 

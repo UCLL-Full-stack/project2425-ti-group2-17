@@ -31,6 +31,9 @@ test('given a valid order and payment input, when making a payment, then it succ
             getPaymentStatus: jest.fn().mockReturnValue('unpaid'),
         }),
         calculateTotalAmount: jest.fn().mockResolvedValue(100),
+        getCustomer: jest
+            .fn()
+            .mockReturnValue({ getEmail: jest.fn().mockReturnValue('john.doe@example.com') }),
     };
     const paymentInput: PaymentInput = {
         amount: 100,
@@ -42,7 +45,12 @@ test('given a valid order and payment input, when making a payment, then it succ
     mockOrderDbGetOrderById.mockResolvedValue(order);
     mockPaymentDbAddPayment.mockResolvedValue(payment);
 
-    const result = await paymentService.makePayment(1, paymentInput);
+    const result = await paymentService.makePayment(
+        1,
+        paymentInput,
+        'john.doe@example.com',
+        'customer'
+    );
 
     expect(result).toEqual(payment);
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
@@ -58,9 +66,9 @@ test('given a non-existent order, when making a payment, then an error is thrown
 
     mockOrderDbGetOrderById.mockResolvedValue(null);
 
-    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
-        'Order with id 1 does not exist.'
-    );
+    await expect(
+        paymentService.makePayment(1, paymentInput, 'john.doe@example.com', 'customer')
+    ).rejects.toThrow('Order with id 1 does not exist.');
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
@@ -69,6 +77,9 @@ test('given an already paid order, when making a payment, then an error is throw
         getPayment: jest.fn().mockReturnValue({
             getPaymentStatus: jest.fn().mockReturnValue('paid'),
         }),
+        getCustomer: jest
+            .fn()
+            .mockReturnValue({ getEmail: jest.fn().mockReturnValue('john.doe@example.com') }),
     };
     const paymentInput: PaymentInput = {
         amount: 100,
@@ -78,9 +89,9 @@ test('given an already paid order, when making a payment, then an error is throw
 
     mockOrderDbGetOrderById.mockResolvedValue(order);
 
-    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
-        'Order with id 1 is already paid.'
-    );
+    await expect(
+        paymentService.makePayment(1, paymentInput, 'john.doe@example.com', 'customer')
+    ).rejects.toThrow('Order with id 1 is already paid.');
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
@@ -90,6 +101,9 @@ test('given a mismatched payment amount, when making a payment, then an error is
             getPaymentStatus: jest.fn().mockReturnValue('unpaid'),
         }),
         calculateTotalAmount: jest.fn().mockResolvedValue(100),
+        getCustomer: jest
+            .fn()
+            .mockReturnValue({ getEmail: jest.fn().mockReturnValue('john.doe@example.com') }),
     };
     const paymentInput: PaymentInput = {
         amount: 50,
@@ -99,9 +113,9 @@ test('given a mismatched payment amount, when making a payment, then an error is
 
     mockOrderDbGetOrderById.mockResolvedValue(order);
 
-    await expect(paymentService.makePayment(1, paymentInput)).rejects.toThrow(
-        'Payment amount 50 does not match order total amount 100.'
-    );
+    await expect(
+        paymentService.makePayment(1, paymentInput, 'john.doe@example.com', 'customer')
+    ).rejects.toThrow('Payment amount 50 does not match order total amount 100.');
     expect(mockOrderDbGetOrderById).toHaveBeenCalledWith({ id: 1 });
 });
 
@@ -113,7 +127,7 @@ test('given valid payments in DB, when getting all payments, then all payments a
 
     mockPaymentDbGetPayments.mockResolvedValue(payments);
 
-    const result = await paymentService.getPayments();
+    const result = await paymentService.getPayments('admin@example.com', 'admin');
 
     expect(result).toEqual(payments);
     expect(mockPaymentDbGetPayments).toHaveBeenCalled();
@@ -124,7 +138,7 @@ test('given a valid payment id, when getting payment by id, then the payment is 
 
     mockPaymentDbGetPaymentById.mockResolvedValue(payment);
 
-    const result = await paymentService.getPaymentById(1);
+    const result = await paymentService.getPaymentById(1, 'admin@example.com', 'admin');
 
     expect(result).toEqual(payment);
     expect(mockPaymentDbGetPaymentById).toHaveBeenCalledWith({ id: 1 });
@@ -133,8 +147,54 @@ test('given a valid payment id, when getting payment by id, then the payment is 
 test('given a non-existent payment id, when getting payment by id, then an error is thrown', async () => {
     mockPaymentDbGetPaymentById.mockResolvedValue(null);
 
-    await expect(paymentService.getPaymentById(1)).rejects.toThrow(
+    await expect(paymentService.getPaymentById(1, 'admin@example.com', 'admin')).rejects.toThrow(
         'Payment with id 1 does not exist.'
     );
     expect(mockPaymentDbGetPaymentById).toHaveBeenCalledWith({ id: 1 });
+});
+
+test('given non-customer role, when making a payment, then UnauthorizedError is thrown', async () => {
+    const order = {
+        getPayment: jest.fn().mockReturnValue({
+            getPaymentStatus: jest.fn().mockReturnValue('unpaid'),
+        }),
+        calculateTotalAmount: jest.fn().mockResolvedValue(100),
+        getCustomer: jest
+            .fn()
+            .mockReturnValue({ getEmail: jest.fn().mockReturnValue('john.doe@example.com') }),
+    };
+    mockOrderDbGetOrderById.mockResolvedValue(order);
+
+    const makePayment = async () => {
+        await paymentService.makePayment(
+            1,
+            { amount: 100, date: new Date(), paymentStatus: 'paid' },
+            'user@example.com',
+            'admin'
+        );
+    };
+
+    await expect(makePayment).rejects.toThrowError(
+        'You must be logged in as a customer to make a payment.'
+    );
+});
+
+test('given non-salesman and non-admin role, when getting all payments, then UnauthorizedError is thrown', async () => {
+    const getPayments = async () => {
+        await paymentService.getPayments('user@example.com', 'customer');
+    };
+
+    await expect(getPayments).rejects.toThrowError(
+        'You must be a salesman or admin to access all payments.'
+    );
+});
+
+test('given non-salesman and non-admin role, when getting a payment by id, then UnauthorizedError is thrown', async () => {
+    const getPaymentById = async () => {
+        await paymentService.getPaymentById(1, 'user@example.com', 'customer');
+    };
+
+    await expect(getPaymentById).rejects.toThrowError(
+        'You must be a salesman or admin to access a payment by id.'
+    );
 });
