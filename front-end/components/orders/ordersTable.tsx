@@ -1,8 +1,9 @@
 import OrderService from '@services/OrderService';
-import { Order } from '@types';
+import { Order, StatusMessage } from '@types';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import Link from 'next/link';
+import classNames from 'classnames';
 
 const OrderTable = () => {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -10,8 +11,10 @@ const OrderTable = () => {
         key: keyof Order | 'customerName' | 'paymentAmount' | 'paymentStatus';
         direction: 'ascending' | 'descending';
     } | null>(null);
+    const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
     useEffect(() => {
+        setStatusMessages([]);
         const fetchOrders = async () => {
             try {
                 const data = await OrderService.getAllOrders();
@@ -136,6 +139,23 @@ const OrderTable = () => {
 
     return (
         <div className="overflow-x-auto shadow-lg rounded-lg max-w-6xl mx-auto pt-4">
+            {statusMessages && (
+                <div className="row">
+                    <ul className="list-none mb-3 mx-auto">
+                        {statusMessages.map(({ message, type }, index) => (
+                            <li
+                                key={index}
+                                className={classNames({
+                                    'text-red-800': type === 'error',
+                                    'text-green-800': type === 'success',
+                                })}
+                            >
+                                {message}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             <table className="min-w-full bg-white text-base">
                 <thead className="bg-gray-200 text-gray-700">
                     <tr>
