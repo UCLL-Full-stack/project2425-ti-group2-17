@@ -20,6 +20,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
     const [image, setImage] = useState('');
     const [sizes, setSizes] = useState('');
     const [colors, setColors] = useState('');
+    const [rating, setRating] = useState<number[]>([]);
 
     const [nameError, setNameError] = useState<string | null>(null);
     const [priceError, setPriceError] = useState<string | null>(null);
@@ -163,6 +164,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             images: image,
             sizes: stringToList(sizes),
             colors: stringToList(colors),
+            rating: rating,
         };
 
         if (updatingProduct) {
@@ -183,6 +185,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setImage(productToUpdate.images);
             setSizes(productToUpdate.sizes.join(','));
             setColors(productToUpdate.colors.join(','));
+            setRating(productToUpdate.rating!);
             setUpdatingProduct(true);
         } else {
             setId('none');
@@ -194,6 +197,7 @@ const ProductEditor: React.FC<Props> = ({ isOpen, onClose, onSave, productToUpda
             setImage('none');
             setSizes('');
             setColors('');
+            setRating([]);
             setUpdatingProduct(false);
         }
         clearErrors();
