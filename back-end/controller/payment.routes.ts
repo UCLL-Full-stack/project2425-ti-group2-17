@@ -49,50 +49,6 @@ const paymentRouter = Router();
 /**
  * @swagger
  * /payments:
- *   put:
- *     security:
- *      - bearerAuth: []
- *     summary: Create a new payment for an order
- *     tags: [Payments]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/PaymentInput'
- *     responses:
- *       200:
- *         description: Payment successfully processed
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Payment'
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal server error
- */
-
-paymentRouter.put('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const request = req as Request & { auth: { email: string; role: Role } };
-        const { email, role } = request.auth;
-        const { orderId, amount } = req.body;
-        const paymentInput: PaymentInput = {
-            amount,
-            date: new Date(),
-            paymentStatus: 'paid',
-        };
-        const payment = await paymentService.makePayment(orderId, paymentInput, email, role);
-        res.status(200).json(payment);
-    } catch (error) {
-        next(error);
-    }
-});
-
-/**
- * @swagger
- * /payments:
  *   get:
  *     security:
  *      - bearerAuth: []
