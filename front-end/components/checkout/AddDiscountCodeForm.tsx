@@ -62,6 +62,11 @@ const AddDiscountCodeForm: React.FC<Props> = ({ isOpen, onClose, onSave, email }
         }
     };
 
+    useEffect(() => {
+        setCode('');
+        clearErrors();
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
