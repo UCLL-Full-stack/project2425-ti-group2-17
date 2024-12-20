@@ -94,6 +94,7 @@ test('given: a product, when: added to wishlist, then: product appears in wishli
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
+        rating: [1, 3, 5],
     });
 
     const result = customer.addProductToWishlist(product);
@@ -112,6 +113,7 @@ test('given: a product in wishlist, when: removed from wishlist, then: product i
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
+        rating: [1, 3, 5],
     });
 
     customer.addProductToWishlist(product);
@@ -131,6 +133,7 @@ test('given: product already in wishlist, when: adding product again, then: thro
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
+        rating: [1, 3, 5],
     });
     customer.addProductToWishlist(product);
 
@@ -149,6 +152,7 @@ test('given: product not in wishlist, when: removing product, then: throws an er
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Black', 'White', 'Green'],
+        rating: [1, 3, 5],
     });
     expect(() => customer.removeProductFromWishlist(product)).toThrow(
         'Product is not in the wishlist.'

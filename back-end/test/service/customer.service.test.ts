@@ -21,6 +21,7 @@ const products: Product[] = [
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
+        rating: [1, 3, 5],
         id: 1,
     }),
     new Product({
@@ -32,6 +33,7 @@ const products: Product[] = [
         images: 'shoes',
         sizes: ['M', 'L', 'XL'],
         colors: ['White', 'Black'],
+        rating: [1, 3, 5],
         id: 2,
     }),
 ];

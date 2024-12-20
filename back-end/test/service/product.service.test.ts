@@ -21,6 +21,7 @@ const products: Product[] = [
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
+        rating: [1, 3, 5],
         id: 1,
     }),
     new Product({
@@ -32,6 +33,7 @@ const products: Product[] = [
         images: 'shoes',
         sizes: ['M', 'L', 'XL'],
         colors: ['White', 'Black'],
+        rating: [1, 3, 5],
         id: 2,
     }),
 ];
@@ -95,6 +97,7 @@ test('given a valid product input, when creating a product, then the product is 
         images: 'shoes',
         sizes: ['M', 'L', 'XL'],
         colors: ['Blue', 'Green'],
+        rating: [1, 3, 5],
     };
 
     const newProduct = new Product({ ...newProductInput, id: 3 });
@@ -122,6 +125,7 @@ test('given an existing product, when creating it again, then an error is thrown
         images: 'image3.jpg',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
+        rating: [1, 3, 5],
     };
 
     await expect(productService.createProduct(duplicateProductInput)).rejects.toThrow(
@@ -143,6 +147,7 @@ test('given a valid product update, when updating a product, then the product is
         images: 'shirt',
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['Red', 'Blue', 'Black'],
+        rating: [1, 3, 5],
     };
 
     const updatedProduct = new Product({ ...updatedProductData, id: 1 });
@@ -169,6 +174,7 @@ test('given a non-existent product ID, when updating the product, then an error 
         images: 'image3.jpg',
         sizes: ['N/A'],
         colors: ['N/A'],
+        rating: [1, 3, 5],
     };
 
     await expect(productService.updateProduct(3, updatedProductData)).rejects.toThrow(
