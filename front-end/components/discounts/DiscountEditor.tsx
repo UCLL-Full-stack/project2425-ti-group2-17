@@ -45,8 +45,8 @@ const DiscountCodeEditor: React.FC<Props> = ({ isOpen, onClose, onSave, discount
         } else if (value < 0) {
             setValueError('Value may not be negative.');
             isValid = false;
-        } else if (type === 'percentage' && value < 100) {
-            setValueError('Value may not be negative.');
+        } else if (type === 'percentage' && value > 100) {
+            setValueError('Percentage must be lower than 100%.');
             isValid = false;
         }
         const datePattern = /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/;
