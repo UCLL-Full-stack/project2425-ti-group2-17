@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         <strong>Colors:</strong> {product.colors.join(', ')}
                     </div>
                     <div className="text-left">
-                        <strong>Rating:</strong>{' '}
+                        <strong>Average rating:</strong>{' '}
                         {rating.length > 0
                             ? rating.reduce((acc, curr) => acc + curr, 0) / rating.length
                             : 'No ratings yet'}
