@@ -229,26 +229,8 @@ const main = async () => {
             customer: {
                 connect: { id: johnDoe.id },
             },
-            cartItems: {
-                create: [
-                    {
-                        product: {
-                            connect: { id: tShirt.id },
-                        },
-                        quantity: 2,
-                    },
-                    {
-                        product: {
-                            connect: { id: runningShoes.id },
-                        },
-                        quantity: 1,
-                    },
-                ],
-            },
-            discountCodes: {
-                connect: [{ id: twentyPercentOff.id }, { id: thirtyFixedOff.id }],
-            },
-            // totalAmount: ,
+            cartItems: {},
+            discountCodes: {},
         },
     });
 
@@ -257,26 +239,8 @@ const main = async () => {
             customer: {
                 connect: { id: janeSmith.id },
             },
-            cartItems: {
-                create: [
-                    {
-                        product: {
-                            connect: { id: tShirt.id },
-                        },
-                        quantity: 1,
-                    },
-                    {
-                        product: {
-                            connect: { id: casualHoodie.id },
-                        },
-                        quantity: 2,
-                    },
-                ],
-            },
-            discountCodes: {
-                connect: [{ id: tenPercentOff.id }, { id: thirtyFixedOff.id }],
-            },
-            // totalAmount: ,
+            cartItems: {},
+            discountCodes: {},
         },
     });
 
@@ -285,26 +249,8 @@ const main = async () => {
             customer: {
                 connect: { id: aliceJohnson.id },
             },
-            cartItems: {
-                create: [
-                    {
-                        product: {
-                            connect: { id: runningShoes.id },
-                        },
-                        quantity: 2,
-                    },
-                    {
-                        product: {
-                            connect: { id: casualHoodie.id },
-                        },
-                        quantity: 1,
-                    },
-                ],
-            },
-            discountCodes: {
-                connect: [{ id: thirtyFixedOff.id }, { id: fiftyFixedOff.id }],
-            },
-            // totalAmount: ,
+            cartItems: {},
+            discountCodes: {},
         },
     });
 
